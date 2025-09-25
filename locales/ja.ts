@@ -3,6 +3,7 @@ export default {
     save: "保存",
     cancel: "キャンセル",
     delete: "削除",
+    archive: "アーカイブ",
     edit: "編集",
     close: "閉じる",
     add: "追加",
@@ -57,6 +58,25 @@ export default {
     title: "戦略的目標",
     newGoal: "新しい目標",
     noGoals: "戦略的目標が定義されていません。追加して始めましょう。"
+  },
+  personalDevView: {
+    aiPlanner: "AI プランナー",
+    plannerDescription: "目標を定義し、AI に学習計画を作成させます。",
+    goalPlaceholder: "例: 金融投資を学ぶ",
+    books: "書籍",
+    youtubeChannels: "YouTube チャンネル",
+    podcasts: "ポッドキャスト",
+    generatePlan: "AI 計画を生成",
+    generatingPlan: "計画を生成中...",
+    activePlans: "アクティブな開発計画",
+    confirmDelete: "この開発計画を削除しますか？元に戻せません。",
+    confirmArchive: "この開発計画をアーカイブしますか？後で復元できます。",
+    noPlans: "アクティブな開発計画がありません。生成して始めましょう！",
+    swapWithAi: "置き換え (AI)",
+    deleteItem: "削除",
+    addResource: "リソースを追加",
+    resourceTitle: "リソース名",
+    authorOrChannel: "著者またはチャンネル"
   },
   aiAgentsView: {
     title: "AIエージェントコマンドセンター",

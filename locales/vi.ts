@@ -3,6 +3,7 @@ export default {
     save: "Lưu",
     cancel: "Hủy",
     delete: "Xóa",
+    archive: "Lưu trữ",
     edit: "Sửa",
     close: "Đóng",
     add: "Thêm",
@@ -62,6 +63,25 @@ export default {
     title: "MỤC TIÊU CHIẾN LƯỢC",
     newGoal: "MỤC TIÊU MỚI",
     noGoals: "Chưa có mục tiêu chiến lược nào được xác định. Thêm một mục tiêu để bắt đầu."
+  },
+  personalDevView: {
+    aiPlanner: "TRÌNH LẬP KẾ HOẠCH AI",
+    plannerDescription: "Xác định mục tiêu và để AI xây dựng kế hoạch học tập cho bạn.",
+    goalPlaceholder: "ví dụ: Học đầu tư tài chính",
+    books: "Sách",
+    youtubeChannels: "Kênh YouTube",
+    podcasts: "Podcast",
+    generatePlan: "TẠO KẾ HOẠCH AI",
+    generatingPlan: "ĐANG TẠO KẾ HOẠCH...",
+    activePlans: "KẾ HOẠCH PHÁT TRIỂN ĐANG HOẠT ĐỘNG",
+    confirmDelete: "Xóa kế hoạch phát triển này? Hành động này không thể hoàn tác.",
+    confirmArchive: "Lưu trữ kế hoạch phát triển này? Bạn có thể khôi phục sau.",
+    noPlans: "Bạn chưa có kế hoạch phát triển nào. Hãy tạo một kế hoạch để bắt đầu!",
+    swapWithAi: "Hoán đổi (AI)",
+    deleteItem: "Xóa",
+    addResource: "Thêm Tài nguyên",
+    resourceTitle: "Tiêu đề tài nguyên",
+    authorOrChannel: "Tác giả hoặc kênh"
   },
   goalItem: {
     progress: "Tiến độ",

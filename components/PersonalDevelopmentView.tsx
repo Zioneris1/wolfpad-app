@@ -84,11 +84,15 @@ const PersonalDevelopmentView: React.FC = () => {
     
     const handleDeletePlan = async (planId: string) => {
         if (!user) return;
+        const ok = window.confirm(t('personalDevView.confirmDelete'));
+        if (!ok) return;
         await devPlanApi.deletePlan(planId, user.id);
     };
     
     const handleArchivePlan = async (planId: string) => {
         if (!user) return;
+        const ok = window.confirm(t('personalDevView.confirmArchive'));
+        if (!ok) return;
         if ((devPlanApi as any).archivePlan) {
             await (devPlanApi as any).archivePlan(planId, user.id);
         } else {
@@ -206,7 +210,7 @@ const PersonalDevelopmentView: React.FC = () => {
                                 </div>
                                 <div className="space-y-4">
                                     <EditableResourceList
-                                        title={t('personalDevView.books')}
+                                        title={`${t('personalDevView.books')} (${(editingPlanId === plan.id ? draftBooks : plan.books).length})`}
                                         icon={<BookIcon />}
                                         resources={editingPlanId === plan.id ? draftBooks : plan.books}
                                         onChange={(resources: DevelopmentResource[]) => setDraftBooks(resources)}
@@ -215,7 +219,7 @@ const PersonalDevelopmentView: React.FC = () => {
                                         onDelete={(res) => handleDeleteResource(plan.id, res.title, 'books')}
                                     />
                                     <EditableResourceList
-                                        title={t('personalDevView.youtubeChannels')}
+                                        title={`${t('personalDevView.youtubeChannels')} (${(editingPlanId === plan.id ? draftYouTube : plan.youtube_channels).length})`}
                                         icon={<YoutubeIcon />}
                                         resources={editingPlanId === plan.id ? draftYouTube : plan.youtube_channels}
                                         onChange={(resources: DevelopmentResource[]) => setDraftYouTube(resources)}
@@ -224,7 +228,7 @@ const PersonalDevelopmentView: React.FC = () => {
                                         onDelete={(res) => handleDeleteResource(plan.id, res.title, 'youtube_channels')}
                                     />
                                     <EditableResourceList
-                                        title={t('personalDevView.podcasts')}
+                                        title={`${t('personalDevView.podcasts')} (${(editingPlanId === plan.id ? draftPodcasts : plan.podcasts).length})`}
                                         icon={<PodcastIcon />}
                                         resources={editingPlanId === plan.id ? draftPodcasts : plan.podcasts}
                                         onChange={(resources: DevelopmentResource[]) => setDraftPodcasts(resources)}

@@ -3,6 +3,7 @@ export default {
     save: "保存",
     cancel: "取消",
     delete: "删除",
+    archive: "归档",
     edit: "编辑",
     close: "关闭",
     add: "添加",
@@ -57,6 +58,25 @@ export default {
     title: "战略目标",
     newGoal: "新目标",
     noGoals: "未定义战略目标。添加一个以开始。"
+  },
+  personalDevView: {
+    aiPlanner: "AI 规划器",
+    plannerDescription: "定义一个目标，让 AI 为你构建学习计划。",
+    goalPlaceholder: "例如：学习金融投资",
+    books: "书籍",
+    youtubeChannels: "YouTube 频道",
+    podcasts: "播客",
+    generatePlan: "生成 AI 计划",
+    generatingPlan: "正在生成计划...",
+    activePlans: "活动的开发计划",
+    confirmDelete: "删除此开发计划？此操作无法撤销。",
+    confirmArchive: "归档此开发计划？你可以稍后恢复它。",
+    noPlans: "你还没有活动的开发计划。生成一个开始吧！",
+    swapWithAi: "替换（AI）",
+    deleteItem: "删除",
+    addResource: "添加资源",
+    resourceTitle: "资源标题",
+    authorOrChannel: "作者或频道"
   },
   aiAgentsView: {
     title: "AI 代理指挥中心",

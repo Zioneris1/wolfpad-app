@@ -3,6 +3,7 @@ export default {
     save: "Speichern",
     cancel: "Abbrechen",
     delete: "Löschen",
+    archive: "Archivieren",
     edit: "Bearbeiten",
     close: "Schließen",
     add: "Hinzufügen",
@@ -62,6 +63,25 @@ export default {
     title: "STRATEGISCHE ZIELE",
     newGoal: "NEUES ZIEL",
     noGoals: "Keine strategischen Ziele definiert. Fügen Sie eines hinzu, um zu beginnen."
+  },
+  personalDevView: {
+    aiPlanner: "KI-PLANER",
+    plannerDescription: "Definiere ein Ziel und lasse die KI einen Lernplan erstellen.",
+    goalPlaceholder: "z. B. Finanzinvestitionen lernen",
+    books: "Bücher",
+    youtubeChannels: "YouTube-Kanäle",
+    podcasts: "Podcasts",
+    generatePlan: "KI-PLAN ERSTELLEN",
+    generatingPlan: "PLAN WIRD ERSTELLT...",
+    activePlans: "AKTIVE ENTWICKLUNGSPLÄNE",
+    confirmDelete: "Diesen Entwicklungsplan löschen? Dies kann nicht rückgängig gemacht werden.",
+    confirmArchive: "Diesen Entwicklungsplan archivieren? Sie können ihn später wiederherstellen.",
+    noPlans: "Keine aktiven Entwicklungspläne. Erstelle einen, um zu starten!",
+    swapWithAi: "Tauschen (KI)",
+    deleteItem: "Löschen",
+    addResource: "Ressource hinzufügen",
+    resourceTitle: "Titel der Ressource",
+    authorOrChannel: "Autor oder Kanal"
   },
   aiAgentsView: {
     title: "KI-AGENTEN-KOMMANDOZENTRALE",

@@ -3,6 +3,7 @@ export default {
     save: "Enregistrer",
     cancel: "Annuler",
     delete: "Supprimer",
+    archive: "Archiver",
     edit: "Modifier",
     close: "Fermer",
     add: "Ajouter",
@@ -78,7 +79,9 @@ export default {
     podcasts: "Podcasts",
     generatePlan: "GÉNÉRER UN PLAN IA",
     generatingPlan: "GÉNÉRATION DU PLAN...",
-    activePlans: "PLANS DE DÉVELOPPEMENT ACTIFS"
+    activePlans: "PLANS DE DÉVELOPPEMENT ACTIFS",
+    confirmDelete: "Supprimer ce plan de développement ? Cette action est irréversible.",
+    confirmArchive: "Archiver ce plan de développement ? Vous pourrez le restaurer plus tard."
   },
   aiAgentsView: {
     title: "CENTRE DE COMMANDE DES AGENTS IA",

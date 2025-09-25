@@ -146,3 +146,15 @@ body {
 .underline-glow {
     box-shadow: 0 0 8px var(--color-secondary-blue-glow);
 }
+
+/* Dashboard table enhancements */
+.row-halo:hover {
+    box-shadow: 0 0 14px rgba(var(--color-secondary-blue-rgb), 0.12) inset,
+                0 0 10px rgba(var(--color-secondary-blue-rgb), 0.18);
+    border-color: var(--color-secondary-blue);
+}
+.sort-label { display: inline-flex; align-items: center; gap: 6px; }
+.sort-indicator { width: 8px; height: 8px; border-right: 2px solid var(--color-text-secondary); border-bottom: 2px solid var(--color-text-secondary); transform: rotate(45deg); opacity: 0.6; transition: transform .2s ease, opacity .2s ease; }
+.sort-active .sort-indicator { opacity: 1; filter: drop-shadow(0 0 4px var(--color-secondary-blue-glow)); }
+@keyframes float-y { 0% { transform: translateY(0); } 50% { transform: translateY(-1px); } 100% { transform: translateY(0); } }
+.sort-active .sort-indicator { animation: float-y 1200ms ease-in-out infinite; }

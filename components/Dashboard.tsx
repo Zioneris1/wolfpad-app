@@ -216,11 +216,21 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                             <div className="hidden md:grid neo-table-header" aria-label="Tasks table header" style={{ gridTemplateColumns: '24px 24px 1fr 100px 56px 56px 70px', fontSize: '0.8rem', padding: '0.5rem 0.6rem' }}>
                                 <span>#</span>
                                 <span>✓</span>
-                                <span>Task / Due</span>
-                                <span>Tags</span>
-                                <button onClick={() => setSortBy('impact')} style={{ textAlign: 'left', background: 'transparent', border: 'none', color: 'var(--color-text-secondary)', cursor: 'pointer', fontVariantNumeric: 'tabular-nums' }}>Impact</button>
-                                <button onClick={() => setSortBy('createdDate')} style={{ textAlign: 'left', background: 'transparent', border: 'none', color: 'var(--color-text-secondary)', cursor: 'pointer', fontVariantNumeric: 'tabular-nums' }}>Effort</button>
-                                <span style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>Time</span>
+                                <span className="sort-label">Task / Due
+                                    <span className="sort-indicator" style={{ borderColor: 'var(--color-text-secondary)' }} />
+                                </span>
+                                <span className="sort-label">Tags
+                                    <span className="sort-indicator" style={{ borderColor: 'var(--color-text-secondary)' }} />
+                                </span>
+                                <button onClick={() => setSortBy('impact')} className={`sort-label ${sortBy==='impact' ? 'sort-active' : ''}`} style={{ textAlign: 'left', background: 'transparent', border: 'none', color: 'var(--color-text-secondary)', cursor: 'pointer', fontVariantNumeric: 'tabular-nums' }}>Impact
+                                    <span className="sort-indicator" />
+                                </button>
+                                <button onClick={() => setSortBy('createdDate')} className={`sort-label ${sortBy==='createdDate' ? 'sort-active' : ''}`} style={{ textAlign: 'left', background: 'transparent', border: 'none', color: 'var(--color-text-secondary)', cursor: 'pointer', fontVariantNumeric: 'tabular-nums' }}>Effort
+                                    <span className="sort-indicator" />
+                                </button>
+                                <span className="sort-label" style={{ justifyContent: 'flex-end' }}>Time
+                                    <span className="sort-indicator" />
+                                </span>
                             </div>
                             {/* Mobile header hint */}
                             <div className="md:hidden" style={{ padding: '0.5rem 0.75rem', color: 'var(--color-text-secondary)', fontSize: '0.8rem' }}>

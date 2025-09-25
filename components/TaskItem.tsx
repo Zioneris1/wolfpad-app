@@ -107,6 +107,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
     return (
         <div 
             style={taskItemStyle}
+            className="row-halo"
             draggable={isDraggable}
             onDragStart={(e) => onDragStart && onDragStart(e, task)}
         >

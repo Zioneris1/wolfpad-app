@@ -78,6 +78,48 @@ const themes: ThemeOption[] = [
             '--color-priority-medium': '#ffd54f',
             '--color-priority-low': '#66bb6a',
         }
+    },
+    {
+        id: 'sunset_glow',
+        name: 'Sunset Glow',
+        styles: {
+            '--color-bg-main': '#121014',
+            '--color-bg-panel': '#1b1720',
+            '--color-bg-dark': '#241e2a',
+            '--color-border': '#3a2f45',
+            '--color-text-primary': '#F5E9F7',
+            '--color-text-secondary': '#B8A8C4',
+            '--color-text-on-accent': '#FFFFFF',
+            '--color-primary-red': '#ff6b6b',
+            '--color-primary-red-glow': '#ff8fa3',
+            '--color-secondary-blue': '#ff8e3c',
+            '--color-secondary-blue-glow': '#ffc078',
+            '--color-secondary-blue-rgb': '255, 142, 60',
+            '--color-priority-high': '#ff6b6b',
+            '--color-priority-medium': '#ffb703',
+            '--color-priority-low': '#ff8e3c',
+        }
+    },
+    {
+        id: 'ocean_breeze',
+        name: 'Ocean Breeze',
+        styles: {
+            '--color-bg-main': '#0b1020',
+            '--color-bg-panel': '#121933',
+            '--color-bg-dark': '#0f172a',
+            '--color-border': '#22406d',
+            '--color-text-primary': '#e2f1ff',
+            '--color-text-secondary': '#9fbad4',
+            '--color-text-on-accent': '#FFFFFF',
+            '--color-primary-red': '#de5a5a',
+            '--color-primary-red-glow': '#ff7a7a',
+            '--color-secondary-blue': '#3aa9ff',
+            '--color-secondary-blue-glow': '#6cc3ff',
+            '--color-secondary-blue-rgb': '58, 169, 255',
+            '--color-priority-high': '#de5a5a',
+            '--color-priority-medium': '#f2c744',
+            '--color-priority-low': '#3aa9ff',
+        }
     }
 ];
 

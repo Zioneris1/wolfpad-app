@@ -1,11 +1,14 @@
 import React, { useRef } from 'react';
 import { useTranslation } from '../hooks/useTranslation';
 import { useDataManager } from '../hooks/useDataManager';
+import { useContext } from 'react';
+import { ThemeContext } from '../context/ThemeContext';
 
 const SettingsView: React.FC = () => {
     const { t } = useTranslation();
     const { exportData, importData } = useDataManager();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { theme, setTheme, themes } = useContext(ThemeContext);
 
     const handleImportClick = () => {
         fileInputRef.current?.click();
@@ -27,6 +30,26 @@ const SettingsView: React.FC = () => {
             </h2>
 
             <div className="max-w-2xl mx-auto space-y-8">
+                <div className="p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
+                    <h3 className="font-bold text-lg mb-2">Theme</h3>
+                    <p className="text-sm mt-1 mb-3" style={{ color: 'var(--color-text-secondary)' }}>Choose your color theme.</p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {themes.map(opt => (
+                            <button
+                                key={opt.id}
+                                onClick={() => setTheme(opt.id)}
+                                className={`text-left p-3 rounded-lg border transition-all ${theme === opt.id ? 'ring-2' : ''}`}
+                                style={{ borderColor: 'var(--color-border)' }}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span className="inline-block w-4 h-4 rounded" style={{ background: 'var(--color-secondary-blue)' }} />
+                                    <span>{opt.name}</span>
+                                </div>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
                 <div className="p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
                     <h3 className="font-bold text-lg mb-2">{t('settingsView.dataManagement')}</h3>
 

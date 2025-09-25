@@ -165,7 +165,10 @@ export default {
     activePlans: "ACTIVE DEVELOPMENT PLANS",
     noPlans: "You don't have any active development plans. Generate one to get started!",
     swapWithAi: "Swap (AI)",
-    deleteItem: "Delete"
+    deleteItem: "Delete",
+    addResource: "Add Resource",
+    resourceTitle: "Resource title",
+    authorOrChannel: "Author or channel"
   },
   analyticsView: {
     title: "ANALYTICS & REPORTS",

@@ -20,6 +20,11 @@ const PersonalDevelopmentView: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isDataLoading, setIsDataLoading] = useState(true);
     const [plans, setPlans] = useState<DevelopmentPlan[]>([]);
+    const [editingPlanId, setEditingPlanId] = useState<string | null>(null);
+    const [draftGoal, setDraftGoal] = useState<string>('');
+    const [draftBooks, setDraftBooks] = useState<DevelopmentResource[]>([]);
+    const [draftYouTube, setDraftYouTube] = useState<DevelopmentResource[]>([]);
+    const [draftPodcasts, setDraftPodcasts] = useState<DevelopmentResource[]>([]);
     
     useEffect(() => {
         if (user) {
@@ -32,13 +37,13 @@ const PersonalDevelopmentView: React.FC = () => {
             const unsubscribe = subscribe('development_plans', (message: any) => {
                 switch (message.type) {
                     case 'DEVELOPMENT_PLAN_CREATED':
-                        setPlans(prev => [message.payload, ...prev]);
+                        setPlans((prev: DevelopmentPlan[]) => [message.payload as DevelopmentPlan, ...prev]);
                         break;
                     case 'DEVELOPMENT_PLAN_UPDATED':
-                        setPlans(prev => prev.map(p => p.id === message.payload.id ? message.payload : p));
+                        setPlans((prev: DevelopmentPlan[]) => prev.map((p: DevelopmentPlan) => p.id === (message.payload as DevelopmentPlan).id ? (message.payload as DevelopmentPlan) : p));
                         break;
                     case 'DEVELOPMENT_PLAN_DELETED':
-                        setPlans(prev => prev.filter(p => p.id !== message.payload.id));
+                        setPlans((prev: DevelopmentPlan[]) => prev.filter((p: DevelopmentPlan) => p.id !== (message.payload as { id: string }).id));
                         break;
                 }
             });
@@ -82,28 +87,65 @@ const PersonalDevelopmentView: React.FC = () => {
         await devPlanApi.deletePlan(planId, user.id);
     };
     
-    const handleDeleteResource = async (planId: string, resourceTitle: string, type: keyof Omit<DevelopmentPlan, 'id'|'goal'| 'user_id' | 'created_at'>) => {
+    const handleArchivePlan = async (planId: string) => {
+        if (!user) return;
+        if ((devPlanApi as any).archivePlan) {
+            await (devPlanApi as any).archivePlan(planId, user.id);
+        } else {
+            // Fallback to delete if archive is not available
+            await devPlanApi.deletePlan(planId, user.id);
+        }
+    };
+    
+    type ResourceKey = 'books' | 'youtube_channels' | 'podcasts';
+
+    const handleDeleteResource = async (planId: string, resourceTitle: string, type: ResourceKey) => {
         if (!user) return;
         const plan = plans.find(p => p.id === planId);
         if (!plan) return;
 
-        const updatedResources = plan[type].filter(r => r.title !== resourceTitle);
-        await devPlanApi.updatePlan(planId, { [type]: updatedResources }, user.id);
+        const updatedResources = (plan[type] as DevelopmentResource[]).filter((r: DevelopmentResource) => r.title !== resourceTitle);
+        await devPlanApi.updatePlan(planId, { [type]: updatedResources } as Partial<DevelopmentPlan>, user.id);
     };
     
-    const handleSwapResource = async (planId: string, resourceToReplace: DevelopmentResource, type: keyof Omit<DevelopmentPlan, 'id'|'goal' | 'user_id' | 'created_at'>) => {
+    const handleSwapResource = async (planId: string, resourceToReplace: DevelopmentResource, type: ResourceKey) => {
         if (!user) return;
         const plan = plans.find(p => p.id === planId);
         if (!plan) return;
 
         try {
             const newResource = await getAlternativeResource(plan.goal, resourceToReplace.title);
-            const updatedResources = plan[type].map(r => r.title === resourceToReplace.title ? { ...newResource, author_or_channel: (newResource as any).authorOrChannel } : r);
-            await devPlanApi.updatePlan(planId, { [type]: updatedResources }, user.id);
+            const updatedResources = (plan[type] as DevelopmentResource[]).map((r: DevelopmentResource) => r.title === resourceToReplace.title ? { ...newResource, author_or_channel: (newResource as any).authorOrChannel } : r);
+            await devPlanApi.updatePlan(planId, { [type]: updatedResources } as Partial<DevelopmentPlan>, user.id);
         } catch (error) {
             alert(error instanceof Error ? error.message : "Failed to swap resource.");
         }
     };
+
+    const beginEdit = (plan: DevelopmentPlan) => {
+        setEditingPlanId(plan.id);
+        setDraftGoal(plan.goal);
+        setDraftBooks(plan.books);
+        setDraftYouTube(plan.youtube_channels);
+        setDraftPodcasts(plan.podcasts);
+    };
+
+    const cancelEdit = () => {
+        setEditingPlanId(null);
+    };
+
+    const saveEdit = async () => {
+        if (!user || !editingPlanId) return;
+        await devPlanApi.updatePlan(editingPlanId, {
+            goal: draftGoal,
+            books: draftBooks,
+            youtube_channels: draftYouTube,
+            podcasts: draftPodcasts,
+        }, user.id);
+        setEditingPlanId(null);
+    };
+
+    const filteredPlans = plans.filter(p => !p.archived);
 
     return (
         <div className="py-2 md:py-6">
@@ -135,16 +177,61 @@ const PersonalDevelopmentView: React.FC = () => {
                 <div className="mt-8 lg:mt-0 lg:col-span-2">
                     <h2 className="text-2xl font-bold tracking-tight mb-4">{t('personalDevView.activePlans')}</h2>
                     <div className="space-y-6">
-                        {isDataLoading ? <p>Loading plans...</p> : plans.length > 0 ? plans.map(plan => (
+                        {isDataLoading ? <p>Loading plans...</p> : filteredPlans.length > 0 ? filteredPlans.map((plan: DevelopmentPlan) => (
                             <div key={plan.id} className="p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
                                 <div className="flex justify-between items-start">
-                                    <h3 className="font-bold text-lg mb-4">{plan.goal}</h3>
-                                    <button onClick={() => handleDeletePlan(plan.id)} className="text-sm font-semibold" style={{ color: 'var(--color-primary-red)' }}>{t('common.delete')}</button>
+                                    {editingPlanId === plan.id ? (
+                                        <input
+                                            value={draftGoal}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDraftGoal(e.target.value)}
+                                            className="font-bold text-lg mb-4 bg-[var(--color-bg-dark)] border border-[var(--color-border)] rounded px-2 py-1"
+                                        />
+                                    ) : (
+                                        <h3 className="font-bold text-lg mb-4">{plan.goal}</h3>
+                                    )}
+                                    <div className="flex gap-2">
+                                        {editingPlanId === plan.id ? (
+                                            <>
+                                                <button onClick={saveEdit} className="text-sm font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)' }}>{t('common.save')}</button>
+                                                <button onClick={cancelEdit} className="text-sm font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-text-secondary)' }}>{t('common.cancel')}</button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <button onClick={() => beginEdit(plan)} className="text-sm font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-secondary-blue)' }}>{t('common.edit')}</button>
+                                                <button onClick={() => handleArchivePlan(plan.id)} className="text-sm font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-text-secondary)' }}>{t('common.archive')}</button>
+                                                <button onClick={() => handleDeletePlan(plan.id)} className="text-sm font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-primary-red)' }}>{t('common.delete')}</button>
+                                            </>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className="space-y-4">
-                                    <ResourceList title={t('personalDevView.books')} icon={<BookIcon />} resources={plan.books} onSwap={(res) => handleSwapResource(plan.id, res, 'books')} onDelete={(res) => handleDeleteResource(plan.id, res.title, 'books')} />
-                                    <ResourceList title={t('personalDevView.youtubeChannels')} icon={<YoutubeIcon />} resources={plan.youtube_channels} onSwap={(res) => handleSwapResource(plan.id, res, 'youtube_channels')} onDelete={(res) => handleDeleteResource(plan.id, res.title, 'youtube_channels')}/>
-                                    <ResourceList title={t('personalDevView.podcasts')} icon={<PodcastIcon />} resources={plan.podcasts} onSwap={(res) => handleSwapResource(plan.id, res, 'podcasts')} onDelete={(res) => handleDeleteResource(plan.id, res.title, 'podcasts')}/>
+                                    <EditableResourceList
+                                        title={t('personalDevView.books')}
+                                        icon={<BookIcon />}
+                                        resources={editingPlanId === plan.id ? draftBooks : plan.books}
+                                        onChange={(resources: DevelopmentResource[]) => setDraftBooks(resources)}
+                                        isEditing={editingPlanId === plan.id}
+                                        onSwap={(res) => handleSwapResource(plan.id, res, 'books')}
+                                        onDelete={(res) => handleDeleteResource(plan.id, res.title, 'books')}
+                                    />
+                                    <EditableResourceList
+                                        title={t('personalDevView.youtubeChannels')}
+                                        icon={<YoutubeIcon />}
+                                        resources={editingPlanId === plan.id ? draftYouTube : plan.youtube_channels}
+                                        onChange={(resources: DevelopmentResource[]) => setDraftYouTube(resources)}
+                                        isEditing={editingPlanId === plan.id}
+                                        onSwap={(res) => handleSwapResource(plan.id, res, 'youtube_channels')}
+                                        onDelete={(res) => handleDeleteResource(plan.id, res.title, 'youtube_channels')}
+                                    />
+                                    <EditableResourceList
+                                        title={t('personalDevView.podcasts')}
+                                        icon={<PodcastIcon />}
+                                        resources={editingPlanId === plan.id ? draftPodcasts : plan.podcasts}
+                                        onChange={(resources: DevelopmentResource[]) => setDraftPodcasts(resources)}
+                                        isEditing={editingPlanId === plan.id}
+                                        onSwap={(res) => handleSwapResource(plan.id, res, 'podcasts')}
+                                        onDelete={(res) => handleDeleteResource(plan.id, res.title, 'podcasts')}
+                                    />
                                 </div>
                             </div>
                         )) : (
@@ -159,31 +246,66 @@ const PersonalDevelopmentView: React.FC = () => {
     );
 };
 
-const ResourceList: React.FC<{ title: string; icon: React.ReactNode; resources: DevelopmentResource[], onSwap: (res: DevelopmentResource) => void, onDelete: (res: DevelopmentResource) => void }> = ({ title, icon, resources, onSwap, onDelete }) => {
+export default PersonalDevelopmentView;
+
+const EditableResourceList: React.FC<{
+    title: string;
+    icon: React.ReactNode;
+    resources: DevelopmentResource[];
+    isEditing: boolean;
+    onChange: (resources: DevelopmentResource[]) => void;
+    onSwap: (res: DevelopmentResource) => void;
+    onDelete: (res: DevelopmentResource) => void;
+}> = ({ title, icon, resources, isEditing, onChange, onSwap, onDelete }) => {
     const { t } = useTranslation();
+    const updateResource = (index: number, field: keyof DevelopmentResource, value: string) => {
+        const newResources = resources.map((r, i) => i === index ? { ...r, [field]: value } : r);
+        onChange(newResources);
+    };
+    const addResource = () => onChange([...resources, { title: '', author_or_channel: '' }]);
+    const removeResource = (index: number) => onChange(resources.filter((_, i) => i !== index));
+
     return (
         <div>
             <h4 className="flex items-center font-semibold text-sm uppercase tracking-wider mb-2" style={{ color: 'var(--color-text-secondary)' }}>{icon}<span className="ml-2">{title}</span></h4>
             <ul className="space-y-2">
-                {resources.map(res => (
-                    <li key={res.title} className="flex justify-between items-center p-3 rounded-md group" style={{ background: 'var(--color-bg-dark)' }}>
-                        <div>
-                            <p className="font-medium text-sm">{res.title}</p>
-                            <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{res.author_or_channel}</p>
-                        </div>
-                        <div className="flex opacity-0 group-hover:opacity-100 transition-opacity gap-2">
-                             <button onClick={() => onSwap(res)} className="flex items-center text-xs font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-secondary-blue)' }}>
-                                <SwapIcon /> {t('personalDevView.swapWithAi')}
-                            </button>
-                             <button onClick={() => onDelete(res)} className="flex items-center text-xs font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-primary-red)' }}>
-                                <DeleteIcon /> {t('personalDevView.deleteItem')}
-                            </button>
+                {resources.map((res: DevelopmentResource, idx: number) => (
+                    <li key={idx} className="flex justify-between items-center p-3 rounded-md group" style={{ background: 'var(--color-bg-dark)' }}>
+                        {isEditing ? (
+                            <div className="flex-1 grid grid-cols-2 gap-2 pr-4">
+                                <input value={res.title} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateResource(idx, 'title', e.target.value)} className="text-sm bg-[var(--color-bg-panel)] border border-[var(--color-border)] rounded px-2 py-1" placeholder={t('personalDevView.resourceTitle')}/>
+                                <input value={res.author_or_channel} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateResource(idx, 'author_or_channel', e.target.value)} className="text-sm bg-[var(--color-bg-panel)] border border-[var(--color-border)] rounded px-2 py-1" placeholder={t('personalDevView.authorOrChannel')}/>
+                            </div>
+                        ) : (
+                            <div>
+                                <p className="font-medium text-sm">{res.title}</p>
+                                <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{res.author_or_channel}</p>
+                            </div>
+                        )}
+                        <div className="flex gap-2">
+                            {isEditing ? (
+                                <button onClick={() => removeResource(idx)} className="flex items-center text-xs font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-primary-red)' }}>
+                                    <DeleteIcon /> {t('personalDevView.deleteItem')}
+                                </button>
+                            ) : (
+                                <>
+                                    <button onClick={() => onSwap(res)} className="flex items-center text-xs font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-secondary-blue)' }}>
+                                        <SwapIcon /> {t('personalDevView.swapWithAi')}
+                                    </button>
+                                    <button onClick={() => onDelete(res)} className="flex items-center text-xs font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-primary-red)' }}>
+                                        <DeleteIcon /> {t('personalDevView.deleteItem')}
+                                    </button>
+                                </>
+                            )}
                         </div>
                     </li>
                 ))}
             </ul>
+            {isEditing && (
+                <button onClick={addResource} className="mt-2 text-xs font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-secondary-blue)' }}>
+                    + {t('personalDevView.addResource')}
+                </button>
+            )}
         </div>
     );
 };
-
-export default PersonalDevelopmentView;

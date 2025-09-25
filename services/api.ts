@@ -135,14 +135,32 @@ export const journalApi = {
 // --- Personal Development API ---
 export const devPlanApi = {
     getPlans: async (userId: string): Promise<DevelopmentPlan[]> => {
-        const { data, error } = await supabase.from('development_plans').select('*').eq('user_id', userId);
+        const { data, error } = await supabase
+            .from('development_plans')
+            .select('*')
+            .eq('user_id', userId)
+            .order('created_at', { ascending: false });
         handleSupabaseError(error, 'getDevPlans');
         return data || [];
     },
     createPlan: async (planData: Omit<DevelopmentPlan, 'id' | 'user_id'>, userId: string): Promise<DevelopmentPlan> => {
-        const { data, error } = await supabase.from('development_plans').insert({ ...planData, user_id: userId }).select().single();
+        // Try inserting with archived flag; fallback without if column doesn't exist
+        let { data, error } = await supabase
+            .from('development_plans')
+            .insert({ ...planData, user_id: userId, archived: false })
+            .select()
+            .single();
+        if (error && (error.code === '42703' || (error.message || '').toLowerCase().includes('column') && (error.message || '').toLowerCase().includes('archived'))) {
+            const retry = await supabase
+                .from('development_plans')
+                .insert({ ...planData, user_id: userId })
+                .select()
+                .single();
+            data = retry.data as any;
+            error = retry.error as any;
+        }
         handleSupabaseError(error, 'createDevPlan');
-        return data;
+        return data as DevelopmentPlan;
     },
     updatePlan: async (id: string, updates: Partial<Omit<DevelopmentPlan, 'id' | 'user_id'>>, userId: string): Promise<DevelopmentPlan> => {
         const { data, error } = await supabase.from('development_plans').update(updates).eq('id', id).eq('user_id', userId).select().single();
@@ -152,6 +170,16 @@ export const devPlanApi = {
     deletePlan: async (id: string, userId: string): Promise<void> => {
         const { error } = await supabase.from('development_plans').delete().eq('id', id).eq('user_id', userId);
         handleSupabaseError(error, 'deleteDevPlan');
+    },
+    archivePlan: async (id: string, userId: string): Promise<void> => {
+        // Prefer soft-archive via archived=true; fallback to delete if column doesn't exist
+        const { error } = await supabase.from('development_plans').update({ archived: true } as any).eq('id', id).eq('user_id', userId);
+        if (error && (error.code === '42703' || (error.message || '').toLowerCase().includes('column') && (error.message || '').toLowerCase().includes('archived'))) {
+            const del = await supabase.from('development_plans').delete().eq('id', id).eq('user_id', userId);
+            handleSupabaseError(del.error, 'archiveDevPlanFallbackDelete');
+            return;
+        }
+        handleSupabaseError(error, 'archiveDevPlan');
     }
 };
 

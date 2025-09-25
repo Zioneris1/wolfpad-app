@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({ onAddTask, tasks }) => {
                     fontSize: '1rem',
                  }}>{t('header.addTask')}</button>
             </div>
-            {isMobile && <TimeTrackerHeader tasks={tasks} />}
+            <TimeTrackerHeader tasks={tasks} />
         </header>
     );
 };

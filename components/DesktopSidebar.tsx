@@ -7,15 +7,16 @@ import { formatTime } from '../utils/time';
 import Logo from './Logo';
 import { useAuthContext } from '../context/AuthContext';
 
-// Time tracker moved to global header
+// Time tracker in sidebar per spec
 
 interface DesktopSidebarProps {
     currentView: View;
     setView: (view: View) => void;
+    onAddTask: () => void;
     tasks: Task[];
 }
 
-const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ currentView, setView, tasks }) => {
+const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ currentView, setView, onAddTask, tasks }) => {
     const { t, language, setLanguage } = useTranslation();
     const { theme, setTheme, themes } = useTheme();
     const { user, logout } = useAuthContext();
@@ -68,6 +69,22 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ currentView, setView, t
             borderRight: '1px solid var(--color-border)'
         }}>
             <Logo className="desktop-sidebar-logo" />
+
+            <SidebarTimeTracker tasks={tasks} />
+
+            <button onClick={onAddTask} style={{
+                background: 'var(--color-primary-red)',
+                color: 'white',
+                border: 'none',
+                padding: '0.75rem',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '1rem',
+                marginBottom: '2rem',
+                width: '100%'
+            }}>
+                {t('header.addTask')}
+            </button>
 
             <nav style={{ flex: 1, overflowY: 'auto' }}>
                 {navItems.map(item => (

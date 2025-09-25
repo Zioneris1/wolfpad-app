@@ -17,15 +17,15 @@ export const ThemeContext = createContext<ThemeContextType>({
 
 const themes: ThemeOption[] = [
     {
-        id: 'dark_blue',
-        name: 'Dark Blue (Default)',
+        id: 'command_center_blue',
+        name: 'Command Center Blue',
         styles: {
-            '--color-bg-main': '#10141A',
-            '--color-bg-panel': '#1A1D24',
-            '--color-bg-dark': '#2A2F38',
-            '--color-border': '#39414F',
+            '--color-bg-main': '#0F1115',
+            '--color-bg-panel': '#151923',
+            '--color-bg-dark': '#1E2430',
+            '--color-border': '#2B3444',
             '--color-text-primary': '#E6EDF3',
-            '--color-text-secondary': '#8D96A5',
+            '--color-text-secondary': '#9AA6B2',
             '--color-text-on-accent': '#FFFFFF',
             '--color-primary-red': '#DA3633',
             '--color-primary-red-glow': '#F85149',
@@ -78,18 +78,54 @@ const themes: ThemeOption[] = [
             '--color-priority-medium': '#ffd54f',
             '--color-priority-low': '#66bb6a',
         }
+    },
+    {
+        id: 'arctic_wolf',
+        name: 'Arctic Wolf',
+        styles: {
+            '--color-bg-main': '#0a0d12',
+            '--color-bg-panel': '#121826',
+            '--color-bg-dark': '#1a2133',
+            '--color-border': '#2a3550',
+            '--color-text-primary': '#e7eef9',
+            '--color-text-secondary': '#a7b4cc',
+            '--color-text-on-accent': '#FFFFFF',
+            '--color-primary-red': '#ef4444',
+            '--color-primary-red-glow': '#f87171',
+            '--color-secondary-blue': '#60a5fa',
+            '--color-secondary-blue-glow': '#93c5fd',
+            '--color-secondary-blue-rgb': '96, 165, 250',
+            '--color-priority-high': '#ef4444',
+            '--color-priority-medium': '#f59e0b',
+            '--color-priority-low': '#60a5fa',
+        }
+    },
+    {
+        id: 'crimson_dusk',
+        name: 'Crimson Dusk',
+        styles: {
+            '--color-bg-main': '#180e12',
+            '--color-bg-panel': '#231318',
+            '--color-bg-dark': '#311821',
+            '--color-border': '#4b2432',
+            '--color-text-primary': '#f4e9ec',
+            '--color-text-secondary': '#c9aab2',
+            '--color-text-on-accent': '#FFFFFF',
+            '--color-primary-red': '#fb7185',
+            '--color-primary-red-glow': '#fda4af',
+            '--color-secondary-blue': '#e11d48',
+            '--color-secondary-blue-glow': '#fb7185',
+            '--color-secondary-blue-rgb': '225, 29, 72',
+            '--color-priority-high': '#fb7185',
+            '--color-priority-medium': '#f59e0b',
+            '--color-priority-low': '#e11d48',
+        }
     }
 ];
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { user } = useAuthContext();
-    const [theme, setThemeState] = useState(() => {
-        if (typeof window !== 'undefined') {
-            const stored = window.localStorage.getItem('wolfpad_theme');
-            if (stored && themes.some(t => t.id === stored)) return stored;
-        }
-        return themes[0].id;
-    });
+    const [theme, setThemeState] = useState(themes[0].id);
 
     useEffect(() => {
         if (user) {

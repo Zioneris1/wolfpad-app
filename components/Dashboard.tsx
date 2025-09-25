@@ -33,7 +33,7 @@ const StatCard: React.FC<{ value: number; label: string; icon: ReactNode; colorC
         </div>
         <div className="ml-4">
             <p className="text-2xl font-bold" style={{ color: `var(--color-text-primary)` }}>{value}</p>
-            <p className="text-sm font-medium" style={{ color: `var(--color-text-secondary)` }}>{label}</p>
+            <p className="text-xs font-medium uppercase tracking-wider" style={{ color: `var(--color-text-secondary)` }}>{label}</p>
         </div>
     </div>
 );

@@ -45,23 +45,37 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const { user } = useAuthContext();
     const [language, setLanguageState] = useState<LanguageCode>('en');
 
+    // Load from localStorage immediately for instant UI update (before profile fetch)
+    useEffect(() => {
+        try {
+            const stored = localStorage.getItem('language');
+            if (stored && Object.keys(supportedLanguages).includes(stored)) {
+                setLanguageState(stored as LanguageCode);
+            }
+        } catch {}
+    }, []);
+
     useEffect(() => {
         if (user) {
             profileApi.getProfile(user.id).then(profile => {
                 if (profile?.language && Object.keys(supportedLanguages).includes(profile.language)) {
                     setLanguageState(profile.language as LanguageCode);
+                    try { localStorage.setItem('language', profile.language); } catch {}
                 }
             });
         }
     }, [user]);
 
-    const setLanguage = (lang: string) => {
-        if (Object.keys(supportedLanguages).includes(lang) && user) {
-            const langCode = lang as LanguageCode;
-            setLanguageState(langCode);
-            profileApi.updateProfile(user.id, { language: langCode });
+    const setLanguage = useCallback((lang: string) => {
+        if (!Object.keys(supportedLanguages).includes(lang)) return;
+        const langCode = lang as LanguageCode;
+        setLanguageState(langCode);
+        try { localStorage.setItem('language', langCode); } catch {}
+        if (user) {
+            // Fire-and-forget profile persistence; UI already updated instantly
+            profileApi.updateProfile(user.id, { language: langCode }).catch(() => {});
         }
-    };
+    }, [user]);
     
     const t = useCallback((key: string, options?: Record<string, string | number>): string => {
         const langDict = translations[language] || translations.en;
@@ -85,7 +99,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
     }, [language]);
 
-    const value = useMemo(() => ({ language, setLanguage, t }), [language, t]);
+    const value = useMemo(() => ({ language, setLanguage, t }), [language, setLanguage, t]);
 
     return (
         <LanguageContext.Provider value={value}>

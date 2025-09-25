@@ -193,8 +193,10 @@ const AppContent: React.FC = () => {
             {!isMobile && <DesktopSidebar currentView={view} setView={setView} onAddTask={() => handleOpenTaskForm()} tasks={taskManager.tasks} />}
 
             <main style={{ flex: 1, overflowY: 'auto', padding: isMobile ? '1rem' : '1rem 2.5rem', paddingBottom: isMobile ? '80px' : '1rem' }}>
-                {isMobile && <Header onAddTask={() => handleOpenTaskForm()} tasks={taskManager.tasks} />}
-                {renderView()}
+                <Header onAddTask={() => handleOpenTaskForm()} tasks={taskManager.tasks} />
+                <div className="wp-container">
+                    {renderView()}
+                </div>
             </main>
 
             {isMobile && <BottomNavBar currentView={view} setView={setView} />}

@@ -3,8 +3,7 @@ import type { Task, GoalWithProgress, AppContextData, AssistantResponse } from '
 
 // Using Vite's standard method for accessing environment variables on the client.
 // Ensure VITE_API_KEY is set in your Vercel/Netlify/other hosting environment.
-// Fix: Use process.env.API_KEY as per the guidelines.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY! });
 
 
 const getAiErrorMessage = (error: unknown, action: string): string => {

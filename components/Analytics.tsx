@@ -27,14 +27,14 @@ interface StatCardProps {
 const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color, onClick }) => (
     <div
         onClick={onClick}
-        className={`p-5 rounded-xl shadow-lg flex items-center space-x-4 transition-all duration-300 ${onClick ? 'cursor-pointer hover:shadow-2xl hover:-translate-y-1' : ''}`}
+        className={`p-5 rounded-xl shadow-lg flex items-center space-x-4 transition-all duration-300 hover-raise ${onClick ? 'cursor-pointer' : ''}`}
         style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}
     >
         <div className="flex-shrink-0 flex items-center justify-center h-16 w-16 rounded-2xl" style={{ backgroundColor: color }}>
             {icon}
         </div>
         <div>
-            <div className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>{value}</div>
+            <div className="text-2xl font-bold glow-title" style={{ color: 'var(--color-text-primary)' }}>{value}</div>
             <div className="text-sm font-medium uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>{title}</div>
         </div>
     </div>
@@ -104,7 +104,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ tasks, moneyManager, onNavigateTo
 
     return (
         <div className="py-2 md:py-6">
-            <h2 className="text-3xl font-bold tracking-tight mb-6" style={{ textShadow: `0 0 5px var(--color-secondary-blue)` }}>{t('analyticsView.title')}</h2>
+            <h2 className="text-3xl font-bold tracking-tight mb-6 glow-title" style={{ textShadow: `0 0 5px var(--color-secondary-blue)` }}>{t('analyticsView.title')}</h2>
 
             {/* --- Key Metrics Grid --- */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

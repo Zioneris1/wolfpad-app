@@ -27,7 +27,7 @@ const CheckCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className=
 
 // --- NEW COMPONENTS ---
 const StatCard: React.FC<{ value: number; label: string; icon: ReactNode; colorClass: string }> = ({ value, label, icon, colorClass }) => (
-    <div className="flex items-center p-4 rounded-lg" style={{ background: `var(--color-bg-dark)`}}>
+    <div className="flex items-center p-4 rounded-lg hover-raise" style={{ background: `var(--color-bg-dark)`}}>
         <div className={`flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-lg ${colorClass} text-white`}>
             {icon}
         </div>
@@ -136,7 +136,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                 {/* --- Left Column (Main Content) --- */}
                 <div className="lg:col-span-2">
                     <header>
-                        <h1 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--color-text-primary)' }}>
+                        <h1 className="text-3xl font-bold tracking-tight glow-title" style={{ color: 'var(--color-text-primary)' }}>
                             Command Center
                         </h1>
                         <p className="mt-1 text-lg" style={{ color: 'var(--color-text-secondary)' }}>

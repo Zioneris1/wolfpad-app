@@ -8,7 +8,7 @@ import Logo from './Logo';
 import { useAuthContext } from '../context/AuthContext';
 
 const SidebarTimeTracker: React.FC<{ tasks: Task[] }> = ({ tasks }) => {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [currentTime, setCurrentTime] = useState(new Date());
     const [formattedCurrentTime, setFormattedCurrentTime] = useState('');
 
@@ -18,8 +18,8 @@ const SidebarTimeTracker: React.FC<{ tasks: Task[] }> = ({ tasks }) => {
     }, []);
 
     useEffect(() => {
-        setFormattedCurrentTime(currentTime.toLocaleTimeString());
-    }, [currentTime]);
+        setFormattedCurrentTime(currentTime.toLocaleTimeString(language));
+    }, [currentTime, language]);
 
     const totalTimeTrackedToday = tasks.reduce((acc, task) => {
         if (task.completed && task.completed_at?.startsWith(new Date().toISOString().split('T')[0])) {

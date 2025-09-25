@@ -55,13 +55,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
     }, [user]);
 
-    const setLanguage = (lang: string) => {
-        if (Object.keys(supportedLanguages).includes(lang) && user) {
-            const langCode = lang as LanguageCode;
-            setLanguageState(langCode);
+    const setLanguage = useCallback((lang: string) => {
+        if (!Object.keys(supportedLanguages).includes(lang)) return;
+        const langCode = lang as LanguageCode;
+        setLanguageState(langCode);
+        if (user) {
             profileApi.updateProfile(user.id, { language: langCode });
         }
-    };
+    }, [user]);
     
     const t = useCallback((key: string, options?: Record<string, string | number>): string => {
         const langDict = translations[language] || translations.en;
@@ -85,7 +86,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
     }, [language]);
 
-    const value = useMemo(() => ({ language, setLanguage, t }), [language, t]);
+    const value = useMemo(() => ({ language, setLanguage, t }), [language, setLanguage, t]);
 
     return (
         <LanguageContext.Provider value={value}>

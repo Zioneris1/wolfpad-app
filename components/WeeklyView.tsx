@@ -74,20 +74,22 @@ const WeeklyTaskCard: React.FC<WeeklyTaskCardProps> = ({ task, onDragStart, onTo
 
 
 const DayTitle: React.FC<{ day: Date }> = ({ day }) => {
+    const { language } = useTranslation();
     const [title, setTitle] = useState('');
     useEffect(() => {
-        setTitle(day.toLocaleDateString(undefined, { weekday: 'long' }));
-    }, [day]);
+        setTitle(day.toLocaleDateString(language, { weekday: 'long' }));
+    }, [day, language]);
     return <>{title}</>;
 };
 
 const DayDate: React.FC<{ date: Date | null }> = ({ date }) => {
+    const { language } = useTranslation();
     const [formatted, setFormatted] = useState('');
     useEffect(() => {
         if (date) {
-            setFormatted(date.toLocaleDateString(undefined, { month: 'short', day: 'numeric'}));
+            setFormatted(date.toLocaleDateString(language, { month: 'short', day: 'numeric'}));
         }
-    }, [date]);
+    }, [date, language]);
     return <>{formatted}</>;
 };
 

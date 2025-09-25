@@ -33,7 +33,7 @@ const currencies = [
 
 
 const MoneyView: React.FC<MoneyViewProps> = ({ moneyManager }) => {
-    const { t: translate } = useTranslation();
+    const { t: translate, language } = useTranslation();
     const { 
         transactions: transactionsForDisplay,
         addTransaction,
@@ -53,7 +53,7 @@ const MoneyView: React.FC<MoneyViewProps> = ({ moneyManager }) => {
 
     const formatCurrency = (value: number) => {
         try {
-            return new Intl.NumberFormat(undefined, { style: 'currency', currency: selectedCurrency, minimumFractionDigits: 2 }).format(value);
+            return new Intl.NumberFormat(language, { style: 'currency', currency: selectedCurrency, minimumFractionDigits: 2 }).format(value);
         } catch (e) {
             return `${selectedCurrency} ${value.toFixed(2)}`; // Fallback
         }

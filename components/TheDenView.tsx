@@ -4,8 +4,8 @@ import type { JournalEntry } from '../types';
 import { useTranslation } from '../hooks/useTranslation';
 
 // Helper to format date for grouping and display
-const formatDateForDisplay = (isoString: string) => {
-    return new Date(isoString).toLocaleDateString(undefined, {
+const formatDateForDisplay = (isoString: string, locale?: string) => {
+    return new Date(isoString).toLocaleDateString(locale, {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
     });
 };
@@ -19,11 +19,11 @@ const JournalEntryItem: React.FC<{
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(entry.content);
     const [formattedTime, setFormattedTime] = useState('');
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
 
     useEffect(() => {
-        setFormattedTime(new Date(entry.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }));
-    }, [entry.created_at]);
+        setFormattedTime(new Date(entry.created_at).toLocaleTimeString(language, { hour: '2-digit', minute: '2-digit' }));
+    }, [entry.created_at, language]);
 
     const handleSave = () => {
         onUpdate(entry.id, editText);
@@ -72,9 +72,10 @@ interface TheDenViewProps {
 
 const DateHeader: React.FC<{ dateString: string }> = ({ dateString }) => {
     const [formattedDate, setFormattedDate] = useState('');
+    const { language } = useTranslation();
     useEffect(() => {
-        setFormattedDate(formatDateForDisplay(dateString));
-    }, [dateString]);
+        setFormattedDate(formatDateForDisplay(dateString, language));
+    }, [dateString, language]);
     return (
         <h4 className="font-semibold pb-2 mb-4 border-b border-dashed" style={{ color: 'var(--color-text-primary)', borderColor: 'var(--color-border)' }}>
             {formattedDate}
@@ -84,13 +85,13 @@ const DateHeader: React.FC<{ dateString: string }> = ({ dateString }) => {
 
 
 const TheDenView: React.FC<TheDenViewProps> = ({ journalManager }) => {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [newEntryContent, setNewEntryContent] = useState('');
     const [formattedToday, setFormattedToday] = useState('');
 
     useEffect(() => {
-        setFormattedToday(formatDateForDisplay(new Date().toISOString()));
-    }, []);
+        setFormattedToday(formatDateForDisplay(new Date().toISOString(), language));
+    }, [language]);
 
     const handleSaveNewEntry = () => {
         journalManager.addEntry(newEntryContent);

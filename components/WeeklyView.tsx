@@ -131,13 +131,13 @@ const DayColumn: React.FC<DayColumnProps> = ({ title, date, tasks, isToday = fal
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className="flex-shrink-0 w-80 rounded-xl p-1 transition-all duration-200"
+            className="flex-shrink-0 w-80 rounded-2xl p-1 transition-all duration-200 border"
             style={{ 
-                background: isDragOver ? 'rgba(var(--color-secondary-blue-rgb), 0.2)' : 'var(--color-bg-panel)',
-                borderTop: isToday ? `3px solid var(--color-secondary-blue)` : `3px solid transparent`
+                background: isDragOver ? 'rgba(var(--color-secondary-blue-rgb), 0.15)' : 'var(--color-bg-panel)',
+                borderColor: isToday ? 'var(--color-secondary-blue)' : 'var(--color-border)'
              }}
         >
-            <div className="p-3 mb-2 flex justify-between items-center">
+            <div className="p-3 mb-2 flex justify-between items-center border-b" style={{ borderColor: 'var(--color-border)' }}>
                  <div>
                     <span className="font-bold text-base" style={{ color: 'var(--color-text-primary)'}}>{title}</span>
                     {fullDate && <span className="ml-2 text-sm" style={{color: 'var(--color-text-secondary)'}}><DayDate date={fullDate} /></span>}
@@ -146,7 +146,7 @@ const DayColumn: React.FC<DayColumnProps> = ({ title, date, tasks, isToday = fal
                     {pendingTaskCount}
                 </span>
             </div>
-            <div className="space-y-3 p-2 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 280px)' }}>
+            <div className="space-y-3 p-2 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 300px)' }}>
                 {tasks.length > 0 ? (
                     tasks.map(task => <WeeklyTaskCard 
                         key={task.id} 

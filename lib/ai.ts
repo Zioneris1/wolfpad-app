@@ -3,11 +3,19 @@ import type { Task, GoalWithProgress, AppContextData, AssistantResponse } from '
 
 // Using Vite's standard method for accessing environment variables on the client.
 // Accept both VITE_API_KEY and GEMINI_API_KEY to be friendly with different hosting setups.
-const apiKey = (import.meta.env.VITE_API_KEY || import.meta.env.GEMINI_API_KEY) as string;
-if (!apiKey) {
-    throw new Error('Missing API key: set VITE_API_KEY or GEMINI_API_KEY in your environment.');
+const apiKey = (import.meta.env.VITE_API_KEY || import.meta.env.GEMINI_API_KEY) as string | undefined;
+
+let aiClient: GoogleGenAI | null = null;
+if (apiKey && typeof apiKey === 'string' && apiKey.length > 0) {
+    aiClient = new GoogleGenAI({ apiKey });
 }
-const ai = new GoogleGenAI({ apiKey });
+
+const getAiClient = (): GoogleGenAI => {
+    if (!aiClient) {
+        throw new Error('AI features are unavailable because no API key is configured.');
+    }
+    return aiClient;
+};
 
 
 const getAiErrorMessage = (error: unknown, action: string): string => {
@@ -63,7 +71,7 @@ export const getTaskSuggestions = async (taskName: string): Promise<SuggestedTas
     const prompt = `Based on the task name "${taskName}", generate a concise, one-paragraph description (max 3 sentences), estimate its effort (1-5), impact (1-10), and suggest 3-5 relevant single-word tags.`;
 
     try {
-        const response = await ai.models.generateContent({
+        const response = await getAiClient().models.generateContent({
             model,
             contents: prompt,
             config: {
@@ -106,7 +114,7 @@ export const getMoreTagSuggestions = async (taskName: string, description: strin
     const prompt = `Given the task "${taskName}" with description "${description}", suggest 5 additional, relevant, single-word tags.`;
     
     try {
-        const response = await ai.models.generateContent({
+        const response = await getAiClient().models.generateContent({
             model,
             contents: prompt,
             config: {
@@ -140,7 +148,7 @@ export const getTaskBreakdownForGoal = async (goalName: string, goalDescription:
     const prompt = `Break down the high-level goal "${goalName}" (Description: "${goalDescription}") into 5-7 actionable, smaller tasks. For each task, provide a name, a concise one-sentence description, and estimate its effort (1-5) and impact (1-10) relative to achieving the main goal.`;
 
     try {
-        const response = await ai.models.generateContent({
+        const response = await getAiClient().models.generateContent({
             model,
             contents: prompt,
             config: {
@@ -188,7 +196,7 @@ export const getDevelopmentPlan = async (goal: string, bookCount: number, channe
     const prompt = `Create a personal development plan for the goal: "${goal}". Provide a list of the top ${bookCount} books (with authors), ${channelCount} YouTube channels, and ${podcastCount} podcasts to achieve this goal.`;
     
     try {
-        const response = await ai.models.generateContent({
+        const response = await getAiClient().models.generateContent({
             model,
             contents: prompt,
             config: {
@@ -227,7 +235,7 @@ export const getAlternativeResource = async (goal: string, resourceToReplace: st
     const prompt = `For a personal development plan focused on "${goal}", suggest one alternative resource to replace "${resourceToReplace}". Provide the title and the author or channel name.`;
 
     try {
-         const response = await ai.models.generateContent({
+         const response = await getAiClient().models.generateContent({
             model,
             contents: prompt,
             config: {
@@ -262,7 +270,7 @@ export const getTaskPrioritization = async (tasks: Task[]): Promise<string> => {
     ${taskData}`;
 
     try {
-        const response = await ai.models.generateContent({
+        const response = await getAiClient().models.generateContent({
             model,
             contents: prompt,
         });
@@ -281,7 +289,7 @@ export const generateContent = async (prompt: string): Promise<string> => {
 
 User prompt: "${prompt}"`;
     try {
-        const response = await ai.models.generateContent({
+        const response = await getAiClient().models.generateContent({
             model,
             contents: finalPrompt,
         });
@@ -306,7 +314,7 @@ export const getGoalStrategy = async (goal: GoalWithProgress): Promise<string> =
     Based on this, suggest 3-4 key strategic steps or areas of focus to help achieve this goal. Provide a very brief, one-sentence explanation for each point. Keep the total response under 100 words. The output must be a simple numbered list in plain text. Do not use any markdown formatting such as asterisks, bullet points, or bolding.`;
 
     try {
-        const response = await ai.models.generateContent({
+        const response = await getAiClient().models.generateContent({
             model,
             contents: prompt,
         });
@@ -353,7 +361,7 @@ Here is the user's current data:
     const prompt = `${contextString}\n\nUser query: "${query}"`;
     
     try {
-        const response = await ai.models.generateContent({
+        const response = await getAiClient().models.generateContent({
             model,
             contents: { parts: [{ text: prompt }] },
             config: {

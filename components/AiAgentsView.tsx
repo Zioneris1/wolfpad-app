@@ -66,6 +66,14 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
     const [strategistResult, setStrategistResult] = useState('');
     
     const pendingTasks = useMemo(() => tasks.filter(task => !task.completed), [tasks]);
+    const completedTasks = useMemo(() => tasks.filter(task => task.completed), [tasks]);
+
+    const presetPrompts = [
+        'Write a concise update for my weekly report about progress and blockers.',
+        'Generate 5 tweet ideas about productivity and focus.',
+        'Draft a short email to request a project status update.',
+        'Summarize my top 3 priorities for today in 2 sentences.',
+    ];
 
     const handleRunPrioritizer = async () => {
         setIsPrioritizerLoading(true);
@@ -91,6 +99,13 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
             setCreatorResult(error instanceof Error ? error.message : String(error));
         } finally {
             setIsCreatorLoading(false);
+        }
+    };
+
+    const handleCreatorKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            handleRunCreator();
         }
     };
 
@@ -120,11 +135,35 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
 
     return (
         <div style={{ padding: '1.5rem 0' }}>
-            <h2 style={{ textShadow: `0 0 5px var(--color-secondary-blue)` }}>{t('aiAgentsView.title')}</h2>
+            <header className="mb-4">
+                <h2 className="text-3xl font-bold tracking-tight m-0" style={{ textShadow: `0 0 5px var(--color-secondary-blue)` }}>{t('aiAgentsView.title')}</h2>
+                <p className="mt-1 text-sm" style={{ color: 'var(--color-text-secondary)' }}>High‑leverage assistants to boost focus and execution.</p>
+            </header>
+
+            {/* Quick Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                <div className="p-3 rounded-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)'}} aria-label="Pending tasks">
+                    <div className="text-xs uppercase" style={{ color: 'var(--color-text-secondary)'}}>Pending</div>
+                    <div className="text-xl font-bold" style={{ color: 'var(--color-text-primary)'}}>{pendingTasks.length}</div>
+                </div>
+                <div className="p-3 rounded-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)'}} aria-label="Completed tasks">
+                    <div className="text-xs uppercase" style={{ color: 'var(--color-text-secondary)'}}>Completed</div>
+                    <div className="text-xl font-bold" style={{ color: 'var(--color-text-primary)'}}>{completedTasks.length}</div>
+                </div>
+                <div className="p-3 rounded-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)'}} aria-label="Total tasks">
+                    <div className="text-xs uppercase" style={{ color: 'var(--color-text-secondary)'}}>Total Tasks</div>
+                    <div className="text-xl font-bold" style={{ color: 'var(--color-text-primary)'}}>{tasks.length}</div>
+                </div>
+                <div className="p-3 rounded-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)'}} aria-label="Goals">
+                    <div className="text-xs uppercase" style={{ color: 'var(--color-text-secondary)'}}>Goals</div>
+                    <div className="text-xl font-bold" style={{ color: 'var(--color-text-primary)'}}>{goals.length}</div>
+                </div>
+            </div>
 
             <div className="agents-grid grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Task Prioritizer Agent */}
-                <div className="agent-card prioritizer p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)'}}>
+                <div className="gradient-card p-[1px] rounded-2xl">
+                <div className="agent-card prioritizer p-6 rounded-[15px] shadow-lg" style={{ background: 'var(--color-bg-panel)' }}>
                     <div className="agent-card-header">
                         <div className="agent-card-icon" style={{color: 'var(--color-secondary-blue)'}}>
                             <PrioritizerIcon />
@@ -132,15 +171,20 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
                         <h3 style={{ margin: 0 }}>{t('aiAgentsView.taskPrioritizer')}</h3>
                     </div>
                     <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', flex: 1 }}>{t('aiAgentsView.taskPrioritizerDesc')}</p>
-                    <button onClick={handleRunPrioritizer} disabled={isPrioritizerLoading || pendingTasks.length === 0} className="w-full font-semibold px-4 py-2 rounded-lg transition-colors" style={{background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>
+                    <div className="flex gap-2">
+                    <button aria-label="Run Task Prioritizer" onClick={handleRunPrioritizer} disabled={isPrioritizerLoading || pendingTasks.length === 0} className="w-full font-semibold px-4 py-2 rounded-lg transition-colors" style={{background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>
                         {isPrioritizerLoading ? t('aiAgentsView.runningAgent') : t('aiAgentsView.runAgent')}
                     </button>
+                    <button aria-label="Clear Prioritizer Output" onClick={() => setPrioritizerResult('')} className="px-3 rounded-lg" style={{ background: 'var(--color-bg-dark)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)'}}>Clear</button>
+                    </div>
                     {pendingTasks.length === 0 && <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem'}}>{t('aiAgentsView.noPendingTasks')}</p>}
                     <AgentOutput result={prioritizerResult} isLoading={isPrioritizerLoading} />
                 </div>
+                </div>
 
                 {/* Content Creator Agent */}
-                <div className="agent-card creator p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)'}}>
+                <div className="gradient-card p-[1px] rounded-2xl">
+                <div className="agent-card creator p-6 rounded-[15px] shadow-lg" style={{ background: 'var(--color-bg-panel)'}}>
                     <div className="agent-card-header">
                         <div className="agent-card-icon" style={{color: '#ff00ff'}}>
                            <CreatorIcon />
@@ -148,20 +192,37 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
                         <h3 style={{ margin: 0 }}>{t('aiAgentsView.contentCreator')}</h3>
                     </div>
                     <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>{t('aiAgentsView.contentCreatorDesc')}</p>
+
+                    {/* Preset chips */}
+                    <div className="flex flex-wrap gap-2 mb-2">
+                        {presetPrompts.map((p, idx) => (
+                            <button key={idx} type="button" className="chip" onClick={() => setCreatorPrompt(p)} aria-label={`Use preset ${idx + 1}`}>
+                                {p.length > 40 ? p.slice(0, 40) + '…' : p}
+                            </button>
+                        ))}
+                    </div>
                     <textarea
                         value={creatorPrompt}
                         onChange={e => setCreatorPrompt(e.target.value)}
                         placeholder={t('aiAgentsView.promptPlaceholder')}
-                        style={{ ...inputStyle, minHeight: '80px', marginBottom: '1rem' }}
+                        onKeyDown={handleCreatorKeyDown}
+                        style={{ ...inputStyle, minHeight: '110px', marginBottom: '0.5rem' }}
+                        aria-label="Content Creator Prompt"
                     />
-                    <button onClick={handleRunCreator} disabled={isCreatorLoading || !creatorPrompt} className="w-full font-semibold px-4 py-2 rounded-lg transition-colors" style={{background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>
-                        {isCreatorLoading ? t('aiAgentsView.runningAgent') : t('aiAgentsView.runAgent')}
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <button aria-label="Run Content Creator (Ctrl+Enter)" onClick={handleRunCreator} disabled={isCreatorLoading || !creatorPrompt} className="w-full font-semibold px-4 py-2 rounded-lg transition-colors" style={{background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>
+                            {isCreatorLoading ? t('aiAgentsView.runningAgent') : t('aiAgentsView.runAgent')}
+                        </button>
+                        <span className="hidden md:inline text-xs px-2 py-1 rounded border" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)'}}>Ctrl/⌘ + Enter</span>
+                        <button aria-label="Clear Content Creator" onClick={() => { setCreatorPrompt(''); setCreatorResult(''); }} className="px-3 rounded-lg" style={{ background: 'var(--color-bg-dark)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)'}}>Clear</button>
+                    </div>
                     <AgentOutput result={creatorResult} isLoading={isCreatorLoading} />
+                </div>
                 </div>
 
                 {/* Goal Strategist Agent */}
-                <div className="agent-card strategist p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)'}}>
+                <div className="gradient-card p-[1px] rounded-2xl">
+                <div className="agent-card strategist p-6 rounded-[15px] shadow-lg" style={{ background: 'var(--color-bg-panel)'}}>
                      <div className="agent-card-header">
                         <div className="agent-card-icon" style={{color: '#64ffda'}}>
                            <StrategistIcon />
@@ -174,17 +235,22 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
                         onChange={e => setSelectedGoalId(e.target.value)}
                         style={{ ...inputStyle, marginBottom: '1rem' }}
                         disabled={goals.length === 0}
+                        aria-label="Select a goal"
                     >
                         <option value="">{t('aiAgentsView.selectGoal')}</option>
                         {goals.map(goal => (
                             <option key={goal.id} value={goal.id}>{goal.name}</option>
                         ))}
                     </select>
-                    <button onClick={handleRunStrategist} disabled={isStrategistLoading || !selectedGoalId} className="w-full font-semibold px-4 py-2 rounded-lg transition-colors" style={{background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>
-                        {isStrategistLoading ? t('aiAgentsView.runningAgent') : t('aiAgentsView.runAgent')}
-                    </button>
+                    <div className="flex gap-2">
+                        <button aria-label="Run Goal Strategist" onClick={handleRunStrategist} disabled={isStrategistLoading || !selectedGoalId} className="w-full font-semibold px-4 py-2 rounded-lg transition-colors" style={{background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>
+                            {isStrategistLoading ? t('aiAgentsView.runningAgent') : t('aiAgentsView.runAgent')}
+                        </button>
+                        <button aria-label="Clear Strategist Output" onClick={() => setStrategistResult('')} className="px-3 rounded-lg" style={{ background: 'var(--color-bg-dark)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)'}}>Clear</button>
+                    </div>
                      {goals.length === 0 && <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem'}}>{t('aiAgentsView.noGoals')}</p>}
                     <AgentOutput result={strategistResult} isLoading={isStrategistLoading} />
+                </div>
                 </div>
             </div>
         </div>

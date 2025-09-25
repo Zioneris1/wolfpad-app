@@ -1,6 +1,6 @@
 {
-  "rewrites": [
-    { "source": "/assets/(.*)", "destination": "/dist/assets/$1" },
-    { "source": "/((?!api/|dist/.*|assets/.*|.*\\..*).*)", "destination": "/dist/index.html" }
+  "routes": [
+    { "src": "/assets/(.*)", "dest": "/dist/assets/$1" },
+    { "src": "/(.*)", "dest": "/dist/index.html" }
   ]
 }

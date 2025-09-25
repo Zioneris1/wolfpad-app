@@ -140,8 +140,8 @@ const Analytics: React.FC<AnalyticsProps> = ({ tasks, moneyManager, onNavigateTo
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
                 {/* Task Completion */}
-                <div className="lg:col-span-1 p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
-                    <h3 className="font-bold text-lg mb-4">{t('analyticsView.completionRate')}</h3>
+                <div className="lg:col-span-1 p-6 rounded-xl shadow-lg glass-panel neon-border cut-corners hover-raise" style={{ backgroundColor: 'rgba(26, 29, 36, 0.55)' }}>
+                    <h3 className="font-bold text-lg mb-4 glow-title">{t('analyticsView.completionRate')}</h3>
                     <DonutChart completed={completedTasks} total={totalTasks} />
                     <div className="flex justify-around mt-4 text-center">
                         <div>
@@ -156,8 +156,8 @@ const Analytics: React.FC<AnalyticsProps> = ({ tasks, moneyManager, onNavigateTo
                 </div>
 
                 {/* Financial Overview & Reports */}
-                <div className="lg:col-span-2 p-6 rounded-xl shadow-lg space-y-6" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
-                     <h3 className="font-bold text-lg">Financial Overview (This Month)</h3>
+                <div className="lg:col-span-2 p-6 rounded-xl shadow-lg space-y-6 glass-panel neon-border cut-corners hover-raise" style={{ backgroundColor: 'rgba(26, 29, 36, 0.55)' }}>
+                     <h3 className="font-bold text-lg glow-title">Financial Overview (This Month)</h3>
                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <StatCard 
                             title="Income" 
@@ -178,21 +178,25 @@ const Analytics: React.FC<AnalyticsProps> = ({ tasks, moneyManager, onNavigateTo
                             color="#3b82f6" // Blue
                         />
                      </div>
-                     <div className="pt-6 border-t" style={{ borderColor: 'var(--color-border)' }}>
-                        <div className="flex justify-between items-center">
-                            <div>
-                                <h4 className="font-bold">{t('analyticsView.financialReport')}</h4>
-                                <p className="text-sm" style={{ color: 'var(--color-text-secondary)'}}>{t('analyticsView.financialReportDesc')}</p>
-                            </div>
-                            <button 
-                                onClick={handleDownloadFinancials} 
-                                className="flex items-center justify-center font-semibold px-4 py-2 rounded-lg transition-colors" 
-                                style={{background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)', border: 'none' }}
-                            >
-                                <DownloadIcon />
-                                {t('analyticsView.downloadCsv')}
-                            </button>
+                </div>
+            </div>
+
+            {/* --- Reports --- */}
+            <div className="mt-8">
+                <div className="p-6 rounded-xl shadow-lg glass-panel neon-border cut-corners hover-raise" style={{ backgroundColor: 'rgba(26, 29, 36, 0.55)' }}>
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <h4 className="font-bold glow-title">{t('analyticsView.financialReport')}</h4>
+                            <p className="text-sm" style={{ color: 'var(--color-text-secondary)'}}>{t('analyticsView.financialReportDesc')}</p>
                         </div>
+                        <button 
+                            onClick={handleDownloadFinancials} 
+                            className="flex items-center justify-center font-semibold px-4 py-2 rounded-lg transition-colors"
+                            style={{background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)', border: 'none' }}
+                        >
+                            <DownloadIcon />
+                            {t('analyticsView.downloadCsv')}
+                        </button>
                     </div>
                 </div>
             </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import type { Task } from '../types';
 import type { useMoneyManager } from '../hooks/useMoneyManager';
 import DonutChart from './DonutChart';
+import SparkBar from './SparkBar';
 import { useTranslation } from '../hooks/useTranslation';
 import { formatTime } from '../utils/time';
 
@@ -142,7 +143,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ tasks, moneyManager, onNavigateTo
                 {/* Task Completion */}
                 <div className="lg:col-span-1 p-6 rounded-xl shadow-lg glass-panel neon-border cut-corners hover-raise" style={{ backgroundColor: 'rgba(26, 29, 36, 0.55)' }}>
                     <h3 className="font-bold text-lg mb-4 glow-title">{t('analyticsView.completionRate')}</h3>
-                    <DonutChart completed={completedTasks} total={totalTasks} />
+                    <DonutChart completed={completedTasks} total={totalTasks} animated />
                     <div className="flex justify-around mt-4 text-center">
                         <div>
                             <p className="font-bold text-2xl" style={{ color: 'var(--color-text-primary)'}}>{completedTasks}</p>
@@ -177,6 +178,10 @@ const Analytics: React.FC<AnalyticsProps> = ({ tasks, moneyManager, onNavigateTo
                             icon={<ScaleIcon />}
                             color="#3b82f6" // Blue
                         />
+                     </div>
+                     <div>
+                        <h4 className="font-bold mb-2" style={{ color: 'var(--color-text-primary)' }}>Spending Pattern (This Month)</h4>
+                        <SparkBar values={monthlyTransactions.filter(t => t.amount < 0).slice(0, 24).map(t => Math.abs(t.amount))} />
                      </div>
                 </div>
             </div>

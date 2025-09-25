@@ -1,7 +1,12 @@
 {
   "version": 2,
-  "rewrites": [
-    { "source": "/assets/(.*)", "destination": "/dist/assets/$1" },
-    { "source": "/(.*)", "destination": "/dist/index.html" }
+  "builds": [
+    { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "dist" } },
+    { "src": "api/**/*.ts", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }

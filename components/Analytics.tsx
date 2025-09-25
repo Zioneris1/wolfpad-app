@@ -27,8 +27,8 @@ interface StatCardProps {
 const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color, onClick }) => (
     <div
         onClick={onClick}
-        className={`p-5 rounded-xl shadow-lg flex items-center space-x-4 transition-all duration-300 hover-raise ${onClick ? 'cursor-pointer' : ''}`}
-        style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}
+        className={`p-5 shadow-lg flex items-center space-x-4 transition-all duration-300 hover-raise hex neon-border glass-panel ${onClick ? 'cursor-pointer' : ''}`}
+        style={{ backgroundColor: 'rgba(26, 29, 36, 0.55)' }}
     >
         <div className="flex-shrink-0 flex items-center justify-center h-16 w-16 rounded-2xl" style={{ backgroundColor: color }}>
             {icon}

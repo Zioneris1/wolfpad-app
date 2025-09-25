@@ -109,19 +109,19 @@ const MoneyView: React.FC<MoneyViewProps> = ({ moneyManager }) => {
             </div>
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-                <Card>
+                <Card className="hex neon-border glass-panel hover-raise">
                     <CardContent>
                         <p style={{color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', margin: '0 0 0.5rem 0'}}>{translate('moneyView.totalIncome')}</p>
                         <p style={{fontSize: '2rem', fontWeight: 'bold', color: 'var(--color-secondary-blue-glow)', margin: 0}}>{formatCurrency(totalIncome)}</p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="hex neon-border glass-panel hover-raise">
                     <CardContent>
                         <p style={{color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', margin: '0 0 0.5rem 0'}}>{translate('moneyView.totalExpenses')}</p>
                         <p style={{fontSize: '2rem', fontWeight: 'bold', color: 'var(--color-primary-red-glow)', margin: 0}}>{formatCurrency(totalExpenses)}</p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="hex neon-border glass-panel hover-raise">
                     <CardContent>
                         <p style={{color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', margin: '0 0 0.5rem 0'}}>{translate('moneyView.netBalance')}</p>
                         <p style={{fontSize: '2rem', fontWeight: 'bold', margin: 0}}>{formatCurrency(balance)}</p>

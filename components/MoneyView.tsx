@@ -3,6 +3,7 @@ import type { useMoneyManager } from '../hooks/useMoneyManager';
 import type { Transaction } from '../types';
 import PieChart from './PieChart';
 import { useTranslation } from '../hooks/useTranslation';
+import { Card, CardContent } from './ui/Card';
 
 interface MoneyViewProps {
     moneyManager: ReturnType<typeof useMoneyManager>;
@@ -107,71 +108,83 @@ const MoneyView: React.FC<MoneyViewProps> = ({ moneyManager }) => {
                  </div>
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-                <div style={{background: 'var(--color-bg-panel)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--color-border)', textAlign: 'center'}}>
-                    <p style={{color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', margin: '0 0 0.5rem 0'}}>{translate('moneyView.totalIncome')}</p>
-                    <p style={{fontSize: '2rem', fontWeight: 'bold', color: 'var(--color-secondary-blue-glow)', margin: 0}}>{formatCurrency(totalIncome)}</p>
-                </div>
-                <div style={{background: 'var(--color-bg-panel)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--color-border)', textAlign: 'center'}}>
-                    <p style={{color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', margin: '0 0 0.5rem 0'}}>{translate('moneyView.totalExpenses')}</p>
-                    <p style={{fontSize: '2rem', fontWeight: 'bold', color: 'var(--color-primary-red-glow)', margin: 0}}>{formatCurrency(totalExpenses)}</p>
-                </div>
-                <div style={{background: 'var(--color-bg-panel)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--color-border)', textAlign: 'center'}}>
-                    <p style={{color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', margin: '0 0 0.5rem 0'}}>{translate('moneyView.netBalance')}</p>
-                    <p style={{fontSize: '2rem', fontWeight: 'bold', margin: 0}}>{formatCurrency(balance)}</p>
-                </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+                <Card>
+                    <CardContent>
+                        <p style={{color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', margin: '0 0 0.5rem 0'}}>{translate('moneyView.totalIncome')}</p>
+                        <p style={{fontSize: '2rem', fontWeight: 'bold', color: 'var(--color-secondary-blue-glow)', margin: 0}}>{formatCurrency(totalIncome)}</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardContent>
+                        <p style={{color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', margin: '0 0 0.5rem 0'}}>{translate('moneyView.totalExpenses')}</p>
+                        <p style={{fontSize: '2rem', fontWeight: 'bold', color: 'var(--color-primary-red-glow)', margin: 0}}>{formatCurrency(totalExpenses)}</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardContent>
+                        <p style={{color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', margin: '0 0 0.5rem 0'}}>{translate('moneyView.netBalance')}</p>
+                        <p style={{fontSize: '2rem', fontWeight: 'bold', margin: 0}}>{formatCurrency(balance)}</p>
+                    </CardContent>
+                </Card>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem' }} className="responsive-money-grid">
                 <div>
-                    <div style={{ background: 'var(--color-bg-panel)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
-                        <h3 style={{ marginTop: 0 }}>{translate('moneyView.addTransaction')}</h3>
-                        <form onSubmit={handleSubmit}>
-                            <div style={{display:'flex', gap: '0.5rem', marginBottom: '1rem'}}>
-                                <button type="button" onClick={() => setType('expense')} style={{flex: 1, background: type === 'expense' ? 'var(--color-primary-red)' : 'var(--color-bg-dark)', color: type === 'expense' ? 'var(--color-text-on-accent)' : 'var(--color-text-primary)', border: 'none', padding: '0.6rem', cursor: 'pointer'}}>{translate('moneyView.expense')}</button>
-                                <button type="button" onClick={() => setType('income')} style={{flex: 1, background: type === 'income' ? 'var(--color-secondary-blue)' : 'var(--color-bg-dark)', color: type === 'income' ? 'var(--color-text-on-accent)' : 'var(--color-text-primary)', border: 'none', padding: '0.6rem', cursor: 'pointer'}}>{translate('moneyView.income')}</button>
-                            </div>
-                            <input type="text" placeholder={translate('moneyView.description')} value={description} onChange={e => setDescription(e.target.value)} required style={formInputStyle} />
-                            <input type="number" step="0.01" placeholder={translate('moneyView.amount')} value={amount} onChange={e => setAmount(e.target.value)} required style={{...formInputStyle, margin: '0.75rem 0'}} />
-                            <select value={category} onChange={e => setCategory(e.target.value)} required style={formInputStyle} >
-                                {availableCategories.map(cat => <option key={cat.id} value={cat.name}>{cat.name}</option>)}
-                            </select>
-                            <button type="submit" style={{width: '100%', marginTop: '1rem', background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)', border: 'none', padding: '0.75rem'}}>{translate('common.add')}</button>
-                        </form>
-                    </div>
-                     <div style={{ background: 'var(--color-bg-panel)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--color-border)', marginTop: '1.5rem' }}>
-                        <PieChart transactions={transactionsForDisplay} currency={selectedCurrency} />
-                    </div>
-                </div>
-                <div style={{ background: 'var(--color-bg-panel)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
-                    <h3 style={{ marginTop: 0 }}>{translate('moneyView.history')}</h3>
-                     <div style={{maxHeight: '500px', overflowY: 'auto'}}>
-                        {transactionsForDisplay.map((t: Transaction) => (
-                            <div key={t.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 0', borderBottom: '1px solid var(--color-border)'}}>
-                                <div>
-                                    <p style={{margin: 0, fontWeight: 'bold'}}>{t.description}</p>
-                                    <p style={{margin: '0.2rem 0 0', fontSize: '0.8rem', color: 'var(--color-text-secondary)'}}>{t.date} - {t.category}</p>
+                    <Card>
+                        <CardContent>
+                            <h3 style={{ marginTop: 0 }}>{translate('moneyView.addTransaction')}</h3>
+                            <form onSubmit={handleSubmit}>
+                                <div style={{display:'flex', gap: '0.5rem', marginBottom: '1rem'}}>
+                                    <button type="button" onClick={() => setType('expense')} style={{flex: 1, background: type === 'expense' ? 'var(--color-primary-red)' : 'var(--color-bg-dark)', color: type === 'expense' ? 'var(--color-text-on-accent)' : 'var(--color-text-primary)', border: 'none', padding: '0.6rem', cursor: 'pointer'}}>{translate('moneyView.expense')}</button>
+                                    <button type="button" onClick={() => setType('income')} style={{flex: 1, background: type === 'income' ? 'var(--color-secondary-blue)' : 'var(--color-bg-dark)', color: type === 'income' ? 'var(--color-text-on-accent)' : 'var(--color-text-primary)', border: 'none', padding: '0.6rem', cursor: 'pointer'}}>{translate('moneyView.income')}</button>
                                 </div>
-                                <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
-                                    <span style={{color: t.amount < 0 ? 'var(--color-primary-red)' : 'var(--color-secondary-blue)'}}>{formatCurrency(t.amount)}</span>
-                                    <button 
-                                        onClick={() => deleteTransaction(t.id)} 
-                                        title={translate('common.delete')}
-                                        style={{
-                                            background:'transparent', 
-                                            border:'none', 
-                                            color:'var(--color-primary-red)', 
-                                            cursor:'pointer',
-                                            padding: '0.25rem 0.75rem',
-                                            fontSize: '1.5rem',
-                                            lineHeight: 1,
-                                            borderRadius: '4px',
-                                        }}>&times;</button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                                <input type="text" placeholder={translate('moneyView.description')} value={description} onChange={e => setDescription(e.target.value)} required style={formInputStyle} />
+                                <input type="number" step="0.01" placeholder={translate('moneyView.amount')} value={amount} onChange={e => setAmount(e.target.value)} required style={{...formInputStyle, margin: '0.75rem 0'}} />
+                                <select value={category} onChange={e => setCategory(e.target.value)} required style={formInputStyle} >
+                                    {availableCategories.map(cat => <option key={cat.id} value={cat.name}>{cat.name}</option>)}
+                                </select>
+                                <button type="submit" style={{width: '100%', marginTop: '1rem', background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)', border: 'none', padding: '0.75rem'}}>{translate('common.add')}</button>
+                            </form>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardContent>
+                            <PieChart transactions={transactionsForDisplay} currency={selectedCurrency} />
+                        </CardContent>
+                    </Card>
                 </div>
+                <Card>
+                    <CardContent>
+                        <h3 style={{ marginTop: 0 }}>{translate('moneyView.history')}</h3>
+                        <div style={{maxHeight: '500px', overflowY: 'auto'}}>
+                            {transactionsForDisplay.map((t: Transaction) => (
+                                <div key={t.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 0', borderBottom: '1px solid var(--color-border)'}}>
+                                    <div>
+                                        <p style={{margin: 0, fontWeight: 'bold'}}>{t.description}</p>
+                                        <p style={{margin: '0.2rem 0 0', fontSize: '0.8rem', color: 'var(--color-text-secondary)'}}>{t.date} - {t.category}</p>
+                                    </div>
+                                    <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+                                        <span style={{color: t.amount < 0 ? 'var(--color-primary-red)' : 'var(--color-secondary-blue)'}}>{formatCurrency(t.amount)}</span>
+                                        <button 
+                                            onClick={() => deleteTransaction(t.id)} 
+                                            title={translate('common.delete')}
+                                            style={{
+                                                background:'transparent', 
+                                                border:'none', 
+                                                color:'var(--color-primary-red)', 
+                                                cursor:'pointer',
+                                                padding: '0.25rem 0.75rem',
+                                                fontSize: '1.5rem',
+                                                lineHeight: 1,
+                                                borderRadius: '4px',
+                                            }}>&times;</button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );

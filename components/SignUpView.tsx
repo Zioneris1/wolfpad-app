@@ -30,7 +30,7 @@ const SignUpView: React.FC<SignUpViewProps> = ({ onSwitchToLogin }) => {
                 setError('Could not create account. Please try again.');
             }
         } catch (err) {
-            setError('An unexpected error occurred.');
+            setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
         } finally {
             setIsLoading(false);
         }
@@ -81,7 +81,7 @@ const SignUpView: React.FC<SignUpViewProps> = ({ onSwitchToLogin }) => {
                         style={inputStyle}
                     />
                     {error && <p style={{ color: 'var(--color-primary-red)', margin: 0, textAlign: 'center' }}>{error}</p>}
-                    <button type="submit" disabled={isLoading} style={{ background: 'var(--color-primary-red)', color: 'var(--color-text-on-accent)', padding: '0.75rem', fontSize: '1rem', marginTop: '0.5rem' }}>
+                    <button type="submit" disabled={isLoading} style={{ background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)', padding: '0.75rem', fontSize: '1rem', marginTop: '0.5rem' }}>
                         {isLoading ? t('common.loading') : t('auth.signupButton')}
                     </button>
                 </form>

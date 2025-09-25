@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Task } from '../types';
 import { useAuthContext } from '../context/AuthContext';
 import { taskApi } from '../services/api';
@@ -139,43 +139,61 @@ export const useTaskManager = () => {
     }, [user]);
 
     const toggleTaskComplete = useCallback(async (id: string) => {
-        const task = tasks.find(t => t.id === id);
-        if (!task) return;
-        
-        const isNowComplete = !task.completed;
-        const updates = {
-            completed: isNowComplete,
-            // Fix: Changed 'completedAt' to 'completed_at' to match the Task type.
-            completed_at: isNowComplete ? new Date().toISOString() : undefined,
-            // Fix: Changed 'isTracking' to 'is_tracking' to match the Task type.
-            is_tracking: false,
-        };
-        await updateTask(id, updates);
-    }, [tasks, updateTask]);
+        setTasks(prevTasks => {
+            const task = prevTasks.find(t => t.id === id);
+            if (!task) return prevTasks;
+            
+            const isNowComplete = !task.completed;
+            const updatedTask = {
+                ...task,
+                completed: isNowComplete,
+                completed_at: isNowComplete ? new Date().toISOString() : undefined,
+                is_tracking: false,
+            };
+            
+            // Update the task in the database
+            updateTask(id, {
+                completed: isNowComplete,
+                completed_at: isNowComplete ? new Date().toISOString() : undefined,
+                is_tracking: false,
+            });
+            
+            return prevTasks.map(t => t.id === id ? updatedTask : t);
+        });
+    }, [updateTask]);
     
     const completeMultipleTasks = useCallback(async (ids: string[]) => {
         if (!user) return;
         const now = new Date().toISOString();
-        const updates = ids.map(id => {
-            const task = tasks.find(t => t.id === id);
-            return {
-                id,
-                data: {
-                    completed: true,
-                    // Fix: Changed 'completedAt' to 'completed_at' to match the Task type.
-                    completed_at: task?.completed_at || now,
-                    // Fix: Changed 'isTracking' to 'is_tracking' to match the Task type.
-                    is_tracking: false,
-                }
-            };
+        
+        setTasks(prevTasks => {
+            const updates = ids.map(id => {
+                const task = prevTasks.find(t => t.id === id);
+                return {
+                    id,
+                    data: {
+                        completed: true,
+                        completed_at: task?.completed_at || now,
+                        is_tracking: false,
+                    }
+                };
+            });
+            
+            // Update the tasks in the database
+            taskApi.updateMultipleTasks(updates, user.id).then(updatedTasks => {
+                const updatedTasksMap = new Map(updatedTasks.map(t => [t.id, t]));
+                setTasks(prevTasks =>
+                    prevTasks.map(task => updatedTasksMap.get(task.id) || task)
+                );
+            });
+            
+            return prevTasks.map(task => 
+                ids.includes(task.id) 
+                    ? { ...task, completed: true, completed_at: task.completed_at || now, is_tracking: false }
+                    : task
+            );
         });
-        // Fix: Pass user.id to updateMultipleTasks API call.
-        const updatedTasks = await taskApi.updateMultipleTasks(updates, user.id);
-        const updatedTasksMap = new Map(updatedTasks.map(t => [t.id, t]));
-        setTasks(prevTasks =>
-            prevTasks.map(task => updatedTasksMap.get(task.id) || task)
-        );
-    }, [tasks, user]);
+    }, [user]);
 
     const startTracking = useCallback((id: string) => {
         if (trackingInterval.current) {
@@ -212,25 +230,41 @@ export const useTaskManager = () => {
             trackingInterval.current = null;
         }
         
-        const taskToStop = tasks.find(t => t.id === id);
+        setTasks(prevTasks => {
+            const taskToStop = prevTasks.find(t => t.id === id);
 
-        if (taskToStop && taskToStop.is_tracking && taskToStop.tracking_start_time) {
-            const elapsedSeconds = (Date.now() - taskToStop.tracking_start_time) / 1000;
-            const finalTimeSpent = taskToStop.time_spent + elapsedSeconds;
-            
-            await updateTask(id, { 
-                is_tracking: false, 
-                time_spent: finalTimeSpent,
-                tracking_start_time: undefined 
-            });
-        } else {
-             tasks.forEach(t => {
-                if (t.is_tracking) {
-                    updateTask(t.id, { is_tracking: false });
-                }
-            });
-        }
-    }, [tasks, updateTask]);
+            if (taskToStop && taskToStop.is_tracking && taskToStop.tracking_start_time) {
+                const elapsedSeconds = (Date.now() - taskToStop.tracking_start_time) / 1000;
+                const finalTimeSpent = taskToStop.time_spent + elapsedSeconds;
+                
+                // Update the task in the database
+                updateTask(id, { 
+                    is_tracking: false, 
+                    time_spent: finalTimeSpent,
+                    tracking_start_time: undefined 
+                });
+                
+                return prevTasks.map(t => 
+                    t.id === id 
+                        ? { ...t, is_tracking: false, time_spent: finalTimeSpent, tracking_start_time: undefined }
+                        : t
+                );
+            } else {
+                // Stop tracking for all tasks
+                prevTasks.forEach(t => {
+                    if (t.is_tracking) {
+                        updateTask(t.id, { is_tracking: false });
+                    }
+                });
+                
+                return prevTasks.map(t => 
+                    t.is_tracking 
+                        ? { ...t, is_tracking: false }
+                        : t
+                );
+            }
+        });
+    }, [updateTask]);
 
     return { 
         tasks,

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { Goal, Task, GoalWithProgress } from '../types';
 import { useAuthContext } from '../context/AuthContext';
 import { goalApi } from '../services/api';
@@ -74,16 +74,9 @@ export const useGoalManager = (tasks: Task[]) => {
         setGoals(prevGoals => prevGoals.filter(goal => goal.id !== id));
     }, [user]);
 
-    // Create a stable reference for tasks to prevent infinite re-renders
-    const tasksRef = useRef(tasks);
-    if (tasks !== tasksRef.current) {
-        tasksRef.current = tasks;
-    }
-
-    // Calculate goals with progress without useMemo to avoid circular dependencies
+    // Calculate goals with progress directly to avoid circular dependencies
     const goalsWithProgress: GoalWithProgress[] = goals.map(goal => {
-        // Use the ref to avoid dependency on tasks array
-        const associatedTasks = tasksRef.current.filter(task => task.goal_id === goal.id);
+        const associatedTasks = tasks.filter(task => task.goal_id === goal.id);
         const completedTasks = associatedTasks.filter(task => task.completed);
         const taskCount = associatedTasks.length;
         const completedTaskCount = completedTasks.length;

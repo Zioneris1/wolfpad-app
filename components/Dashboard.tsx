@@ -1,4 +1,7 @@
 import React, { useState, useMemo, useEffect, ReactNode } from 'react';
+import { motion } from 'framer-motion';
+import FancyStatTile from './FancyStatTile';
+import AreaSparkline from './AreaSparkline';
 import type { Task } from '../types';
 import TaskList from './TaskList';
 import BulkActionBar from './BulkActionBar';
@@ -61,7 +64,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
         setSelectedTasks([]);
     };
 
-    const { displayedTasks, stats } = useMemo(() => {
+    const { displayedTasks, stats, dashboardTasks } = useMemo(() => {
         const dashboardTasks = tasks.filter(t => t.promoted_to_dashboard);
         
         let filteredByStatus = dashboardTasks;
@@ -120,9 +123,33 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
         return {
             displayedTasks: tasksByTab[activeTab],
-            stats
+            stats,
+            dashboardTasks
         };
     }, [tasks, filter, sortBy, activeTab]);
+
+    const todayStrForScore = useMemo(() => {
+        const d = new Date();
+        d.setHours(0,0,0,0);
+        return d.toISOString().split('T')[0];
+    }, []);
+
+    const focusScore = useMemo(() => {
+        const total = dashboardTasks.reduce((acc, t) => acc + (t.impact || 0), 0);
+        const done = dashboardTasks.filter(t => t.completed).reduce((acc, t) => acc + (t.impact || 0), 0);
+        return total > 0 ? Math.min(100, Math.round((done / total) * 100)) : 0;
+    }, [dashboardTasks]);
+
+    const weekCompletionSeries = useMemo(() => {
+        const series: number[] = [];
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const key = d.toISOString().split('T')[0];
+            series.push(tasks.filter(t => t.completed && t.completed_at?.startsWith(key)).length);
+        }
+        return series;
+    }, [tasks]);
 
     const tabs: { id: ActiveTab; label: string }[] = [
         { id: 'today', label: t('dashboard.dueToday') },
@@ -135,14 +162,33 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
             <div className="lg:grid lg:grid-cols-3 lg:gap-8">
                 {/* --- Left Column (Main Content) --- */}
                 <div className="lg:col-span-2">
-                    <header>
-                        <h1 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--color-text-primary)', textShadow: '0 0 12px var(--color-secondary-blue-glow)' }}>
-                            Command Center
-                        </h1>
-                        <p className="mt-1 text-lg" style={{ color: 'var(--color-text-secondary)' }}>
-                            Here's your mission overview for today. Focus on what matters.
-                        </p>
+                    <header className="glass-panel neon-border cut-corners hover-raise" style={{ padding: '1rem 1.25rem', background: 'rgba(26,29,36,0.55)' }}>
+                        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+                            <h1 className="text-3xl font-extrabold tracking-tight glow-title" style={{ margin: 0 }}>
+                                Command Center
+                            </h1>
+                            <p className="mt-1" style={{ color: 'var(--color-text-secondary)' }}>
+                                Your day, optimized. Execute with clarity and speed.
+                            </p>
+                        </motion.div>
                     </header>
+
+                    <div className="mt-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+                        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
+                            <FancyStatTile label={t('dashboard.dueToday')} value={String(stats.dueToday)} accent="blue" />
+                        </motion.div>
+                        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+                            <FancyStatTile label={t('dashboard.overdue')} value={String(stats.overdue)} accent="red" />
+                        </motion.div>
+                        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                            <FancyStatTile label={t('dashboard.completedToday')} value={String(stats.completedToday)} accent="green">
+                                <AreaSparkline points={weekCompletionSeries} width={220} height={70} />
+                            </FancyStatTile>
+                        </motion.div>
+                        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
+                            <FancyStatTile label="Focus Score" value={`${focusScore}%`} accent="blue" sub={`Today ${todayStrForScore}`} />
+                        </motion.div>
+                    </div>
 
                     <div className="mt-6 border-b glass-panel neon-border cut-corners" style={{ borderColor: 'var(--color-border)', backgroundColor: 'rgba(26,29,36,0.55)' }}>
                         <nav className="-mb-px flex space-x-6 scanline" aria-label="Tabs" style={{ paddingLeft: '0.75rem', position: 'relative' }}>
@@ -185,41 +231,27 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
                 {/* --- Right Column (Sidebar) --- */}
                 <div className="mt-8 lg:mt-0 lg:col-span-1">
-                     <div className="space-y-6 p-4 md:p-6 rounded-lg glass-panel neon-border cut-corners hover-raise" style={{backgroundColor: 'rgba(26, 29, 36, 0.6)'}}>
+                    <div className="space-y-6 p-4 md:p-6 rounded-lg glass-panel neon-border cut-corners hover-raise" style={{backgroundColor: 'rgba(26, 29, 36, 0.6)'}}>
+                        <div>
+                            <h3 className="text-lg font-medium" style={{ color: 'var(--color-text-primary)' }}>Quick Actions</h3>
+                            <div className="mt-4 grid grid-cols-2 gap-2">
+                                <button onClick={() => onSetInitialFilter('pending')} className="hover-raise" style={{ background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)', border: 'none', padding: '0.7rem 0.9rem', borderRadius: 10 }}>Focus 25:00</button>
+                                <button onClick={() => onSetInitialFilter('all')} className="hover-raise" style={{ background: 'transparent', color: 'var(--color-text-primary)', border: '1px solid var(--color-border)', padding: '0.7rem 0.9rem', borderRadius: 10 }}>Add Task</button>
+                            </div>
+                        </div>
                         <div>
                             <h3 className="text-lg font-medium" style={{ color: 'var(--color-text-primary)' }}>Stats</h3>
                             <div className="mt-4 space-y-4">
-                               <StatCard value={stats.dueToday} label={t('dashboard.dueToday')} icon={<CalendarIcon />} colorClass="bg-blue-500" glow="rgba(59,130,246,0.45)" />
-                               <StatCard value={stats.overdue} label={t('dashboard.overdue')} icon={<AlertTriangleIcon />} colorClass="bg-red-500" glow="rgba(218,54,51,0.4)" />
-                               <StatCard value={stats.completedToday} label={t('dashboard.completedToday')} icon={<CheckCircleIcon />} colorClass="bg-gray-500" glow="rgba(255,255,255,0.25)" />
+                                <StatCard value={stats.dueToday} label={t('dashboard.dueToday')} icon={<CalendarIcon />} colorClass="bg-blue-500" glow="rgba(59,130,246,0.45)" />
+                                <StatCard value={stats.overdue} label={t('dashboard.overdue')} icon={<AlertTriangleIcon />} colorClass="bg-red-500" glow="rgba(218,54,51,0.4)" />
+                                <StatCard value={stats.completedToday} label={t('dashboard.completedToday')} icon={<CheckCircleIcon />} colorClass="bg-gray-500" glow="rgba(255,255,255,0.25)" />
                             </div>
                         </div>
-                        
                         <div>
-                            <h3 className="text-lg font-medium" style={{ color: 'var(--color-text-primary)' }}>Controls</h3>
-                             <div className="mt-4 space-y-4">
-                                <div>
-                                    <label className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Show</label>
-                                    <div className="flex space-x-1 mt-1 bg-[var(--color-bg-dark)] p-1 rounded-xl">
-                                         {['pending', 'completed', 'all'].map((f) => (
-                                             <button
-                                                 key={f}
-                                                 onClick={() => { setFilter(f as any); onSetInitialFilter(f as any); }}
-                                                 className={`flex-1 text-xs px-3 py-1.5 rounded-lg transition-colors duration-200 ${filter === f ? 'text-white' : 'text-[var(--color-text-secondary)]'}`}
-                                                 style={{backgroundColor: filter === f ? 'var(--color-secondary-blue)' : 'transparent'}}
-                                             >
-                                                 {t(`dashboard.${f}`)}
-                                             </button>
-                                         ))}
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>{t('dashboard.sortBy')}</label>
-                                    <select value={sortBy} onChange={(e) => setSortBy(e.target.value as SortBy)} className="mt-1 block w-full pl-3 pr-10 py-2 text-base rounded-md focus:outline-none focus:ring-[var(--color-secondary-blue)] focus:border-[var(--color-secondary-blue)] sm:text-sm" style={{ background: 'var(--color-bg-dark)', color: 'var(--color-text-primary)', border: '1px solid var(--color-border)' }}>
-                                        <option value="impact">{t('dashboard.impact')}</option>
-                                        <option value="createdDate">{t('dashboard.createdDate')}</option>
-                                    </select>
-                                </div>
+                            <h3 className="text-lg font-medium" style={{ color: 'var(--color-text-primary)' }}>Insights</h3>
+                            <div className="mt-3">
+                                <AreaSparkline points={weekCompletionSeries} width={320} height={90} />
+                                <div className="text-sm" style={{ color: 'var(--color-text-secondary)', marginTop: 6 }}>Completions (7 days)</div>
                             </div>
                         </div>
                     </div>

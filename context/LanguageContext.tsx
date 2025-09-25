@@ -43,7 +43,15 @@ export const LanguageContext = createContext<LanguageContextType>({
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { user } = useAuthContext();
-    const [language, setLanguageState] = useState<LanguageCode>('en');
+    const [language, setLanguageState] = useState<LanguageCode>(() => {
+        if (typeof window !== 'undefined') {
+            const stored = window.localStorage.getItem('wolfpad_language');
+            if (stored && Object.keys(supportedLanguages).includes(stored)) {
+                return stored as LanguageCode;
+            }
+        }
+        return 'en';
+    });
 
     useEffect(() => {
         if (user) {
@@ -56,10 +64,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }, [user]);
 
     const setLanguage = (lang: string) => {
-        if (Object.keys(supportedLanguages).includes(lang) && user) {
-            const langCode = lang as LanguageCode;
-            setLanguageState(langCode);
-            profileApi.updateProfile(user.id, { language: langCode });
+        if (!Object.keys(supportedLanguages).includes(lang)) return;
+        const langCode = lang as LanguageCode;
+        setLanguageState(langCode);
+        if (typeof window !== 'undefined') {
+            window.localStorage.setItem('wolfpad_language', langCode);
+        }
+        if (user) {
+            profileApi.updateProfile(user.id, { language: langCode }).catch(() => {});
         }
     };
     

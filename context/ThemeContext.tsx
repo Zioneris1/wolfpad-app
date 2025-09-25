@@ -83,7 +83,13 @@ const themes: ThemeOption[] = [
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { user } = useAuthContext();
-    const [theme, setThemeState] = useState(themes[0].id);
+    const [theme, setThemeState] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const stored = window.localStorage.getItem('wolfpad_theme');
+            if (stored && themes.some(t => t.id === stored)) return stored;
+        }
+        return themes[0].id;
+    });
 
     useEffect(() => {
         if (user) {
@@ -91,6 +97,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 if (profile?.theme && themes.some(t => t.id === profile.theme)) {
                     setThemeState(profile.theme);
                 }
+            }).catch(() => {
+                // ignore profile fetch errors for theme
             });
         }
     }, [user]);
@@ -105,9 +113,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }, [theme]);
     
     const setTheme = (newTheme: string) => {
-        if (!user) return;
+        if (!themes.some(t => t.id === newTheme)) return;
         setThemeState(newTheme);
-        profileApi.updateProfile(user.id, { theme: newTheme });
+        if (typeof window !== 'undefined') {
+            window.localStorage.setItem('wolfpad_theme', newTheme);
+        }
+        if (user) {
+            profileApi.updateProfile(user.id, { theme: newTheme }).catch(() => {});
+        }
     };
 
     const value = useMemo(() => ({ theme, setTheme, themes }), [theme]);

@@ -3,6 +3,7 @@ export default {
     save: "Salvar",
     cancel: "Cancelar",
     delete: "Excluir",
+    archive: "Arquivar",
     edit: "Editar",
     close: "Fechar",
     add: "Adicionar",
@@ -57,6 +58,25 @@ export default {
     title: "METAS ESTRATÉGICAS",
     newGoal: "NOVA META",
     noGoals: "Nenhuma meta estratégica definida. Adicione uma para começar."
+  },
+  personalDevView: {
+    aiPlanner: "PLANEJADOR IA",
+    plannerDescription: "Defina uma meta e deixe a IA montar um plano de aprendizado.",
+    goalPlaceholder: "ex.: Aprender investimentos financeiros",
+    books: "Livros",
+    youtubeChannels: "Canais do YouTube",
+    podcasts: "Podcasts",
+    generatePlan: "GERAR PLANO IA",
+    generatingPlan: "GERANDO PLANO...",
+    activePlans: "PLANOS DE DESENVOLVIMENTO ATIVOS",
+    confirmDelete: "Excluir este plano de desenvolvimento? Isso não pode ser desfeito.",
+    confirmArchive: "Arquivar este plano de desenvolvimento? Você poderá restaurá-lo depois.",
+    noPlans: "Você não tem planos de desenvolvimento ativos. Gere um para começar!",
+    swapWithAi: "Trocar (IA)",
+    deleteItem: "Excluir",
+    addResource: "Adicionar Recurso",
+    resourceTitle: "Título do recurso",
+    authorOrChannel: "Autor ou canal"
   },
   aiAgentsView: {
     title: "CENTRO DE COMANDO DE AGENTES DE IA",

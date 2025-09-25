@@ -3,6 +3,7 @@ export default {
     save: "Сохранить",
     cancel: "Отмена",
     delete: "Удалить",
+    archive: "Архивировать",
     edit: "Изменить",
     close: "Закрыть",
     add: "Добавить",
@@ -57,6 +58,25 @@ export default {
     title: "СТРАТЕГИЧЕСКИЕ ЦЕЛИ",
     newGoal: "НОВАЯ ЦЕЛЬ",
     noGoals: "Стратегические цели не определены. Добавьте одну, чтобы начать."
+  },
+  personalDevView: {
+    aiPlanner: "ПЛАНИРОВЩИК ИИ",
+    plannerDescription: "Определите цель и позвольте ИИ построить учебный план.",
+    goalPlaceholder: "например, Научиться финансовым инвестициям",
+    books: "Книги",
+    youtubeChannels: "Каналы YouTube",
+    podcasts: "Подкасты",
+    generatePlan: "СГЕНЕРИРОВАТЬ ПЛАН ИИ",
+    generatingPlan: "ГЕНЕРАЦИЯ ПЛАНА...",
+    activePlans: "АКТИВНЫЕ ПЛАНЫ РАЗВИТИЯ",
+    confirmDelete: "Удалить этот план развития? Это действие нельзя отменить.",
+    confirmArchive: "Архивировать этот план развития? Вы можете восстановить его позже.",
+    noPlans: "У вас нет активных планов развития. Создайте один, чтобы начать!",
+    swapWithAi: "Заменить (ИИ)",
+    deleteItem: "Удалить",
+    addResource: "Добавить ресурс",
+    resourceTitle: "Название ресурса",
+    authorOrChannel: "Автор или канал"
   },
   aiAgentsView: {
     title: "КОМАНДНЫЙ ЦЕНТР АГЕНТОВ ИИ",

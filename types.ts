@@ -92,6 +92,8 @@ export interface DevelopmentPlan {
     books: DevelopmentResource[];
     youtube_channels: DevelopmentResource[];
     podcasts: DevelopmentResource[];
+    archived?: boolean;
+    created_at?: string;
 }
 
 export interface AppContextData {

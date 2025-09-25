@@ -131,7 +131,7 @@ const DayColumn: React.FC<DayColumnProps> = ({ title, date, tasks, isToday = fal
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className="flex-shrink-0 w-80 rounded-2xl p-1 transition-all duration-200 border"
+            className="flex-shrink-0 w-80 rounded-2xl p-1 transition-all duration-200 border glass-panel neon-border cut-corners hover-raise"
             style={{ 
                 background: isDragOver ? 'rgba(var(--color-secondary-blue-rgb), 0.15)' : 'var(--color-bg-panel)',
                 borderColor: isToday ? 'var(--color-secondary-blue)' : 'var(--color-border)'

@@ -48,7 +48,7 @@ const GoalItem: React.FC<GoalItemProps> = (props) => {
     };
 
     return (
-        <Card>
+        <Card className="glass-panel neon-border cut-corners hover-raise">
             <CardHeader>
                 <div className="flex justify-between items-start gap-4">
                     <div className="flex-1">

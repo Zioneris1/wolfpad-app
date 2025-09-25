@@ -6,6 +6,8 @@ import { useAuthContext } from '../context/AuthContext';
 import { devPlanApi } from '../services/api';
 import { subscribe } from '../services/realtime';
 import { Card, CardContent } from './ui/Card';
+import { isAiEnabled } from '../lib/ai';
+import { motion, AnimatePresence } from 'framer-motion';
 
 
 const BookIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 16c1.255 0 2.443-.29 3.5-.804V4.804zM14.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 0114.5 16c1.255 0 2.443-.29 3.5-.804v-10A7.968 7.968 0 0014.5 4z" /></svg>;
@@ -21,6 +23,9 @@ const PersonalDevelopmentView: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isDataLoading, setIsDataLoading] = useState(true);
     const [plans, setPlans] = useState<DevelopmentPlan[]>([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const aiEnabled = isAiEnabled();
+    const maxChars = 200;
     
     useEffect(() => {
         if (user) {
@@ -113,18 +118,25 @@ const PersonalDevelopmentView: React.FC = () => {
                 <div className="lg:col-span-1 lg:sticky lg:top-6">
                     <Card>
                         <CardContent>
-                            <h3 className="font-bold text-lg" style={{ color: 'var(--color-secondary-blue)' }}>{t('personalDevView.aiPlanner')}</h3>
+                            <h3 className="font-bold text-lg glow-title" style={{ color: 'var(--color-secondary-blue)' }}>{t('personalDevView.aiPlanner')}</h3>
+                            {!aiEnabled && (
+                                <div className="mb-3 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                                    AI features are disabled. Set VITE_API_KEY to enable the planner.
+                                </div>
+                            )}
                             <p className="text-sm mt-1 mb-4" style={{ color: 'var(--color-text-secondary)' }}>{t('personalDevView.plannerDescription')}</p>
                             <textarea
                             value={goal}
                             onChange={e => setGoal(e.target.value)}
                             placeholder={t('personalDevView.goalPlaceholder')}
                             className="w-full p-2 rounded-md bg-[var(--color-bg-dark)] border border-[var(--color-border)] text-[var(--color-text-primary)]"
-                            rows={3}
+                                rows={3}
+                                maxLength={maxChars}
                             />
+                            <div className="text-right text-xs" style={{ color: 'var(--color-text-secondary)' }}>{goal.length}/{maxChars}</div>
                             <button
                             onClick={handleGeneratePlan}
-                            disabled={isLoading || !goal.trim()}
+                                disabled={isLoading || !goal.trim() || !aiEnabled}
                             className="w-full mt-3 font-semibold px-4 py-2 rounded-lg transition-colors"
                             style={{ background: 'var(--color-primary-red)', color: 'var(--color-text-on-accent)' }}
                             >
@@ -136,26 +148,66 @@ const PersonalDevelopmentView: React.FC = () => {
 
                 {/* --- Right Column (Plans) --- */}
                 <div className="mt-8 lg:mt-0 lg:col-span-2">
-                    <h2 className="text-2xl font-bold tracking-tight mb-4">{t('personalDevView.activePlans')}</h2>
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-2xl font-bold tracking-tight glow-title">{t('personalDevView.activePlans')}</h2>
+                        <input
+                            type="text"
+                            placeholder="Search resources..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-dark)] px-4 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-secondary-blue)] focus:ring-1 focus:ring-[var(--color-secondary-blue)] outline-none"
+                            style={{ width: '260px' }}
+                        />
+                    </div>
                     <div className="space-y-6">
-                        {isDataLoading ? <p>Loading plans...</p> : plans.length > 0 ? plans.map(plan => (
-                            <Card key={plan.id}>
+                        {isDataLoading ? (
+                            <>
+                                {[1,2].map((i) => (
+                                    <Card key={i}>
+                                        <CardContent>
+                                            <div className="animate-pulse space-y-3">
+                                                <div className="h-5 w-1/3 bg-[var(--color-border)] rounded"></div>
+                                                <div className="h-4 w-2/3 bg-[var(--color-border)] rounded"></div>
+                                                <div className="h-4 w-1/2 bg-[var(--color-border)] rounded"></div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </>
+                        ) : plans.length > 0 ? (
+                            <AnimatePresence>
+                                {plans.map(plan => (
+                                    <motion.div
+                                        key={plan.id}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        transition={{ duration: 0.2 }}
+                                    >
+                                        <Card>
+                                            <CardContent>
+                                                <div className="flex justify-between items-start">
+                                                    <h3 className="font-bold text-lg mb-4">{plan.goal}</h3>
+                                                    <button onClick={() => handleDeletePlan(plan.id)} className="text-sm font-semibold" style={{ color: 'var(--color-primary-red)' }}>{t('common.delete')}</button>
+                                                </div>
+                                                <div className="space-y-4">
+                                                    <ResourceList title={t('personalDevView.books')} icon={<BookIcon />} resources={plan.books} onSwap={(res) => handleSwapResource(plan.id, res, 'books')} onDelete={(res) => handleDeleteResource(plan.id, res.title, 'books')} searchQuery={searchQuery} />
+                                                    <ResourceList title={t('personalDevView.youtubeChannels')} icon={<YoutubeIcon />} resources={plan.youtube_channels} onSwap={(res) => handleSwapResource(plan.id, res, 'youtube_channels')} onDelete={(res) => handleDeleteResource(plan.id, res.title, 'youtube_channels')} searchQuery={searchQuery} />
+                                                    <ResourceList title={t('personalDevView.podcasts')} icon={<PodcastIcon />} resources={plan.podcasts} onSwap={(res) => handleSwapResource(plan.id, res, 'podcasts')} onDelete={(res) => handleDeleteResource(plan.id, res.title, 'podcasts')} searchQuery={searchQuery} />
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
+                        ) : (
+                            <Card>
                                 <CardContent>
-                                <div className="flex justify-between items-start">
-                                    <h3 className="font-bold text-lg mb-4">{plan.goal}</h3>
-                                    <button onClick={() => handleDeletePlan(plan.id)} className="text-sm font-semibold" style={{ color: 'var(--color-primary-red)' }}>{t('common.delete')}</button>
-                                </div>
-                                <div className="space-y-4">
-                                    <ResourceList title={t('personalDevView.books')} icon={<BookIcon />} resources={plan.books} onSwap={(res) => handleSwapResource(plan.id, res, 'books')} onDelete={(res) => handleDeleteResource(plan.id, res.title, 'books')} />
-                                    <ResourceList title={t('personalDevView.youtubeChannels')} icon={<YoutubeIcon />} resources={plan.youtube_channels} onSwap={(res) => handleSwapResource(plan.id, res, 'youtube_channels')} onDelete={(res) => handleDeleteResource(plan.id, res.title, 'youtube_channels')}/>
-                                    <ResourceList title={t('personalDevView.podcasts')} icon={<PodcastIcon />} resources={plan.podcasts} onSwap={(res) => handleSwapResource(plan.id, res, 'podcasts')} onDelete={(res) => handleDeleteResource(plan.id, res.title, 'podcasts')}/>
-                                </div>
+                                    <div className="text-center py-6">
+                                        <p className="mt-1 text-sm" style={{ color: 'var(--color-text-secondary)'}}>{t('personalDevView.noPlans')}</p>
+                                    </div>
                                 </CardContent>
                             </Card>
-                        )) : (
-                            <div className="text-center py-12 px-6 border-2 border-dashed rounded-lg" style={{ borderColor: 'var(--color-border)', background: 'var(--color-bg-dark)'}}>
-                                <p className="mt-1 text-sm" style={{ color: 'var(--color-text-secondary)'}}>{t('personalDevView.noPlans')}</p>
-                            </div>
                         )}
                     </div>
                 </div>
@@ -164,29 +216,56 @@ const PersonalDevelopmentView: React.FC = () => {
     );
 };
 
-const ResourceList: React.FC<{ title: string; icon: React.ReactNode; resources: DevelopmentResource[], onSwap: (res: DevelopmentResource) => void, onDelete: (res: DevelopmentResource) => void }> = ({ title, icon, resources, onSwap, onDelete }) => {
+const ResourceList: React.FC<{ title: string; icon: React.ReactNode; resources: DevelopmentResource[], onSwap: (res: DevelopmentResource) => void, onDelete: (res: DevelopmentResource) => void, searchQuery?: string }> = ({ title, icon, resources, onSwap, onDelete, searchQuery = '' }) => {
     const { t } = useTranslation();
+    const [collapsed, setCollapsed] = useState(false);
+
+    const filtered = resources.filter(r => {
+        const q = searchQuery.trim().toLowerCase();
+        if (!q) return true;
+        return r.title.toLowerCase().includes(q) || (r.author_or_channel || '').toLowerCase().includes(q);
+    });
+
+    const handleCopyAll = async () => {
+        const text = filtered.map(r => `${r.title} — ${r.author_or_channel || ''}`).join('\n');
+        try { await navigator.clipboard.writeText(text); } catch {}
+    };
+    const handleCopyOne = async (r: DevelopmentResource) => {
+        try { await navigator.clipboard.writeText(`${r.title} — ${r.author_or_channel || ''}`); } catch {}
+    };
     return (
         <div>
-            <h4 className="flex items-center font-semibold text-sm uppercase tracking-wider mb-2" style={{ color: 'var(--color-text-secondary)' }}>{icon}<span className="ml-2">{title}</span></h4>
-            <ul className="space-y-2">
-                {resources.map(res => (
-                    <li key={res.title} className="flex justify-between items-center p-3 rounded-md group" style={{ background: 'var(--color-bg-dark)' }}>
-                        <div>
-                            <p className="font-medium text-sm">{res.title}</p>
-                            <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{res.author_or_channel}</p>
-                        </div>
-                        <div className="flex opacity-0 group-hover:opacity-100 transition-opacity gap-2">
-                             <button onClick={() => onSwap(res)} className="flex items-center text-xs font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-secondary-blue)' }}>
-                                <SwapIcon /> {t('personalDevView.swapWithAi')}
-                            </button>
-                             <button onClick={() => onDelete(res)} className="flex items-center text-xs font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-primary-red)' }}>
-                                <DeleteIcon /> {t('personalDevView.deleteItem')}
-                            </button>
-                        </div>
-                    </li>
-                ))}
-            </ul>
+            <div className="flex items-center justify-between mb-2">
+                <h4 className="flex items-center font-semibold text-sm uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>{icon}<span className="ml-2">{title}</span></h4>
+                <div className="flex items-center gap-2">
+                    <button onClick={() => setCollapsed(!collapsed)} className="text-xs font-semibold px-2 py-1 rounded border" style={{ borderColor: 'var(--color-border)' }}>{collapsed ? 'Expand' : 'Collapse'}</button>
+                    <button onClick={handleCopyAll} className="text-xs font-semibold px-2 py-1 rounded border" style={{ borderColor: 'var(--color-border)' }}>Copy All</button>
+                </div>
+            </div>
+            {!collapsed && (
+                <ul className="space-y-2">
+                    {filtered.map(res => (
+                        <li key={res.title} className="flex justify-between items-center p-3 rounded-md group" style={{ background: 'var(--color-bg-dark)' }}>
+                            <div>
+                                <p className="font-medium text-sm">{res.title}</p>
+                                <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{res.author_or_channel}</p>
+                            </div>
+                            <div className="flex opacity-0 group-hover:opacity-100 transition-opacity gap-2">
+                                <button onClick={() => handleCopyOne(res)} className="text-xs font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-text-secondary)' }}>Copy</button>
+                                <button onClick={() => onSwap(res)} className="flex items-center text-xs font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-secondary-blue)' }}>
+                                    <SwapIcon /> {t('personalDevView.swapWithAi')}
+                                </button>
+                                <button onClick={() => onDelete(res)} className="flex items-center text-xs font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-primary-red)' }}>
+                                    <DeleteIcon /> {t('personalDevView.deleteItem')}
+                                </button>
+                            </div>
+                        </li>
+                    ))}
+                    {filtered.length === 0 && (
+                        <li className="text-center text-sm p-4" style={{ color: 'var(--color-text-secondary)' }}>No results.</li>
+                    )}
+                </ul>
+            )}
         </div>
     );
 };

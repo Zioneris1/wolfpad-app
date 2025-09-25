@@ -204,7 +204,15 @@ export const getDevelopmentPlan = async (goal: string, bookCount: number, channe
     
     try {
         const client = getAiClient();
-        if (!client) throw new Error("AI features are disabled. Set VITE_API_KEY.");
+        if (!client) {
+            const res = await fetch('/api/dev-plan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ goal, bookCount, channelCount, podcastCount })
+            });
+            if (!res.ok) throw new Error(await res.text());
+            return await res.json() as DevelopmentPlan;
+        }
         const response = await client.models.generateContent({
             model,
             contents: prompt,
@@ -244,24 +252,32 @@ export const getAlternativeResource = async (goal: string, resourceToReplace: st
     const prompt = `For a personal development plan focused on "${goal}", suggest one alternative resource to replace "${resourceToReplace}". Provide the title and the author or channel name.`;
 
     try {
-         const client = getAiClient();
-         if (!client) throw new Error("AI features are disabled. Set VITE_API_KEY.");
-         const response = await client.models.generateContent({
-            model,
-            contents: prompt,
-            config: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: Type.OBJECT,
-                    properties: {
-                        title: { type: Type.STRING },
-                        authorOrChannel: { type: Type.STRING },
-                    },
-                }
-            }
-        });
-        const jsonText = response.text?.trim() || '';
-        return JSON.parse(jsonText) as DevelopmentResource;
+        const client = getAiClient();
+        if (!client) {
+            const res = await fetch('/api/alt-resource', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ goal, resourceToReplace })
+            });
+            if (!res.ok) throw new Error(await res.text());
+            return await res.json() as DevelopmentResource;
+        }
+        const response = await client.models.generateContent({
+           model,
+           contents: prompt,
+           config: {
+               responseMimeType: "application/json",
+               responseSchema: {
+                   type: Type.OBJECT,
+                   properties: {
+                       title: { type: Type.STRING },
+                       authorOrChannel: { type: Type.STRING },
+                   },
+               }
+           }
+       });
+       const jsonText = response.text?.trim() || '';
+       return JSON.parse(jsonText) as DevelopmentResource;
     } catch (error) {
         throw new Error(getAiErrorMessage(error, 'get an alternative resource'));
     }

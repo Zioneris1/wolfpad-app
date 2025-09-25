@@ -54,7 +54,23 @@ const Logo: React.FC<LogoProps> = ({ className }) => {
             <div style={iconWrapper} aria-hidden="true">
                 <span style={iconStyle}>🐺</span>
             </div>
-            <span style={textStyle}>{text}</span>
+            <svg width="160" height="28" viewBox="0 0 160 28" role="img" aria-label="WolfPad wordmark">
+                <defs>
+                    <linearGradient id="wp-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="var(--color-secondary-blue)"/>
+                        <stop offset="60%" stopColor="var(--color-secondary-blue-glow)"/>
+                        <stop offset="100%" stopColor="var(--color-primary-red)"/>
+                    </linearGradient>
+                    <filter id="wp-glow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="1.8" result="blur" />
+                        <feMerge>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <text x="0" y="20" fontSize="18" fontWeight={800} letterSpacing="0.02em" filter="url(#wp-glow)" style={{ fill: 'url(#wp-grad)' }}>{text}</text>
+            </svg>
         </div>
     );
 };

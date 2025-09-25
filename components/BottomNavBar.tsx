@@ -60,6 +60,8 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ currentView, setView }) => 
         { view: 'theDen', labelKey: 'header.theDen' },
         { view: 'analytics', labelKey: 'header.analytics' },
         { view: 'settings', labelKey: 'header.settings' },
+        // @ts-ignore
+        { view: 'designGuide' as any, labelKey: 'Design Guide' },
     ];
 
     const handleNavClick = (view: View) => {
@@ -90,7 +92,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ currentView, setView }) => 
             <nav>
                 {moreNavItems.map(item => (
                     <button key={item.view} onClick={() => handleNavClick(item.view)} style={navButtonStyle(currentView === item.view)}>
-                        {t(item.labelKey)}
+                        {item.labelKey.startsWith('header.') ? t(item.labelKey) : item.labelKey}
                     </button>
                 ))}
             </nav>

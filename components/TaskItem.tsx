@@ -89,7 +89,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
     );
     
     const actionButtons = (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div className="row-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', opacity: 0, transform: 'translateX(6px)', transition: 'opacity .18s ease, transform .18s ease' }}>
             {onPromote && !task.promoted_to_dashboard && (
                  <button title={t('taskItem.promoteToDashboard')} onClick={() => onPromote(task.id)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--color-text-secondary)', padding: '0.2rem' }}>
                     <PromoteIcon/>
@@ -107,7 +107,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
     return (
         <div 
             style={taskItemStyle}
-            className="row-halo"
+            className="row-halo group"
             draggable={isDraggable}
             onDragStart={(e) => onDragStart && onDragStart(e, task)}
         >
@@ -142,7 +142,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
                     {formatTime(task.time_spent)}
                 </div>
                 
-                {actionButtons}
+                <div className="group-hover:opacity-100" style={{ display: 'flex', alignItems: 'center' }}>
+                    {actionButtons}
+                </div>
             </div>
 
             {/* --- MOBILE LAYOUT --- */}

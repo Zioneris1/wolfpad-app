@@ -6,7 +6,7 @@ import { useTranslation } from '../hooks/useTranslation';
 interface TaskFormProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (task: Omit<Task, 'id' | 'completed' | 'createdAt' | 'completedAt' | 'timeSpent' | 'isTracking' | 'promotedToDashboard'> | Task) => void;
+    onSave: (task: Omit<Task, 'id' | 'completed' | 'created_at' | 'completed_at' | 'time_spent' | 'is_tracking' | 'promoted_to_dashboard' | 'user_id'> | Task) => void;
     taskToEdit?: Task | null;
 }
 
@@ -71,7 +71,15 @@ const TaskForm: React.FC<TaskFormProps> = ({ isOpen, onClose, onSave, taskToEdit
             impact,
             tags,
         };
-        onSave(taskToEdit ? { ...taskToEdit, ...taskData } : { ...taskData, goal_id: undefined, promoted_to_dashboard: true });
+        onSave(taskToEdit ? { ...taskToEdit, ...taskData } : { 
+            ...taskData, 
+            goal_id: undefined, 
+            promoted_to_dashboard: true,
+            created_at: new Date().toISOString(),
+            time_spent: 0,
+            is_tracking: false,
+            user_id: ''
+        });
     };
 
     if (!isOpen) return null;

@@ -140,42 +140,42 @@ export interface Database {
       tasks: {
         Row: Task;
         Insert: Omit<Task, 'id' | 'created_at'>;
-        Update: Partial<Task>;
+        Update: Partial<Omit<Task, 'id' | 'created_at'>>;
       };
       goals: {
         Row: Goal;
         Insert: Omit<Goal, 'id' | 'created_at'>;
-        Update: Partial<Goal>;
+        Update: Partial<Omit<Goal, 'id' | 'created_at'>>;
       };
       schedule_blocks: {
         Row: ScheduleBlock;
         Insert: Omit<ScheduleBlock, 'id'>;
-        Update: Partial<ScheduleBlock>;
+        Update: Partial<Omit<ScheduleBlock, 'id'>>;
       };
       transactions: {
         Row: Transaction;
         Insert: Omit<Transaction, 'id'>;
-        Update: Partial<Transaction>;
+        Update: Partial<Omit<Transaction, 'id'>>;
       };
       transaction_categories: {
         Row: TransactionCategory;
         Insert: Omit<TransactionCategory, 'id'>;
-        Update: Partial<TransactionCategory>;
+        Update: Partial<Omit<TransactionCategory, 'id'>>;
       };
       journal_entries: {
         Row: JournalEntry;
-        Insert: Omit<JournalEntry, 'id'>;
-        Update: Partial<JournalEntry>;
+        Insert: Omit<JournalEntry, 'id' | 'user_id'>;
+        Update: Partial<Omit<JournalEntry, 'id' | 'user_id'>>;
       };
       development_plans: {
         Row: DevelopmentPlan;
-        Insert: Omit<DevelopmentPlan, 'id'>;
-        Update: Partial<DevelopmentPlan>;
+        Insert: Omit<DevelopmentPlan, 'id' | 'user_id'>;
+        Update: Partial<Omit<DevelopmentPlan, 'id' | 'user_id'>>;
       };
       user_profiles: {
         Row: UserProfile;
-        Insert: Partial<UserProfile>;
-        Update: Partial<UserProfile>;
+        Insert: Omit<UserProfile, 'id'>;
+        Update: Partial<Omit<UserProfile, 'id' | 'user_id'>>;
       }
     };
   };

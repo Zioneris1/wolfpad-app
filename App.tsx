@@ -57,7 +57,7 @@ const AppContent: React.FC = () => {
         setIsTaskFormOpen(false);
     };
 
-    const handleSaveTask = (taskData: Omit<Task, 'id' | 'completed' | 'createdAt' | 'completedAt' | 'timeSpent' | 'isTracking' | 'promotedToDashboard'> | Task) => {
+    const handleSaveTask = (taskData: Omit<Task, 'id' | 'completed' | 'created_at' | 'completed_at' | 'time_spent' | 'is_tracking' | 'promoted_to_dashboard' | 'user_id'> | Task) => {
         if ('id' in taskData) {
             taskManager.updateTask(taskData.id, taskData);
         } else {

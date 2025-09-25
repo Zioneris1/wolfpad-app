@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { useMoneyManager } from '../hooks/useMoneyManager';
+import type { Transaction } from '../types';
 import PieChart from './PieChart';
 import { useTranslation } from '../hooks/useTranslation';
 
@@ -34,7 +35,7 @@ const currencies = [
 const MoneyView: React.FC<MoneyViewProps> = ({ moneyManager }) => {
     const { t: translate } = useTranslation();
     const { 
-        transactionsForDisplay,
+        transactions: transactionsForDisplay,
         addTransaction,
         deleteTransaction,
         balance,
@@ -145,7 +146,7 @@ const MoneyView: React.FC<MoneyViewProps> = ({ moneyManager }) => {
                 <div style={{ background: 'var(--color-bg-panel)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
                     <h3 style={{ marginTop: 0 }}>{translate('moneyView.history')}</h3>
                      <div style={{maxHeight: '500px', overflowY: 'auto'}}>
-                        {transactionsForDisplay.map(t => (
+                        {transactionsForDisplay.map((t: Transaction) => (
                             <div key={t.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 0', borderBottom: '1px solid var(--color-border)'}}>
                                 <div>
                                     <p style={{margin: 0, fontWeight: 'bold'}}>{t.description}</p>

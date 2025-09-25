@@ -32,7 +32,7 @@ export const taskApi = {
     updateMultipleTasks: async (updates: { id: string, data: Partial<Omit<Task, 'id'>> }[], userId: string): Promise<Task[]> => {
         const { data, error } = await supabase.from('tasks').upsert(updates.map(u => ({...u.data, id: u.id, user_id: userId}))).select();
         handleSupabaseError(error, 'updateMultipleTasks');
-        return data;
+        return data || [];
     },
     deleteMultipleTasks: async (ids: string[], userId: string): Promise<void> => {
         const { error } = await supabase.from('tasks').delete().in('id', ids).eq('user_id', userId);

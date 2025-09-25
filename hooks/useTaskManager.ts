@@ -36,8 +36,8 @@ export const useTaskManager = () => {
                         setTasks(prev => prev.filter(t => t.id !== message.payload.id));
                         break;
                     case 'TASKS_BULK_UPDATED': {
-                        const updatedMap = new Map(message.payload.map((t: Task) => [t.id, t]));
-                        setTasks(prev => prev.map(t => updatedMap.get(t.id) || t));
+                        const updatedMap = new Map<string, Task>(message.payload.map((t: Task) => [t.id, t]));
+                        setTasks((prev: Task[]) => prev.map((t: Task) => updatedMap.get(t.id) || t));
                         break;
                     }
                     case 'TASKS_BULK_DELETED':

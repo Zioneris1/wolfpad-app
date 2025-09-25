@@ -9,7 +9,7 @@ import { useTranslation } from '../hooks/useTranslation';
 interface GoalFormProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (goal: Omit<Goal, 'id' | 'createdAt'> | Goal) => void;
+    onSave: (goal: Omit<Goal, 'id' | 'created_at'> | Goal) => void;
     goalToEdit?: Goal | null;
 }
 
@@ -32,7 +32,7 @@ const GoalForm: React.FC<GoalFormProps> = ({ isOpen, onClose, onSave, goalToEdit
         e.preventDefault();
         if (!name) return;
         const goalData = { name, description };
-        onSave(goalToEdit ? { ...goalToEdit, ...goalData } : { ...goalData, type: 'standard' });
+        onSave(goalToEdit ? { ...goalToEdit, ...goalData } : { ...goalData, type: 'standard', created_at: new Date().toISOString(), user_id: '' });
         onClose();
     };
     
@@ -59,7 +59,7 @@ const GoalForm: React.FC<GoalFormProps> = ({ isOpen, onClose, onSave, goalToEdit
 interface GoalsViewProps {
     goalManager: ReturnType<typeof useGoalManager>;
     tasks: Task[];
-    onAddBulkTasks: (tasks: Omit<Task, 'id' | 'completed' | 'createdAt' | 'completedAt' | 'tags' | 'timeSpent' | 'isTracking' | 'promotedToDashboard'>[]) => void;
+    onAddBulkTasks: (tasks: Omit<Task, 'id' | 'completed' | 'created_at' | 'completed_at' | 'tags' | 'time_spent' | 'is_tracking' | 'promoted_to_dashboard' | 'user_id'>[]) => void;
     onPromoteTask: (id: string) => void;
     onEditTask: (task: Task) => void;
     onDeleteTask: (id: string) => void;
@@ -95,7 +95,7 @@ const GoalsView: React.FC<GoalsViewProps> = (props) => {
         setIsFormOpen(false);
     };
 
-    const handleSaveGoal = (goalData: Omit<Goal, 'id' | 'createdAt'> | Goal) => {
+    const handleSaveGoal = (goalData: Omit<Goal, 'id' | 'created_at'> | Goal) => {
         if ('id' in goalData) {
             updateGoal(goalData.id, goalData);
         } else {
@@ -116,11 +116,11 @@ const GoalsView: React.FC<GoalsViewProps> = (props) => {
                         <GoalItem
                             key={goal.id}
                             goal={goal}
-                            tasks={tasks}
                             onEditGoal={handleOpenForm}
                             onDeleteGoal={deleteGoal}
                             onBreakdown={setGoalForBreakdown}
                             {...props} // Pass all task handlers down
+                            tasks={tasks}
                         />
                     ))}
                 </div>

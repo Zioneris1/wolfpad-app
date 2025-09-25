@@ -164,10 +164,10 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
                     <div className="mt-6">
                         <TaskList
-                            tasks={displayedTasks}
                             selectedTasks={selectedTasks}
                             onSelectionChange={setSelectedTasks}
                             {...props}
+                            tasks={displayedTasks}
                         />
                     </div>
                 </div>

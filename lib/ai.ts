@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import type { Task, GoalWithProgress, View, AppContextData, AssistantResponse } from '../types';
+import type { Task, GoalWithProgress, AppContextData, AssistantResponse } from '../types';
 
 // Using Vite's standard method for accessing environment variables on the client.
 // Ensure VITE_API_KEY is set in your Vercel/Netlify/other hosting environment.
@@ -80,7 +80,7 @@ export const getTaskSuggestions = async (taskName: string): Promise<SuggestedTas
             }
         });
 
-        const jsonText = response.text.trim();
+        const jsonText = response.text?.trim() || '';
         const suggestions = JSON.parse(jsonText);
 
         // Clamp values to be within expected range
@@ -120,7 +120,7 @@ export const getMoreTagSuggestions = async (taskName: string, description: strin
             }
         });
         
-        const jsonText = response.text.trim();
+        const jsonText = response.text?.trim() || '';
         const result = JSON.parse(jsonText);
         return result.tags || [];
 
@@ -162,7 +162,7 @@ export const getTaskBreakdownForGoal = async (goalName: string, goalDescription:
             }
         });
 
-        const jsonText = response.text.trim();
+        const jsonText = response.text?.trim() || '';
         const result = JSON.parse(jsonText);
 
         // Clamp values to be within expected range
@@ -209,7 +209,7 @@ export const getDevelopmentPlan = async (goal: string, bookCount: number, channe
                 }
             }
         });
-        const jsonText = response.text.trim();
+        const jsonText = response.text?.trim() || '';
         return JSON.parse(jsonText) as DevelopmentPlan;
     } catch (error) {
         throw new Error(getAiErrorMessage(error, 'generate a development plan'));
@@ -238,7 +238,7 @@ export const getAlternativeResource = async (goal: string, resourceToReplace: st
                 }
             }
         });
-        const jsonText = response.text.trim();
+        const jsonText = response.text?.trim() || '';
         return JSON.parse(jsonText) as DevelopmentResource;
     } catch (error) {
         throw new Error(getAiErrorMessage(error, 'get an alternative resource'));
@@ -263,7 +263,7 @@ export const getTaskPrioritization = async (tasks: Task[]): Promise<string> => {
             model,
             contents: prompt,
         });
-        return response.text;
+        return response.text || '';
     } catch (error) {
         throw new Error(getAiErrorMessage(error, 'prioritize tasks'));
     }
@@ -282,7 +282,7 @@ User prompt: "${prompt}"`;
             model,
             contents: finalPrompt,
         });
-        return response.text;
+        return response.text || '';
     } catch (error) {
         throw new Error(getAiErrorMessage(error, 'generate content'));
     }
@@ -307,7 +307,7 @@ export const getGoalStrategy = async (goal: GoalWithProgress): Promise<string> =
             model,
             contents: prompt,
         });
-        return response.text;
+        return response.text || '';
     } catch (error) {
         throw new Error(getAiErrorMessage(error, 'get a goal strategy'));
     }
@@ -368,7 +368,7 @@ Here is the user's current data:
             }
         });
 
-        const jsonText = response.text.trim();
+        const jsonText = response.text?.trim() || '';
         return JSON.parse(jsonText);
 
     } catch (error) {

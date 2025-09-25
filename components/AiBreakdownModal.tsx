@@ -6,7 +6,7 @@ import { useTranslation } from '../hooks/useTranslation';
 interface AiBreakdownModalProps {
     goal: GoalWithProgress | null;
     onClose: () => void;
-    onAddTasks: (tasks: Omit<Task, 'id' | 'completed' | 'createdAt' | 'completedAt' | 'tags' | 'timeSpent' | 'isTracking' | 'promotedToDashboard'>[]) => void;
+    onAddTasks: (tasks: Omit<Task, 'id' | 'completed' | 'created_at' | 'completed_at' | 'tags' | 'time_spent' | 'is_tracking' | 'promoted_to_dashboard' | 'user_id'>[]) => void;
 }
 
 const AiBreakdownModal: React.FC<AiBreakdownModalProps> = ({ goal, onClose, onAddTasks }) => {
@@ -22,7 +22,7 @@ const AiBreakdownModal: React.FC<AiBreakdownModalProps> = ({ goal, onClose, onAd
         try {
             const tasks = await getTaskBreakdownForGoal(goal.name, goal.description);
             setSuggestedTasks(tasks);
-            setSelectedTasks(tasks.reduce((acc, task, index) => ({...acc, [index]: true}), {}));
+            setSelectedTasks(tasks.reduce((acc, _, index) => ({...acc, [index]: true}), {}));
         } catch (error) {
             console.error("Failed to get AI task breakdown", error);
             if (error instanceof Error) {
@@ -56,6 +56,10 @@ const AiBreakdownModal: React.FC<AiBreakdownModalProps> = ({ goal, onClose, onAd
                 impact: task.impact,
                 goal_id: goal.id,
                 due_date: undefined,
+                created_at: new Date().toISOString(),
+                time_spent: 0,
+                is_tracking: false,
+                promoted_to_dashboard: false,
             }));
         onAddTasks(tasksToAdd);
         onClose();

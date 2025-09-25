@@ -144,7 +144,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ currentView, setView, o
             <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '1rem', marginTop: '1rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', padding: '0.5rem', background: 'var(--color-bg-panel)', borderRadius: '4px' }}>
                     <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--color-secondary-blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
-                        {user?.email[0].toUpperCase()}
+                        {user?.email?.[0]?.toUpperCase() || 'U'}
                     </div>
                     <div style={{ flex: 1, overflow: 'hidden' }}>
                         <p style={{ margin: 0, color: 'var(--color-text-primary)', fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email}</p>

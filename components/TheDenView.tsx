@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import type { useJournalManager } from '../hooks/useJournalManager';
 import type { JournalEntry } from '../types';
 import { useTranslation } from '../hooks/useTranslation';
+import { Card, CardContent } from './ui/Card';
 
 // Helper to format date for grouping and display
 const formatDateForDisplay = (isoString: string, locale?: string) => {
@@ -117,29 +118,31 @@ const TheDenView: React.FC<TheDenViewProps> = ({ journalManager }) => {
             </h2>
 
             {/* Today's Entry Form */}
-            <div className="mb-8 p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
-                <h3 className="font-bold text-lg mb-1">{t('theDen.todaysEntry')}</h3>
-                <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
-                    {formattedToday}
-                </p>
-                <textarea
-                    value={newEntryContent}
-                    onChange={(e) => setNewEntryContent(e.target.value)}
-                    placeholder={t('theDen.placeholder')}
-                    className="w-full p-3 rounded-md bg-[var(--color-bg-dark)] border border-[var(--color-border)] text-[var(--color-text-primary)] transition focus:border-[var(--color-secondary-blue)] focus:ring-1 focus:ring-[var(--color-secondary-blue)]"
-                    style={{ minHeight: '150px', fontFamily: 'Courier New, monospace' }}
-                />
-                <div className="flex justify-end mt-4">
-                    <button 
-                        onClick={handleSaveNewEntry}
-                        disabled={!newEntryContent.trim()}
-                        className="font-semibold px-6 py-2 rounded-lg transition-colors"
-                        style={{ background: 'var(--color-primary-red)', color: 'var(--color-text-on-accent)' }}
-                    >
-                        {t('theDen.saveEntry')}
-                    </button>
-                </div>
-            </div>
+            <Card>
+                <CardContent>
+                    <h3 className="font-bold text-lg mb-1">{t('theDen.todaysEntry')}</h3>
+                    <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
+                        {formattedToday}
+                    </p>
+                    <textarea
+                        value={newEntryContent}
+                        onChange={(e) => setNewEntryContent(e.target.value)}
+                        placeholder={t('theDen.placeholder')}
+                        className="w-full p-3 rounded-md bg-[var(--color-bg-dark)] border border-[var(--color-border)] text-[var(--color-text-primary)] transition focus:border-[var(--color-secondary-blue)] focus:ring-1 focus:ring-[var(--color-secondary-blue)]"
+                        style={{ minHeight: '150px', fontFamily: 'Courier New, monospace' }}
+                    />
+                    <div className="flex justify-end mt-4">
+                        <button 
+                            onClick={handleSaveNewEntry}
+                            disabled={!newEntryContent.trim()}
+                            className="font-semibold px-6 py-2 rounded-lg transition-colors"
+                            style={{ background: 'var(--color-primary-red)', color: 'var(--color-text-on-accent)' }}
+                        >
+                            {t('theDen.saveEntry')}
+                        </button>
+                    </div>
+                </CardContent>
+            </Card>
 
             {/* Journal Archive */}
             <div>

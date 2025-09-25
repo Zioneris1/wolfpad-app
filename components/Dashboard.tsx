@@ -27,7 +27,7 @@ const CheckCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className=
 
 // --- NEW COMPONENTS ---
 const StatCard: React.FC<{ value: number; label: string; icon: ReactNode; colorClass: string; glow: string }> = ({ value, label, icon, colorClass, glow }) => (
-    <div className="flex items-center p-4 rounded-lg hover-raise" style={{ background: `var(--color-bg-dark)`}}>
+    <div className="flex items-center p-4 rounded-lg hover-raise" style={{ backgroundColor: 'rgba(42, 47, 56, 0.6)', border: '1px solid var(--color-border)' }}>
         <div className={`flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-lg ${colorClass} text-white`} style={{ boxShadow: `0 0 15px ${glow}` }}>
             {icon}
         </div>
@@ -144,13 +144,13 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                         </p>
                     </header>
 
-                    <div className="mt-6 border-b" style={{ borderColor: 'var(--color-border)' }}>
+            <div className="mt-6 border-b" style={{ borderColor: 'var(--color-border)' }}>
                         <nav className="-mb-px flex space-x-6" aria-label="Tabs">
                             {tabs.map((tab) => (
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm transition-colors duration-200
+                            className={`whitespace-nowrap py-3 px-1 border-b-2 font-semibold text-sm transition-colors duration-200
                                         ${activeTab === tab.id
                                             ? 'border-[var(--color-secondary-blue)] text-[var(--color-secondary-blue)]'
                                             : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-border)]'
@@ -175,7 +175,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
                 {/* --- Right Column (Sidebar) --- */}
                 <div className="mt-8 lg:mt-0 lg:col-span-1">
-                     <div className="space-y-6 p-4 md:p-6 rounded-lg" style={{background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)', backdropFilter: 'blur(10px)'}}>
+                     <div className="space-y-6 p-4 md:p-6 rounded-lg" style={{backgroundColor: 'rgba(26, 29, 36, 0.6)', border: '1px solid var(--color-border)', backdropFilter: 'blur(10px)'}}>
                         <div>
                             <h3 className="text-lg font-medium" style={{ color: 'var(--color-text-primary)' }}>Stats</h3>
                             <div className="mt-4 space-y-4">

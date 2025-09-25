@@ -51,3 +51,46 @@ body {
 *::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 9999px; }
 *::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 *::-webkit-scrollbar-track { background: transparent; }
+
+/* Futuristic glass + neon helpers */
+.glass-panel {
+    backdrop-filter: blur(12px);
+}
+.neon-border {
+    border: 1px solid transparent;
+    background: linear-gradient(var(--color-bg-panel), var(--color-bg-panel)) padding-box,
+                linear-gradient(120deg, rgba(59,130,246,0.35), rgba(218,54,51,0.25)) border-box;
+}
+.cut-corners {
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+}
+.scanline {
+    position: relative;
+    overflow: hidden;
+}
+.scanline:after {
+    content: '';
+    position: absolute;
+    top: -150%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(120deg, transparent 40%, rgba(255,255,255,0.05) 50%, transparent 60%);
+    transform: rotate(10deg);
+    animation: scan 6s linear infinite;
+}
+@keyframes scan {
+    0% { transform: translateY(-60%) rotate(10deg); }
+    100% { transform: translateY(60%) rotate(10deg); }
+}
+
+/* Table-like header for task board */
+.neo-table-header {
+    display: grid;
+    grid-template-columns: 28px 28px 1fr 140px 100px 90px 90px;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    color: var(--color-text-secondary);
+    border-radius: 16px;
+}

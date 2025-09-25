@@ -144,8 +144,8 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                         </p>
                     </header>
 
-            <div className="mt-6 border-b" style={{ borderColor: 'var(--color-border)' }}>
-                        <nav className="-mb-px flex space-x-6" aria-label="Tabs">
+                    <div className="mt-6 border-b glass-panel neon-border cut-corners" style={{ borderColor: 'var(--color-border)', backgroundColor: 'rgba(26,29,36,0.55)' }}>
+                        <nav className="-mb-px flex space-x-6 scanline" aria-label="Tabs" style={{ paddingLeft: '0.75rem' }}>
                             {tabs.map((tab) => (
                                 <button
                                     key={tab.id}
@@ -164,6 +164,15 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                     </div>
 
                     <div className="mt-6">
+                        <div className="neo-table-header" style={{ backgroundColor: 'rgba(26,29,36,0.55)' }}>
+                            <span>#</span>
+                            <span>✓</span>
+                            <span>Task / Due</span>
+                            <span>Tags</span>
+                            <span>Impact</span>
+                            <span>Effort</span>
+                            <span>Time</span>
+                        </div>
                         <TaskList
                             selectedTasks={selectedTasks}
                             onSelectionChange={setSelectedTasks}

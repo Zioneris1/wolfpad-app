@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { useScheduleManager } from '../hooks/useScheduleManager';
 import { useTranslation } from '../hooks/useTranslation';
 import DonutChart from './DonutChart';
+import { Card, CardContent } from './ui/Card';
 
 interface PersonalScheduleProps {
     scheduleManager: ReturnType<typeof useScheduleManager>;
@@ -19,14 +20,16 @@ const DayContent: React.FC<{
     const { t } = useTranslation();
     const todayStr = new Date().toISOString().split('T')[0];
     // Fix: Changed dayOfWeek to day_of_week to match ScheduleBlock type.
-    const dayBlocks = blocks.filter(b => b.day_of_week === dayIndex);
+    const dayBlocks = blocks.filter((b: any) => b.day_of_week === dayIndex);
     // Fix: Changed lastCompleted to last_completed to match ScheduleBlock type.
-    const completedCount = dayBlocks.filter(b => b.last_completed === todayStr).length;
+    const completedCount = dayBlocks.filter((b: any) => b.last_completed === todayStr).length;
 
     return (
-        <div style={{background: 'var(--color-bg-panel)', borderRadius: '8px', border: `1px solid ${isToday ? 'var(--color-secondary-blue)' : 'var(--color-border)'}`}}>
-             <h4 style={{ textAlign: 'center', padding: '0.75rem', margin: 0, borderBottom: '1px solid var(--color-border)' }}>{dayName}</h4>
-             <div style={{ padding: '1rem', borderBottom: `1px solid var(--color-border)`, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+        <Card>
+            <div style={{ textAlign: 'center', padding: '0.75rem', margin: 0, borderBottom: '1px solid var(--color-border)', background: isToday ? 'rgba(var(--color-secondary-blue-rgb), 0.1)' : 'transparent' }}>
+                <h4 style={{ margin: 0 }}>{dayName}</h4>
+            </div>
+            <CardContent>
                 <DonutChart
                     completed={completedCount}
                     total={dayBlocks.length}
@@ -34,9 +37,9 @@ const DayContent: React.FC<{
                     strokeWidth={9}
                 />
                 <span style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>{t('scheduleView.dailyProgress')}</span>
-            </div>
-             <div style={{ padding: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', minHeight: '200px' }}>
-                {dayBlocks.length > 0 ? dayBlocks.map(block => (
+            </CardContent>
+            <div style={{ padding: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', minHeight: '200px' }}>
+                {dayBlocks.length > 0 ? dayBlocks.map((block: any) => (
                     <div key={block.id} style={{ 
                         display: 'flex',
                         flexDirection: 'column',
@@ -75,7 +78,7 @@ const DayContent: React.FC<{
                     </p>
                 )}
             </div>
-        </div>
+        </Card>
     );
 };
 

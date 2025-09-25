@@ -101,7 +101,7 @@ const MoneyView: React.FC<MoneyViewProps> = ({ moneyManager }) => {
                  <div>
                     <label style={{ marginRight: '0.5rem'}}>{translate('moneyView.currency')}</label>
                     <select value={selectedCurrency} onChange={(e) => setSelectedCurrency(e.target.value)} style={{...formInputStyle, width: 'auto'}}>
-                        {currencies.map(c => (
+                {currencies.map((c: { code: string; name: string }) => (
                             <option key={c.code} value={c.code}>{c.code} - {c.name}</option>
                         ))}
                     </select>
@@ -141,8 +141,8 @@ const MoneyView: React.FC<MoneyViewProps> = ({ moneyManager }) => {
                                 </div>
                                 <input type="text" placeholder={translate('moneyView.description')} value={description} onChange={e => setDescription(e.target.value)} required style={formInputStyle} />
                                 <input type="number" step="0.01" placeholder={translate('moneyView.amount')} value={amount} onChange={e => setAmount(e.target.value)} required style={{...formInputStyle, margin: '0.75rem 0'}} />
-                                <select value={category} onChange={e => setCategory(e.target.value)} required style={formInputStyle} >
-                                    {availableCategories.map(cat => <option key={cat.id} value={cat.name}>{cat.name}</option>)}
+                            <select value={category} onChange={e => setCategory(e.target.value)} required style={formInputStyle} >
+                                {availableCategories.map((cat: { id: string; name: string }) => <option key={cat.id} value={cat.name}>{cat.name}</option>)}
                                 </select>
                                 <button type="submit" style={{width: '100%', marginTop: '1rem', background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)', border: 'none', padding: '0.75rem'}}>{translate('common.add')}</button>
                             </form>

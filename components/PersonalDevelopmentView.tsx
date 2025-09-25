@@ -5,6 +5,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import { useAuthContext } from '../context/AuthContext';
 import { devPlanApi } from '../services/api';
 import { subscribe } from '../services/realtime';
+import { Card, CardContent } from './ui/Card';
 
 
 const BookIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 16c1.255 0 2.443-.29 3.5-.804V4.804zM14.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 0114.5 16c1.255 0 2.443-.29 3.5-.804v-10A7.968 7.968 0 0014.5 4z" /></svg>;
@@ -110,25 +111,27 @@ const PersonalDevelopmentView: React.FC = () => {
             <div className="lg:grid lg:grid-cols-3 lg:gap-8">
                 {/* --- Left Column (Planner) --- */}
                 <div className="lg:col-span-1">
-                    <div className="p-6 rounded-xl shadow-lg sticky top-6" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
-                        <h3 className="font-bold text-lg" style={{ color: 'var(--color-secondary-blue)' }}>{t('personalDevView.aiPlanner')}</h3>
-                        <p className="text-sm mt-1 mb-4" style={{ color: 'var(--color-text-secondary)' }}>{t('personalDevView.plannerDescription')}</p>
-                        <textarea
+                    <Card>
+                        <CardContent>
+                            <h3 className="font-bold text-lg" style={{ color: 'var(--color-secondary-blue)' }}>{t('personalDevView.aiPlanner')}</h3>
+                            <p className="text-sm mt-1 mb-4" style={{ color: 'var(--color-text-secondary)' }}>{t('personalDevView.plannerDescription')}</p>
+                            <textarea
                             value={goal}
                             onChange={e => setGoal(e.target.value)}
                             placeholder={t('personalDevView.goalPlaceholder')}
                             className="w-full p-2 rounded-md bg-[var(--color-bg-dark)] border border-[var(--color-border)] text-[var(--color-text-primary)]"
                             rows={3}
-                        />
-                        <button
+                            />
+                            <button
                             onClick={handleGeneratePlan}
                             disabled={isLoading || !goal.trim()}
                             className="w-full mt-3 font-semibold px-4 py-2 rounded-lg transition-colors"
                             style={{ background: 'var(--color-primary-red)', color: 'var(--color-text-on-accent)' }}
-                        >
-                            {isLoading ? t('personalDevView.generatingPlan') : t('personalDevView.generatePlan')}
-                        </button>
-                    </div>
+                            >
+                                {isLoading ? t('personalDevView.generatingPlan') : t('personalDevView.generatePlan')}
+                            </button>
+                        </CardContent>
+                    </Card>
                 </div>
 
                 {/* --- Right Column (Plans) --- */}
@@ -136,7 +139,8 @@ const PersonalDevelopmentView: React.FC = () => {
                     <h2 className="text-2xl font-bold tracking-tight mb-4">{t('personalDevView.activePlans')}</h2>
                     <div className="space-y-6">
                         {isDataLoading ? <p>Loading plans...</p> : plans.length > 0 ? plans.map(plan => (
-                            <div key={plan.id} className="p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
+                            <Card key={plan.id}>
+                                <CardContent>
                                 <div className="flex justify-between items-start">
                                     <h3 className="font-bold text-lg mb-4">{plan.goal}</h3>
                                     <button onClick={() => handleDeletePlan(plan.id)} className="text-sm font-semibold" style={{ color: 'var(--color-primary-red)' }}>{t('common.delete')}</button>
@@ -146,7 +150,8 @@ const PersonalDevelopmentView: React.FC = () => {
                                     <ResourceList title={t('personalDevView.youtubeChannels')} icon={<YoutubeIcon />} resources={plan.youtube_channels} onSwap={(res) => handleSwapResource(plan.id, res, 'youtube_channels')} onDelete={(res) => handleDeleteResource(plan.id, res.title, 'youtube_channels')}/>
                                     <ResourceList title={t('personalDevView.podcasts')} icon={<PodcastIcon />} resources={plan.podcasts} onSwap={(res) => handleSwapResource(plan.id, res, 'podcasts')} onDelete={(res) => handleDeleteResource(plan.id, res.title, 'podcasts')}/>
                                 </div>
-                            </div>
+                                </CardContent>
+                            </Card>
                         )) : (
                             <div className="text-center py-12 px-6 border-2 border-dashed rounded-lg" style={{ borderColor: 'var(--color-border)', background: 'var(--color-bg-dark)'}}>
                                 <p className="mt-1 text-sm" style={{ color: 'var(--color-text-secondary)'}}>{t('personalDevView.noPlans')}</p>

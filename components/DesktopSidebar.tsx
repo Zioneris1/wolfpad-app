@@ -8,6 +8,48 @@ import Logo from './Logo';
 import { useAuthContext } from '../context/AuthContext';
 
 // Time tracker in sidebar per spec
+const SidebarTimeTracker: React.FC<{ tasks: Task[] }> = ({ tasks }) => {
+    const { t, language } = useTranslation();
+    const [currentTime, setCurrentTime] = useState(new Date());
+    const [formattedCurrentTime, setFormattedCurrentTime] = useState('');
+
+    useEffect(() => {
+        const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    useEffect(() => {
+        setFormattedCurrentTime(currentTime.toLocaleTimeString(language));
+    }, [currentTime, language]);
+
+    const totalTimeTrackedToday = tasks.reduce((acc, task) => {
+        if (task.completed && task.completed_at?.startsWith(new Date().toISOString().split('T')[0])) {
+            return acc + task.time_spent;
+        }
+        return acc;
+    }, 0);
+
+    const secondsInDay = 24 * 60 * 60;
+    const secondsPassed = currentTime.getHours() * 3600 + currentTime.getMinutes() * 60 + currentTime.getSeconds();
+    const secondsLeft = secondsInDay - secondsPassed;
+
+    return (
+        <div className="sidebar-time-tracker" style={{ margin: '1rem 0' }}>
+            <div className="sidebar-time-tracker-item" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                <span className="sidebar-time-tracker-label" style={{ color: 'var(--color-text-secondary)' }}>{t('timeTracker.trackedToday')}</span>
+                <span className="sidebar-time-tracker-value highlight" style={{ color: 'var(--color-secondary-blue)' }}>{formatTime(totalTimeTrackedToday)}</span>
+            </div>
+            <div className="sidebar-time-tracker-item" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                <span className="sidebar-time-tracker-label" style={{ color: 'var(--color-text-secondary)' }}>{t('timeTracker.currentTime')}</span>
+                <span className="sidebar-time-tracker-value">{formattedCurrentTime || '...'}</span>
+            </div>
+            <div className="sidebar-time-tracker-item" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span className="sidebar-time-tracker-label" style={{ color: 'var(--color-text-secondary)' }}>{t('timeTracker.timeLeft')}</span>
+                <span className="sidebar-time-tracker-value">{formatTime(secondsLeft)}</span>
+            </div>
+        </div>
+    );
+};
 
 interface DesktopSidebarProps {
     currentView: View;

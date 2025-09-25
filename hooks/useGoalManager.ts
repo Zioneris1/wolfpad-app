@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Goal, Task, GoalWithProgress } from '../types';
 import { useAuthContext } from '../context/AuthContext';
 import { goalApi } from '../services/api';
@@ -80,23 +80,22 @@ export const useGoalManager = (tasks: Task[]) => {
         tasksRef.current = tasks;
     }
 
-    const goalsWithProgress: GoalWithProgress[] = useMemo(() => {
-        return goals.map(goal => {
-            // Use the ref to avoid dependency on tasks array
-            const associatedTasks = tasksRef.current.filter(task => task.goal_id === goal.id);
-            const completedTasks = associatedTasks.filter(task => task.completed);
-            const taskCount = associatedTasks.length;
-            const completedTaskCount = completedTasks.length;
-            const progress = taskCount > 0 ? Math.round((completedTaskCount / taskCount) * 100) : 0;
-            
-            return {
-                ...goal,
-                taskCount,
-                completedTaskCount,
-                progress
-            };
-        });
-    }, [goals]);
+    // Calculate goals with progress without useMemo to avoid circular dependencies
+    const goalsWithProgress: GoalWithProgress[] = goals.map(goal => {
+        // Use the ref to avoid dependency on tasks array
+        const associatedTasks = tasksRef.current.filter(task => task.goal_id === goal.id);
+        const completedTasks = associatedTasks.filter(task => task.completed);
+        const taskCount = associatedTasks.length;
+        const completedTaskCount = completedTasks.length;
+        const progress = taskCount > 0 ? Math.round((completedTaskCount / taskCount) * 100) : 0;
+        
+        return {
+            ...goal,
+            taskCount,
+            completedTaskCount,
+            progress
+        };
+    });
 
     return {
         goals: goalsWithProgress,

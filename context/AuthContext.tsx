@@ -6,7 +6,7 @@ interface AuthContextType {
     user: User | null;
     loading: boolean;
     login: (email: string, pass: string) => Promise<boolean>;
-    signup: (email: string, pass: string) => Promise<boolean>;
+    signup: (email: string, pass: string) => Promise<{ success: boolean; loggedIn: boolean }>;
     logout: () => void;
 }
 

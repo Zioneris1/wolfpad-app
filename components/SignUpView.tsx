@@ -14,6 +14,7 @@ const SignUpView: React.FC<SignUpViewProps> = ({ onSwitchToLogin }) => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
+    const [successMsg, setSuccessMsg] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -25,9 +26,11 @@ const SignUpView: React.FC<SignUpViewProps> = ({ onSwitchToLogin }) => {
         setError('');
         setIsLoading(true);
         try {
-            const success = await signup(email, password);
+            const { success, loggedIn } = await signup(email, password);
             if (!success) {
                 setError('Could not create account. Please try again.');
+            } else if (!loggedIn) {
+                setSuccessMsg('Account created. Please check your email to verify your account before logging in.');
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
@@ -81,6 +84,7 @@ const SignUpView: React.FC<SignUpViewProps> = ({ onSwitchToLogin }) => {
                         style={inputStyle}
                     />
                     {error && <p style={{ color: 'var(--color-primary-red)', margin: 0, textAlign: 'center' }}>{error}</p>}
+                    {successMsg && <p style={{ color: 'var(--color-secondary-blue)', margin: 0, textAlign: 'center' }}>{successMsg}</p>}
                     <button type="submit" disabled={isLoading} style={{ background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)', padding: '0.75rem', fontSize: '1rem', marginTop: '0.5rem' }}>
                         {isLoading ? t('common.loading') : t('auth.signupButton')}
                     </button>

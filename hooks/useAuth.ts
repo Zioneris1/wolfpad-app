@@ -48,7 +48,8 @@ export const useAuth = () => {
         }
         // If email confirmations are enabled, user may be null until confirmed
         setUser(data.user ?? null);
-        return true;
+        const loggedIn = Boolean(data.user);
+        return { success: true, loggedIn };
     }, []);
 
 

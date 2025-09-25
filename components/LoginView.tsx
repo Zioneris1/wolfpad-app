@@ -25,7 +25,7 @@ const LoginView: React.FC<LoginViewProps> = ({ onSwitchToSignUp }) => {
                 setError('Invalid credentials. Please try again.');
             }
         } catch (err) {
-            setError('An unexpected error occurred.');
+            setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
         } finally {
             setIsLoading(false);
         }
@@ -43,7 +43,7 @@ const LoginView: React.FC<LoginViewProps> = ({ onSwitchToSignUp }) => {
     
     return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'var(--color-bg-main)', padding: '1rem' }}>
-            <div style={{ width: '100%', maxWidth: '400px', background: 'var(--color-bg-panel)', padding: '2.5rem', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
+            <div className="panel panel-padded card-elevated" style={{ width: '100%', maxWidth: '400px' }}>
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                     <Logo className="desktop-sidebar-logo" />
                     <h2 style={{ color: 'var(--color-text-primary)', margin: '0.5rem 0 0.25rem' }}>{t('auth.loginTitle')}</h2>
@@ -53,22 +53,22 @@ const LoginView: React.FC<LoginViewProps> = ({ onSwitchToSignUp }) => {
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <input
                         type="email"
+                        className="input"
                         placeholder={t('auth.email')}
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                         required
-                        style={inputStyle}
                     />
                     <input
                         type="password"
+                        className="input"
                         placeholder={t('auth.password')}
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                         required
-                        style={inputStyle}
                     />
                     {error && <p style={{ color: 'var(--color-primary-red)', margin: 0, textAlign: 'center' }}>{error}</p>}
-                    <button type="submit" disabled={isLoading} style={{ background: 'var(--color-primary-red)', color: 'var(--color-text-on-accent)', padding: '0.75rem', fontSize: '1rem', marginTop: '0.5rem' }}>
+                    <button type="submit" disabled={isLoading} className="btn btn-primary" style={{ padding: '0.75rem', fontSize: '1rem', marginTop: '0.5rem' }}>
                         {isLoading ? t('common.loading') : t('auth.loginButton')}
                     </button>
                 </form>

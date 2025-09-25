@@ -25,32 +25,31 @@ export const useAuth = () => {
     }, []);
 
     const login = useCallback(async (email: string, pass: string) => {
-        // Fix: Explicitly map `pass` to the `password` property.
-        const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
         if (error) {
             console.error('Login error:', error.message);
-            throw error;
+            throw new Error(error.message || 'Login failed');
         }
-        return !error;
+        setUser(data.user ?? null);
+        return true;
     }, []);
 
     const signup = useCallback(async (email: string, pass: string) => {
-        // Fix: Explicitly map `pass` to the `password` property.
-        const { error } = await supabase.auth.signUp({ 
+        const { data, error } = await supabase.auth.signUp({ 
             email, 
             password: pass,
             options: {
-                // You can add email confirmation logic here if desired
-                // emailRedirectTo: window.location.origin,
+                emailRedirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
             }
         });
         if (error) {
             console.error('Signup error:', error.message);
-            throw error;
+            throw new Error(error.message || 'Signup failed');
         }
-        // In a real app, you might want to show a "Check your email" message
-        // For this app, we'll auto-login the user after signup.
-        return !error;
+        // If email confirmations are enabled, user may be null until confirmed
+        setUser(data.user ?? null);
+        const loggedIn = Boolean(data.user);
+        return { success: true, loggedIn };
     }, []);
 
 

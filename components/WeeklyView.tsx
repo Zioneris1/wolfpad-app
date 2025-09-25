@@ -238,12 +238,13 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ tasks, onUpdateTask, onToggleCo
 
     return (
         <div className="h-full flex flex-col">
-            <h2 className="text-3xl font-bold tracking-tight mb-4" style={{ textShadow: `0 0 5px var(--color-secondary-blue)` }}>
+            <h2 className="text-3xl font-bold tracking-tight mb-4 heading-glow">
                 {t('weeklyView.title')}
             </h2>
             <div className="flex-1 overflow-x-auto pb-4">
                  <div className="flex space-x-4 min-w-max h-full" onDragEnd={handleDragEnd}>
                     {/* Unscheduled Column */}
+                    <div className="card-elevated rounded-xl">
                     <DayColumn
                         title="To Schedule"
                         date={null}
@@ -253,6 +254,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ tasks, onUpdateTask, onToggleCo
                         onToggleComplete={onToggleComplete}
                         draggedTaskId={draggedTaskId}
                     />
+                    </div>
 
                     {/* Day Columns */}
                     {weekDays.map(day => {
@@ -261,6 +263,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ tasks, onUpdateTask, onToggleCo
                         const isToday = dateKey === todayStr;
 
                         return (
+                            <div className="card-elevated rounded-xl">
                             <DayColumn
                                 key={dateKey}
                                 title={<DayTitle day={day} />}
@@ -272,6 +275,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ tasks, onUpdateTask, onToggleCo
                                 onToggleComplete={onToggleComplete}
                                 draggedTaskId={draggedTaskId}
                             />
+                            </div>
                         );
                     })}
                 </div>

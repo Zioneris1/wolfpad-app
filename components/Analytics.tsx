@@ -27,7 +27,7 @@ interface StatCardProps {
 const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color, onClick }) => (
     <div
         onClick={onClick}
-        className={`p-5 rounded-xl shadow-lg flex items-center space-x-4 transition-all duration-300 ${onClick ? 'cursor-pointer hover:shadow-2xl hover:-translate-y-1' : ''}`}
+        className={`p-5 rounded-xl card-tinted flex items-center space-x-4 transition-all duration-300 ${onClick ? 'cursor-pointer hover:-translate-y-1' : ''}`}
         style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}
     >
         <div className="flex-shrink-0 flex items-center justify-center h-16 w-16 rounded-2xl" style={{ backgroundColor: color }}>
@@ -140,7 +140,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ tasks, moneyManager, onNavigateTo
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
                 {/* Task Completion */}
-                <div className="lg:col-span-1 p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
+                <div className="lg:col-span-1 p-6 rounded-xl card-elevated" style={{ background: 'var(--color-bg-panel)' }}>
                     <h3 className="font-bold text-lg mb-4">{t('analyticsView.completionRate')}</h3>
                     <DonutChart completed={completedTasks} total={totalTasks} />
                     <div className="flex justify-around mt-4 text-center">
@@ -156,7 +156,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ tasks, moneyManager, onNavigateTo
                 </div>
 
                 {/* Financial Overview & Reports */}
-                <div className="lg:col-span-2 p-6 rounded-xl shadow-lg space-y-6" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
+                <div className="lg:col-span-2 p-6 rounded-xl card-elevated space-y-6" style={{ background: 'var(--color-bg-panel)' }}>
                      <h3 className="font-bold text-lg">Financial Overview (This Month)</h3>
                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <StatCard 

@@ -26,6 +26,7 @@ import Analytics from './components/Analytics';
 import AiAgentsView from './components/AiAgentsView';
 import TheDenView from './components/TheDenView';
 import SettingsView from './components/SettingsView';
+import DesignGuide from './components/DesignGuide';
 import TaskForm from './components/TaskForm';
 import TaskDetail from './components/TaskDetail';
 import AiAssistant from './components/AiAssistant';
@@ -138,6 +139,8 @@ const AppContent: React.FC = () => {
                 return <TheDenView journalManager={journalManager} />;
             case 'settings':
                 return <SettingsView />;
+            case 'designGuide':
+                return <DesignGuide />;
             default:
                 return <Dashboard 
                     tasks={taskManager.tasks} 
@@ -193,7 +196,7 @@ const AppContent: React.FC = () => {
             {!isMobile && <DesktopSidebar currentView={view} setView={setView} onAddTask={() => handleOpenTaskForm()} tasks={taskManager.tasks} />}
 
             <main style={{ flex: 1, overflowY: 'auto', padding: isMobile ? '1rem' : '1rem 2.5rem', paddingBottom: isMobile ? '80px' : '1rem' }}>
-                {isMobile && <Header onAddTask={() => handleOpenTaskForm()} tasks={taskManager.tasks} />}
+                {isMobile && <Header onAddTask={() => handleOpenTaskForm()} tasks={taskManager.tasks} setView={setView} />}
                 {renderView()}
             </main>
 

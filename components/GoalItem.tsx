@@ -47,7 +47,7 @@ const GoalItem: React.FC<GoalItemProps> = (props) => {
     };
 
     return (
-        <div className="bg-[var(--color-bg-panel)] border border-[var(--color-border)] rounded-lg shadow-lg flex flex-col transition-all duration-300 border-t-4" style={{borderColor: 'var(--color-secondary-blue)'}}>
+        <div className="bg-[var(--color-bg-panel)] border border-[var(--color-border)] rounded-lg card-elevated flex flex-col transition-all duration-300 border-t-4" style={{borderColor: 'var(--color-secondary-blue)'}}>
             
             {/* Main Card Content */}
             <div className="p-5 flex flex-col flex-grow">
@@ -65,11 +65,11 @@ const GoalItem: React.FC<GoalItemProps> = (props) => {
 
                 {/* Stats */}
                 <div className="mt-4 grid grid-cols-2 gap-4 pt-4 border-t border-dashed" style={{borderColor: 'var(--color-border)'}}>
-                    <div>
+                    <div className="panel-dark p-3 rounded glow-accent">
                         <div className="text-3xl font-bold" style={{color: progressColor}}>{goal.progress}%</div>
                         <div className="text-xs uppercase tracking-wider" style={{color: 'var(--color-text-secondary)'}}>{t('goalItem.progress')}</div>
                     </div>
-                     <div>
+                     <div className="panel-dark p-3 rounded card-tinted">
                         <div className="text-3xl font-bold" style={{color: 'var(--color-text-primary)'}}>{goal.completedTaskCount}<span className="text-lg" style={{color: 'var(--color-text-secondary)'}}>/ {goal.taskCount}</span></div>
                         <div className="text-xs uppercase tracking-wider" style={{color: 'var(--color-text-secondary)'}}>{t('common.tasks')} {t('dashboard.completed')}</div>
                     </div>

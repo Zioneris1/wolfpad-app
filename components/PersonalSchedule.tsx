@@ -173,18 +173,18 @@ const PersonalSchedule: React.FC<PersonalScheduleProps> = ({ scheduleManager }) 
 
     return (
         <div style={{ padding: '1.5rem 0' }}>
-            <h2 style={{ textShadow: `0 0 5px var(--color-secondary-blue)` }}>{t('scheduleView.weeklyRoutine')}</h2>
+            <h2 className="heading-glow">{t('scheduleView.weeklyRoutine')}</h2>
 
-            <div style={{ background: 'var(--color-bg-panel)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--color-border)', marginBottom: '2rem' }}>
+            <div className="panel panel-padded card-elevated" style={{ marginBottom: '2rem' }}>
                 <h3 style={{ marginTop: 0 }}>{t('scheduleView.addBlockTitle')}</h3>
                 <form onSubmit={handleSubmit} className="schedule-form" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end' }}>
-                    <div style={{flex: 2}}><label>Activity</label><input type="text" placeholder={t('scheduleView.activityNamePlaceholder')} value={name} onChange={e => setName(e.target.value)} required style={formInputStyle}/></div>
-                    <div><label>Day</label><select value={day} onChange={e => setDay(Number(e.target.value))} style={formInputStyle}>
+                    <div style={{flex: 2}}><label>Activity</label><input className="input" type="text" placeholder={t('scheduleView.activityNamePlaceholder')} value={name} onChange={e => setName(e.target.value)} required /></div>
+                    <div><label>Day</label><select className="select" value={day} onChange={e => setDay(Number(e.target.value))}>
                         {weekDays.map((d, i) => <option key={i} value={i}>{d}</option>)}
                     </select></div>
-                    <div><label>{t('scheduleView.from')}</label><input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} required style={formInputStyle}/></div>
-                    <div><label>{t('scheduleView.to')}</label><input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} required style={formInputStyle}/></div>
-                    <button type="submit" style={{height: '45px', background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>{t('scheduleView.addBlock')}</button>
+                    <div><label>{t('scheduleView.from')}</label><input className="input" type="time" value={startTime} onChange={e => setStartTime(e.target.value)} required /></div>
+                    <div><label>{t('scheduleView.to')}</label><input className="input" type="time" value={endTime} onChange={e => setEndTime(e.target.value)} required /></div>
+                    <button type="submit" className="btn btn-primary" style={{height: '45px'}}>{t('scheduleView.addBlock')}</button>
                 </form>
             </div>
 

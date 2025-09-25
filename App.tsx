@@ -3,6 +3,7 @@ import type { View, Task, AppContextData } from './types';
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider, useAuthContext } from './context/AuthContext';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Hooks
 import { useTaskManager } from './hooks/useTaskManager';
@@ -154,8 +155,12 @@ const AppContent: React.FC = () => {
     };
     
     // Simple check for mobile for layout switching
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const [isMobile, setIsMobile] = useState(false);
+    const [isClient, setIsClient] = useState(false);
+    
     useEffect(() => {
+        setIsClient(true);
+        setIsMobile(window.innerWidth < 768);
         const handleResize = () => setIsMobile(window.innerWidth < 768);
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
@@ -169,7 +174,7 @@ const AppContent: React.FC = () => {
         currentView: view,
     };
 
-    if (authLoading) {
+    if (authLoading || !isClient) {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--color-bg-main)', color: 'var(--color-text-primary)' }}>
                 Loading...
@@ -230,9 +235,11 @@ const ThemedAndLocalizedApp: React.FC = () => {
 
 const App: React.FC = () => {
     return (
-        <AuthProvider>
-            <ThemedAndLocalizedApp />
-        </AuthProvider>
+        <ErrorBoundary>
+            <AuthProvider>
+                <ThemedAndLocalizedApp />
+            </AuthProvider>
+        </ErrorBoundary>
     );
 };
 

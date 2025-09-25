@@ -11,3 +11,9 @@ dist/
 .env
 .env.local
 
+node_modules/
+dist/
+.vscode/
+.env
+.env.local
+

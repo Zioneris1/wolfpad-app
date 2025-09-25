@@ -19,6 +19,11 @@ export default defineConfig({
   },
   define: {
     // Ensure environment variables are available at build time
-    'import.meta.env.VITE_API_KEY': JSON.stringify(process.env.VITE_API_KEY)
+    'import.meta.env.VITE_API_KEY': JSON.stringify(process.env.VITE_API_KEY),
+    // Fix hydration issues
+    'import.meta.env.SSR': false
+  },
+  ssr: {
+    noExternal: ['@supabase/supabase-js']
   }
 })

@@ -94,3 +94,14 @@ body {
     color: var(--color-text-secondary);
     border-radius: 16px;
 }
+
+/* Hex and neon helpers */
+.hex {
+    clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+}
+.shadow-neon-blue {
+    box-shadow: 0 0 12px var(--color-secondary-blue-glow);
+}
+.underline-glow {
+    box-shadow: 0 0 8px var(--color-secondary-blue-glow);
+}

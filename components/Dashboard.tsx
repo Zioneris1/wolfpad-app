@@ -27,7 +27,7 @@ const CheckCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className=
 
 // --- NEW COMPONENTS ---
 const StatCard: React.FC<{ value: number; label: string; icon: ReactNode; colorClass: string; glow: string }> = ({ value, label, icon, colorClass, glow }) => (
-    <div className="flex items-center p-4 rounded-lg hover-raise" style={{ backgroundColor: 'rgba(42, 47, 56, 0.6)', border: '1px solid var(--color-border)' }}>
+    <div className="flex items-center p-4 hover-raise hex neon-border glass-panel" style={{ backgroundColor: 'rgba(42, 47, 56, 0.5)' }}>
         <div className={`flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-lg ${colorClass} text-white`} style={{ boxShadow: `0 0 15px ${glow}` }}>
             {icon}
         </div>
@@ -145,7 +145,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                     </header>
 
                     <div className="mt-6 border-b glass-panel neon-border cut-corners" style={{ borderColor: 'var(--color-border)', backgroundColor: 'rgba(26,29,36,0.55)' }}>
-                        <nav className="-mb-px flex space-x-6 scanline" aria-label="Tabs" style={{ paddingLeft: '0.75rem' }}>
+                        <nav className="-mb-px flex space-x-6 scanline" aria-label="Tabs" style={{ paddingLeft: '0.75rem', position: 'relative' }}>
                             {tabs.map((tab) => (
                                 <button
                                     key={tab.id}
@@ -160,6 +160,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                                     {tab.label}
                                 </button>
                             ))}
+                            <div className="underline-glow" style={{ position: 'absolute', bottom: 0, left: 0, height: '2px', width: `${(activeTab === 'today' ? 33 : activeTab === 'upcoming' ? 66 : 100)}%`, background: 'var(--color-secondary-blue)', transition: 'width 250ms ease' }}></div>
                         </nav>
                     </div>
 

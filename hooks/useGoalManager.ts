@@ -8,7 +8,6 @@ export const useGoalManager = (tasks: Task[]) => {
     const { user } = useAuthContext();
     const [goals, setGoals] = useState<Goal[]>([]);
     const [loading, setLoading] = useState(true);
-    const prevTasksRef = useRef<Task[]>([]);
 
     useEffect(() => {
         if (user) {
@@ -75,21 +74,16 @@ export const useGoalManager = (tasks: Task[]) => {
         setGoals(prevGoals => prevGoals.filter(goal => goal.id !== id));
     }, [user]);
 
+    // Create a stable reference for tasks to prevent infinite re-renders
+    const tasksRef = useRef(tasks);
+    if (tasks !== tasksRef.current) {
+        tasksRef.current = tasks;
+    }
+
     const goalsWithProgress: GoalWithProgress[] = useMemo(() => {
-        // Only recalculate if tasks actually changed
-        const tasksChanged = tasks.length !== prevTasksRef.current.length || 
-            tasks.some((task, index) => {
-                const prevTask = prevTasksRef.current[index];
-                return !prevTask || task.id !== prevTask.id || task.completed !== prevTask.completed || task.goal_id !== prevTask.goal_id;
-            });
-        
-        if (tasksChanged) {
-            prevTasksRef.current = tasks;
-        }
-        
         return goals.map(goal => {
-            // Fix: Changed goalId to goal_id to match Task type.
-            const associatedTasks = tasks.filter(task => task.goal_id === goal.id);
+            // Use the ref to avoid dependency on tasks array
+            const associatedTasks = tasksRef.current.filter(task => task.goal_id === goal.id);
             const completedTasks = associatedTasks.filter(task => task.completed);
             const taskCount = associatedTasks.length;
             const completedTaskCount = completedTasks.length;
@@ -102,7 +96,7 @@ export const useGoalManager = (tasks: Task[]) => {
                 progress
             };
         });
-    }, [goals, tasks]);
+    }, [goals]);
 
     return {
         goals: goalsWithProgress,

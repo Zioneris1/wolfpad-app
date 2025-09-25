@@ -43,10 +43,7 @@ const AppContent: React.FC = () => {
     const [dashboardFilter, setDashboardFilter] = useState<'pending' | 'completed' | 'all'>('pending');
 
     const taskManager = useTaskManager();
-    
-    // Memoize tasks to prevent infinite re-renders
-    const memoizedTasks = useMemo(() => taskManager.tasks, [taskManager.tasks]);
-    const goalManager = useGoalManager(memoizedTasks);
+    const goalManager = useGoalManager(taskManager.tasks);
     const scheduleManager = useScheduleManager();
     const moneyManager = useMoneyManager();
     const journalManager = useJournalManager();

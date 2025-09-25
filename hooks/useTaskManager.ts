@@ -232,11 +232,8 @@ export const useTaskManager = () => {
         }
     }, [tasks, updateTask]);
 
-    // Memoize tasks to prevent unnecessary re-renders
-    const memoizedTasks = useMemo(() => tasks, [tasks]);
-
     return { 
-        tasks: memoizedTasks,
+        tasks,
         loading,
         addTask, 
         addBulkTasks,

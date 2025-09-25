@@ -12,7 +12,7 @@ const PrioritizerIcon = () => <svg viewBox="0 0 24 24" fill="currentColor"><path
 const CreatorIcon = () => <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>;
 const StrategistIcon = () => <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path><path d="M12 12m-5 0a5 5 0 1010 0 5 5 0 10-10 0"></path></svg>;
 
-const AgentOutput: React.FC<{ result: string; isLoading: boolean }> = ({ result, isLoading }) => {
+const AgentOutput: React.FC<{ result: string; isLoading: boolean; onCopy?: () => void; onSave?: () => void }> = ({ result, isLoading, onCopy, onSave }) => {
     const { t } = useTranslation();
     const [copied, setCopied] = useState(false);
 
@@ -28,9 +28,16 @@ const AgentOutput: React.FC<{ result: string; isLoading: boolean }> = ({ result,
             <div className="flex justify-between items-center mb-2">
                 <span className="text-xs uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>{t('aiAgentsView.agentResponse')}</span>
                 {result && !isLoading && (
-                    <button onClick={handleCopy} className="text-xs font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-secondary-blue)'}}>
-                        {copied ? t('aiAgentsView.copied') : t('aiAgentsView.copy')}
-                    </button>
+                    <div className="flex gap-2">
+                        <button onClick={() => { handleCopy(); onCopy && onCopy(); }} className="text-xs font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-secondary-blue)'}}>
+                            {copied ? t('aiAgentsView.copied') : t('aiAgentsView.copy')}
+                        </button>
+                        {onSave && (
+                            <button onClick={onSave} className="text-xs font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', color: 'var(--color-text-primary)'}}>
+                                Save to notes
+                            </button>
+                        )}
+                    </div>
                 )}
             </div>
             <div className="text-sm whitespace-pre-wrap" style={{ color: 'var(--color-text-primary)'}}>
@@ -81,8 +88,10 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
         try {
             const result = await getTaskPrioritization(pendingTasks);
             setPrioritizerResult(result);
+            showToast('Prioritizer completed');
         } catch (error) {
             setPrioritizerResult(error instanceof Error ? error.message : String(error));
+            showToast('Prioritizer failed');
         } finally {
             setIsPrioritizerLoading(false);
         }
@@ -95,8 +104,10 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
         try {
             const result = await generateContent(creatorPrompt);
             setCreatorResult(result);
+            showToast('Content generated');
         } catch (error) {
             setCreatorResult(error instanceof Error ? error.message : String(error));
+            showToast('Content generation failed');
         } finally {
             setIsCreatorLoading(false);
         }
@@ -117,8 +128,10 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
         try {
             const result = await getGoalStrategy(selectedGoal);
             setStrategistResult(result);
+            showToast('Strategy generated');
         } catch (error) {
             setStrategistResult(error instanceof Error ? error.message : String(error));
+            showToast('Strategy generation failed');
         } finally {
             setIsStrategistLoading(false);
         }
@@ -131,6 +144,13 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
         borderRadius: '4px',
         padding: '0.75rem',
         color: 'var(--color-text-primary)'
+    };
+
+    // Toast system
+    const [toasts, setToasts] = useState<string[]>([]);
+    const showToast = (message: string) => {
+        setToasts(prev => [...prev, message]);
+        setTimeout(() => setToasts(prev => prev.slice(1)), 2500);
     };
 
     return (
@@ -178,7 +198,7 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
                     <button aria-label="Clear Prioritizer Output" onClick={() => setPrioritizerResult('')} className="px-3 rounded-lg" style={{ background: 'var(--color-bg-dark)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)'}}>Clear</button>
                     </div>
                     {pendingTasks.length === 0 && <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem'}}>{t('aiAgentsView.noPendingTasks')}</p>}
-                    <AgentOutput result={prioritizerResult} isLoading={isPrioritizerLoading} />
+                    <AgentOutput result={prioritizerResult} isLoading={isPrioritizerLoading} onCopy={() => showToast('Copied prioritizer output')} onSave={() => showToast('Saved to notes (coming soon)')} />
                 </div>
                 </div>
 
@@ -216,7 +236,7 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
                         <span className="hidden md:inline text-xs px-2 py-1 rounded border" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)'}}>Ctrl/⌘ + Enter</span>
                         <button aria-label="Clear Content Creator" onClick={() => { setCreatorPrompt(''); setCreatorResult(''); }} className="px-3 rounded-lg" style={{ background: 'var(--color-bg-dark)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)'}}>Clear</button>
                     </div>
-                    <AgentOutput result={creatorResult} isLoading={isCreatorLoading} />
+                    <AgentOutput result={creatorResult} isLoading={isCreatorLoading} onCopy={() => showToast('Copied content')} onSave={() => showToast('Saved to notes (coming soon)')} />
                 </div>
                 </div>
 
@@ -249,9 +269,15 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
                         <button aria-label="Clear Strategist Output" onClick={() => setStrategistResult('')} className="px-3 rounded-lg" style={{ background: 'var(--color-bg-dark)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)'}}>Clear</button>
                     </div>
                      {goals.length === 0 && <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem'}}>{t('aiAgentsView.noGoals')}</p>}
-                    <AgentOutput result={strategistResult} isLoading={isStrategistLoading} />
+                    <AgentOutput result={strategistResult} isLoading={isStrategistLoading} onCopy={() => showToast('Copied strategy')} onSave={() => showToast('Saved to notes (coming soon)')} />
                 </div>
                 </div>
+            </div>
+            {/* Toasts */}
+            <div className="toast-container">
+                {toasts.map((msg, idx) => (
+                    <div key={idx} className="toast fade-in">{msg}</div>
+                ))}
             </div>
         </div>
     );

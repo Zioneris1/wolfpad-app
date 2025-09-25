@@ -103,9 +103,10 @@ interface DayColumnProps {
     onDrop: (date: string | null) => void;
     onToggleComplete: (id: string) => void;
     draggedTaskId: string | null;
+    isMobile: boolean;
 }
 
-const DayColumn: React.FC<DayColumnProps> = ({ title, date, tasks, isToday = false, onDragStart, onDrop, onToggleComplete, draggedTaskId }) => {
+const DayColumn: React.FC<DayColumnProps> = ({ title, date, tasks, isToday = false, onDragStart, onDrop, onToggleComplete, draggedTaskId, isMobile }) => {
     const [isDragOver, setIsDragOver] = useState(false);
     const pendingTaskCount = tasks.filter(t => !t.completed).length;
 
@@ -134,10 +135,11 @@ const DayColumn: React.FC<DayColumnProps> = ({ title, date, tasks, isToday = fal
             className="flex-shrink-0 w-80 rounded-2xl p-1 transition-all duration-200 border glass-panel neon-border cut-corners hover-raise"
             style={{ 
                 background: isDragOver ? 'rgba(var(--color-secondary-blue-rgb), 0.15)' : 'var(--color-bg-panel)',
-                borderColor: isToday ? 'var(--color-secondary-blue)' : 'var(--color-border)'
+                borderColor: isToday ? 'var(--color-secondary-blue)' : 'var(--color-border)',
+                width: isMobile ? '17rem' : undefined
              }}
         >
-            <div className="p-3 mb-2 flex justify-between items-center border-b" style={{ borderColor: 'var(--color-border)' }}>
+            <div className="p-3 mb-2 flex justify-between items-center border-b" style={{ borderColor: 'var(--color-border)', padding: isMobile ? '0.5rem' : undefined }}>
                  <div>
                     <span className="font-bold text-base" style={{ color: 'var(--color-text-primary)'}}>{title}</span>
                     {fullDate && <span className="ml-2 text-sm" style={{color: 'var(--color-text-secondary)'}}><DayDate date={fullDate} /></span>}
@@ -146,7 +148,7 @@ const DayColumn: React.FC<DayColumnProps> = ({ title, date, tasks, isToday = fal
                     {pendingTaskCount}
                 </span>
             </div>
-            <div className="space-y-3 p-2 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 300px)' }}>
+            <div className="space-y-3 p-2 overflow-y-auto" style={{ maxHeight: isMobile ? 'calc(100vh - 260px - env(safe-area-inset-bottom, 0))' : 'calc(100vh - 300px)', padding: isMobile ? '0.4rem' : undefined }}>
                 {tasks.length > 0 ? (
                     tasks.map(task => <WeeklyTaskCard 
                         key={task.id} 
@@ -169,6 +171,13 @@ const DayColumn: React.FC<DayColumnProps> = ({ title, date, tasks, isToday = fal
 const WeeklyView: React.FC<WeeklyViewProps> = ({ tasks, onUpdateTask, onToggleComplete }) => {
     const { t } = useTranslation();
     const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const onResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', onResize);
+        return () => window.removeEventListener('resize', onResize);
+    }, []);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -243,7 +252,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ tasks, onUpdateTask, onToggleCo
             <h2 className="text-3xl font-bold tracking-tight mb-4" style={{ textShadow: `0 0 5px var(--color-secondary-blue)` }}>
                 {t('weeklyView.title')}
             </h2>
-            <div className="flex-1 overflow-x-auto pb-4">
+            <div className="flex-1 overflow-x-auto pb-4" style={{ paddingBottom: 'calc(84px + env(safe-area-inset-bottom, 0))' }}>
                  <div className="flex space-x-4 min-w-max h-full" onDragEnd={handleDragEnd}>
                     {/* Unscheduled Column */}
                     <DayColumn
@@ -254,6 +263,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ tasks, onUpdateTask, onToggleCo
                         onDrop={handleDrop}
                         onToggleComplete={onToggleComplete}
                         draggedTaskId={draggedTaskId}
+                        isMobile={isMobile}
                     />
 
                     {/* Day Columns */}
@@ -273,6 +283,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ tasks, onUpdateTask, onToggleCo
                                 onDrop={handleDrop}
                                 onToggleComplete={onToggleComplete}
                                 draggedTaskId={draggedTaskId}
+                                isMobile={isMobile}
                             />
                         );
                     })}

@@ -104,14 +104,14 @@ const GoalsView: React.FC<GoalsViewProps> = (props) => {
     };
     
     return (
-        <div className="py-2 md:py-6">
+        <div className="py-2 md:py-6" style={{ paddingBottom: 'calc(84px + env(safe-area-inset-bottom, 0))' }}>
             <div className="flex justify-between items-center mb-6">
                  <h2 className="text-3xl font-bold tracking-tight m-0" style={{ textShadow: `0 0 5px var(--color-secondary-blue)` }}>{t('goalsView.title')}</h2>
                  <button onClick={() => handleOpenForm()} className="px-4 py-2 rounded-md font-semibold" style={{background: 'var(--color-primary-red)', color: 'var(--color-text-on-accent)', border: 'none' }}>{t('goalsView.newGoal')}</button>
             </div>
             
             {goals.length > 0 ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" style={{ gap: '1rem' }}>
                     {goals.map(goal => (
                         <GoalItem
                             key={goal.id}

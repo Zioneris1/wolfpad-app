@@ -28,6 +28,9 @@ body {
     padding-left: 1rem;
     padding-right: 1rem;
 }
+@media (max-width: 767px) {
+  .wp-container { padding-left: 0.75rem; padding-right: 0.75rem; }
+}
 
 /* Glow accents */
 .glow-title {
@@ -93,6 +96,9 @@ body {
     padding: 0.5rem 0.75rem;
     color: var(--color-text-secondary);
     border-radius: 16px;
+}
+@media (max-width: 767px) {
+  .neo-table-header { grid-template-columns: 22px 22px 1fr 90px 70px 70px 70px; gap: 0.5rem; padding: 0.4rem 0.5rem; }
 }
 /* Mobile bottom nav */
 .bottom-nav {

@@ -141,7 +141,7 @@ const PersonalSchedule: React.FC<PersonalScheduleProps> = ({ scheduleManager }) 
     const renderMobileView = () => {
         const selectedDayName = weekDays[selectedDayIndex];
         return (
-            <div>
+            <div style={{ paddingBottom: 'calc(84px + env(safe-area-inset-bottom, 0))' }}>
                 <div className="flex overflow-x-auto pb-4 -mx-4 px-4">
                     <div className="flex space-x-2">
                         {weekDays.map((dayName, dayIndex) => (

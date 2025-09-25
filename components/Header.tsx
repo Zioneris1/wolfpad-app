@@ -3,6 +3,7 @@ import type { Task } from '../types';
 import { useTranslation } from '../hooks/useTranslation';
 import TimeTrackerHeader from './TimeTrackerHeader';
 import Logo from './Logo';
+import { useTheme } from '../hooks/useTheme';
 
 
 interface HeaderProps {
@@ -14,12 +15,18 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onAddTask, tasks, setView }) => {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
+    const { themes, theme, setTheme } = useTheme();
 
     return (
         <header className="main-header">
             <div className="main-header-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                  <Logo className="mobile-header-logo" />
                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                 <button onClick={() => {
+                    const idx = themes.findIndex(x => x.id === theme);
+                    const next = themes[(idx + 1) % themes.length]?.id;
+                    if (next) setTheme(next);
+                 }} title="Cycle Theme" className="btn btn-ghost" style={{ padding: '0.4rem 0.6rem' }}>🎨</button>
                  <button onClick={() => setOpen((v) => !v)} title="Menu" style={{
                     background: 'var(--color-bg-panel)',
                     color: 'var(--color-text-primary)',

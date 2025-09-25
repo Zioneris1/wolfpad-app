@@ -29,6 +29,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                     setThemeState(profile.theme);
                 }
             });
+        } else {
+            try {
+                const local = localStorage.getItem('wolfpad_theme');
+                if (local && themes.some(t => t.id === local)) {
+                    setThemeState(local);
+                }
+            } catch {}
         }
     }, [user]);
 
@@ -40,9 +47,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }, [theme]);
     
     const setTheme = (newTheme: string) => {
-        if (!user) return;
         setThemeState(newTheme);
-        profileApi.updateProfile(user.id, { theme: newTheme });
+        if (user) {
+            profileApi.updateProfile(user.id, { theme: newTheme });
+        } else {
+            try { localStorage.setItem('wolfpad_theme', newTheme); } catch {}
+        }
     };
 
     const value = useMemo(() => ({ theme, setTheme, themes }), [theme]);

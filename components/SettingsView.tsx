@@ -40,10 +40,14 @@ const SettingsView: React.FC = () => {
                                 onClick={() => setTheme(opt.id)}
                                 className={`text-left p-3 rounded-lg border transition-all ${theme === opt.id ? 'ring-2' : ''}`}
                                 style={{ borderColor: 'var(--color-border)' }}
+                                aria-label={`Switch to ${opt.name}`}
                             >
-                                <div className="flex items-center gap-2">
-                                    <span className="inline-block w-4 h-4 rounded" style={{ background: 'var(--color-secondary-blue)' }} />
-                                    <span>{opt.name}</span>
+                                <div className="flex items-center gap-3">
+                                    <span className="inline-block w-9 h-6 rounded gradient-card" style={{ background: `linear-gradient(135deg, ${opt.styles['--color-secondary-blue-glow']}, ${opt.styles['--color-primary-red-glow']})` }} />
+                                    <div>
+                                        <div className="text-sm">{opt.name}</div>
+                                        <div className="text-xs text-secondary">{opt.id}</div>
+                                    </div>
                                 </div>
                             </button>
                         ))}

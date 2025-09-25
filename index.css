@@ -40,3 +40,13 @@ body {
 @media (max-width: 768px) {
   .desktop-sidebar-logo { display: none; }
 }
+
+/* Utility animations */
+.fade-in {
+  animation: fadeIn 200ms ease-in forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

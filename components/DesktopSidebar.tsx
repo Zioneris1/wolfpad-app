@@ -73,6 +73,9 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ currentView, setView, o
         { view: 'analytics', labelKey: 'header.analytics' },
         { view: 'agents', labelKey: 'header.aiAgents' },
         { view: 'settings', labelKey: 'header.settings' },
+        // Non-translated entry for Design Guide
+        // @ts-ignore
+        { view: 'designGuide' as any, labelKey: 'Design Guide' },
     ];
 
     const navButtonStyle = (isActive: boolean): React.CSSProperties => ({
@@ -136,7 +139,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ currentView, setView, o
                         onMouseOver={e => { if (currentView !== item.view) e.currentTarget.style.background = 'var(--color-bg-panel)'; }}
                         onMouseOut={e => { if (currentView !== item.view) e.currentTarget.style.background = 'transparent'; }}
                     >
-                        {t(item.labelKey)}
+                        {item.labelKey.startsWith('header.') ? t(item.labelKey) : item.labelKey}
                     </button>
                 ))}
             </nav>

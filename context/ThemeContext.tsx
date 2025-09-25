@@ -125,16 +125,21 @@ const themes: ThemeOption[] = [
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { user } = useAuthContext();
-    const [theme, setThemeState] = useState(themes[0].id);
+    const [theme, setThemeState] = useState(() => {
+        const stored = typeof window !== 'undefined' ? window.localStorage.getItem('wolfpad_theme') : null;
+        return stored && themes.some(t => t.id === stored) ? stored : themes[0].id;
+    });
 
     useEffect(() => {
-        if (user) {
-            profileApi.getProfile(user.id).then(profile => {
-                if (profile?.theme && themes.some(t => t.id === profile.theme)) {
-                    setThemeState(profile.theme);
+        if (!user) return;
+        profileApi.getProfile(user.id).then(profile => {
+            if (profile?.theme && themes.some(t => t.id === profile.theme)) {
+                setThemeState(profile.theme);
+                if (typeof window !== 'undefined') {
+                    window.localStorage.setItem('wolfpad_theme', profile.theme);
                 }
-            });
-        }
+            }
+        });
     }, [user]);
 
     useEffect(() => {
@@ -145,9 +150,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }, [theme]);
     
     const setTheme = (newTheme: string) => {
-        if (!user) return;
+        if (!themes.some(t => t.id === newTheme)) return;
         setThemeState(newTheme);
-        profileApi.updateProfile(user.id, { theme: newTheme });
+        if (typeof window !== 'undefined') {
+            window.localStorage.setItem('wolfpad_theme', newTheme);
+        }
+        if (user) {
+            profileApi.updateProfile(user.id, { theme: newTheme });
+        }
     };
 
     const value = useMemo(() => ({ theme, setTheme, themes }), [theme]);

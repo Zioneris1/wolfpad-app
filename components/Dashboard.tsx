@@ -185,7 +185,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
                 {/* --- Right Column (Sidebar) --- */}
                 <div className="mt-8 lg:mt-0 lg:col-span-1">
-                     <div className="space-y-6 p-4 md:p-6 rounded-lg" style={{backgroundColor: 'rgba(26, 29, 36, 0.6)', border: '1px solid var(--color-border)', backdropFilter: 'blur(10px)'}}>
+                     <div className="space-y-6 p-4 md:p-6 rounded-lg glass-panel neon-border cut-corners hover-raise" style={{backgroundColor: 'rgba(26, 29, 36, 0.6)'}}>
                         <div>
                             <h3 className="text-lg font-medium" style={{ color: 'var(--color-text-primary)' }}>Stats</h3>
                             <div className="mt-4 space-y-4">

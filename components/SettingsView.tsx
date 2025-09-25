@@ -27,7 +27,7 @@ const SettingsView: React.FC = () => {
             </h2>
 
             <div className="max-w-2xl mx-auto space-y-8">
-                <div className="p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
+                <div className="p-6 rounded-xl shadow-lg glass-panel neon-border cut-corners hover-raise" style={{ backgroundColor: 'rgba(26,29,36,0.55)' }}>
                     <h3 className="font-bold text-lg mb-2">{t('settingsView.dataManagement')}</h3>
 
                     <div className="pt-4 mt-4 border-t" style={{ borderColor: 'var(--color-border)' }}>
@@ -62,7 +62,7 @@ const SettingsView: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
+                <div className="p-6 rounded-xl shadow-lg glass-panel neon-border cut-corners hover-raise" style={{ backgroundColor: 'rgba(26,29,36,0.55)' }}>
                     <h3 className="font-bold text-lg mb-4">Notification Preferences</h3>
                     <div className="space-y-4">
                         <div className="flex items-center justify-between">

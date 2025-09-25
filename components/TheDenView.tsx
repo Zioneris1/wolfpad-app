@@ -118,7 +118,8 @@ const TheDenView: React.FC<TheDenViewProps> = ({ journalManager }) => {
             </h2>
 
             {/* Today's Entry Form */}
-            <Card>
+            <Card className="glass-panel neon-border cut-corners hover-raise">
+                            <Card className="glass-panel neon-border cut-corners hover-raise">
                 <CardContent>
                     <h3 className="font-bold text-lg mb-1">{t('theDen.todaysEntry')}</h3>
                     <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>

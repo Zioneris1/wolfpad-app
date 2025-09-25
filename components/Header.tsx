@@ -12,10 +12,17 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onAddTask, tasks }) => {
     const { t } = useTranslation();
+    const [isMobile, setIsMobile] = React.useState(false);
+    React.useEffect(() => {
+        const update = () => setIsMobile(window.innerWidth < 768);
+        update();
+        window.addEventListener('resize', update);
+        return () => window.removeEventListener('resize', update);
+    }, []);
 
     return (
         <header className="main-header">
-            <div className="main-header-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <div className="main-header-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isMobile ? '1rem' : '1.25rem' }}>
                  <Logo className="mobile-header-logo" />
                  <button onClick={onAddTask} className="mobile-add-task-btn" style={{
                     background: 'var(--color-primary-red)',
@@ -27,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({ onAddTask, tasks }) => {
                     fontSize: '1rem',
                  }}>{t('header.addTask')}</button>
             </div>
-            <TimeTrackerHeader tasks={tasks} />
+            {isMobile && <TimeTrackerHeader tasks={tasks} />}
         </header>
     );
 };

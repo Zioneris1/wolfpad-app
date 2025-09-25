@@ -8,9 +8,10 @@ interface AiAgentsViewProps {
     goals: GoalWithProgress[];
 }
 
-const PrioritizerIcon = () => <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"></path></svg>;
-const CreatorIcon = () => <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>;
-const StrategistIcon = () => <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path><path d="M12 12m-5 0a5 5 0 1010 0 5 5 0 10-10 0"></path></svg>;
+const iconSvgStyle: React.CSSProperties = { width: '100%', height: '100%' };
+const PrioritizerIcon = () => <svg viewBox="0 0 24 24" fill="currentColor" style={iconSvgStyle}><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"></path></svg>;
+const CreatorIcon = () => <svg viewBox="0 0 24 24" fill="currentColor" style={iconSvgStyle}><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>;
+const StrategistIcon = () => <svg viewBox="0 0 24 24" fill="currentColor" style={iconSvgStyle}><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path><path d="M12 12m-5 0a5 5 0 1010 0 5 5 0 10-10 0"></path></svg>;
 
 const AgentOutput: React.FC<{ result: string; isLoading: boolean }> = ({ result, isLoading }) => {
     const { t } = useTranslation();
@@ -117,55 +118,101 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
 
             <div className="agents-grid">
                 {/* Task Prioritizer Agent */}
-                <div className="agent-card prioritizer">
-                    <div className="agent-card-header">
-                        <div className="agent-card-icon" style={{color: 'var(--color-secondary-blue)'}}>
+                <div
+                    className="agent-card prioritizer"
+                    style={{
+                        background: 'var(--color-bg-panel)',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: '8px',
+                        padding: '1.25rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.75rem',
+                        transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+                    }}
+                    onMouseOver={e => { e.currentTarget.style.transform = 'scale(1.01)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.2)'; }}
+                    onMouseOut={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+                >
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <div style={{ width: 'clamp(40px, 8vw, 56px)', height: 'clamp(40px, 8vw, 56px)', color: 'var(--color-secondary-blue)' }}>
                             <PrioritizerIcon />
                         </div>
-                        <h3 style={{ margin: 0 }}>{t('aiAgentsView.taskPrioritizer')}</h3>
                     </div>
-                    <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', flex: 1 }}>{t('aiAgentsView.taskPrioritizerDesc')}</p>
-                    <button onClick={handleRunPrioritizer} disabled={isPrioritizerLoading || pendingTasks.length === 0} style={{width: '100%', background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>
-                        {isPrioritizerLoading ? t('aiAgentsView.runningAgent') : t('aiAgentsView.runAgent')}
-                    </button>
-                    {pendingTasks.length === 0 && <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem'}}>{t('aiAgentsView.noPendingTasks')}</p>}
+                    <h3 style={{ margin: 0, textAlign: 'center' }}>{t('aiAgentsView.taskPrioritizer')}</h3>
+                    <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>{t('aiAgentsView.taskPrioritizerDesc')}</p>
+                    <div style={{ marginTop: 'auto' }}>
+                        <button onClick={handleRunPrioritizer} disabled={isPrioritizerLoading || pendingTasks.length === 0} style={{width: '100%', background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>
+                            {isPrioritizerLoading ? t('aiAgentsView.runningAgent') : t('aiAgentsView.runAgent')}
+                        </button>
+                        {pendingTasks.length === 0 && <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem'}}>{t('aiAgentsView.noPendingTasks')}</p>}
+                    </div>
                     <AgentOutput result={prioritizerResult} isLoading={isPrioritizerLoading} />
                 </div>
 
                 {/* Content Creator Agent */}
-                <div className="agent-card creator">
-                    <div className="agent-card-header">
-                        <div className="agent-card-icon" style={{color: '#ff00ff'}}>
-                           <CreatorIcon />
+                <div
+                    className="agent-card creator"
+                    style={{
+                        background: 'var(--color-bg-panel)',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: '8px',
+                        padding: '1.25rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.75rem',
+                        transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+                    }}
+                    onMouseOver={e => { e.currentTarget.style.transform = 'scale(1.01)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.2)'; }}
+                    onMouseOut={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+                >
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <div style={{ width: 'clamp(40px, 8vw, 56px)', height: 'clamp(40px, 8vw, 56px)', color: '#64748b' }}>
+                            <CreatorIcon />
                         </div>
-                        <h3 style={{ margin: 0 }}>{t('aiAgentsView.contentCreator')}</h3>
                     </div>
+                    <h3 style={{ margin: 0, textAlign: 'center' }}>{t('aiAgentsView.contentCreator')}</h3>
                     <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>{t('aiAgentsView.contentCreatorDesc')}</p>
                     <textarea
                         value={creatorPrompt}
                         onChange={e => setCreatorPrompt(e.target.value)}
                         placeholder={t('aiAgentsView.promptPlaceholder')}
-                        style={{ ...inputStyle, minHeight: '80px', marginBottom: '1rem' }}
+                        style={{ ...inputStyle, minHeight: '80px' }}
                     />
-                    <button onClick={handleRunCreator} disabled={isCreatorLoading || !creatorPrompt} style={{width: '100%', background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>
-                        {isCreatorLoading ? t('aiAgentsView.runningAgent') : t('aiAgentsView.runAgent')}
-                    </button>
+                    <div style={{ marginTop: 'auto' }}>
+                        <button onClick={handleRunCreator} disabled={isCreatorLoading || !creatorPrompt} style={{width: '100%', background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>
+                            {isCreatorLoading ? t('aiAgentsView.runningAgent') : t('aiAgentsView.runAgent')}
+                        </button>
+                    </div>
                     <AgentOutput result={creatorResult} isLoading={isCreatorLoading} />
                 </div>
 
                 {/* Goal Strategist Agent */}
-                <div className="agent-card strategist">
-                     <div className="agent-card-header">
-                        <div className="agent-card-icon" style={{color: '#64ffda'}}>
-                           <StrategistIcon />
+                <div
+                    className="agent-card strategist"
+                    style={{
+                        background: 'var(--color-bg-panel)',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: '8px',
+                        padding: '1.25rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.75rem',
+                        transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+                    }}
+                    onMouseOver={e => { e.currentTarget.style.transform = 'scale(1.01)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.2)'; }}
+                    onMouseOut={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+                >
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <div style={{ width: 'clamp(40px, 8vw, 56px)', height: 'clamp(40px, 8vw, 56px)', color: '#14b8a6' }}>
+                            <StrategistIcon />
                         </div>
-                        <h3 style={{ margin: 0 }}>{t('aiAgentsView.goalStrategist')}</h3>
                     </div>
+                    <h3 style={{ margin: 0, textAlign: 'center' }}>{t('aiAgentsView.goalStrategist')}</h3>
                     <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>{t('aiAgentsView.goalStrategistDesc')}</p>
-                     <select
+                    <select
                         value={selectedGoalId}
                         onChange={e => setSelectedGoalId(e.target.value)}
-                        style={{ ...inputStyle, marginBottom: '1rem' }}
+                        style={{ ...inputStyle }}
                         disabled={goals.length === 0}
                     >
                         <option value="">{t('aiAgentsView.selectGoal')}</option>
@@ -173,10 +220,12 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
                             <option key={goal.id} value={goal.id}>{goal.name}</option>
                         ))}
                     </select>
-                    <button onClick={handleRunStrategist} disabled={isStrategistLoading || !selectedGoalId} style={{width: '100%', background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>
-                        {isStrategistLoading ? t('aiAgentsView.runningAgent') : t('aiAgentsView.runAgent')}
-                    </button>
-                     {goals.length === 0 && <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem'}}>{t('aiAgentsView.noGoals')}</p>}
+                    <div style={{ marginTop: 'auto' }}>
+                        <button onClick={handleRunStrategist} disabled={isStrategistLoading || !selectedGoalId} style={{width: '100%', background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>
+                            {isStrategistLoading ? t('aiAgentsView.runningAgent') : t('aiAgentsView.runAgent')}
+                        </button>
+                        {goals.length === 0 && <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem'}}>{t('aiAgentsView.noGoals')}</p>}
+                    </div>
                     <AgentOutput result={strategistResult} isLoading={isStrategistLoading} />
                 </div>
             </div>

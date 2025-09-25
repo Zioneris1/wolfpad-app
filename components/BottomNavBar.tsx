@@ -85,9 +85,9 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ currentView, setView }) => 
     );
 
     const MoreMenuOverlay = () => (
-        <div className={`more-menu-overlay ${isMoreMenuOpen ? 'open' : ''}`}>
-            <button className="close-btn" onClick={() => setIsMoreMenuOpen(false)}>&times;</button>
-            <nav>
+        <div className={`more-menu-overlay ${isMoreMenuOpen ? 'open' : ''}`} role="dialog" aria-modal="true" aria-label="More menu" onClick={() => setIsMoreMenuOpen(false)}>
+            <button className="close-btn" onClick={() => setIsMoreMenuOpen(false)} aria-label="Close more menu">&times;</button>
+            <nav onClick={(e) => e.stopPropagation()}>
                 {moreNavItems.map(item => (
                     <button key={item.view} onClick={() => handleNavClick(item.view)} style={navButtonStyle(currentView === item.view)}>
                         {t(item.labelKey)}

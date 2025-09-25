@@ -22,19 +22,21 @@ const Header: React.FC<HeaderProps> = ({ onAddTask, tasks }) => {
 
     return (
         <header className="main-header">
-            <div className="main-header-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isMobile ? '1rem' : '1.25rem' }}>
+            <div className="main-header-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isMobile ? '0.5rem' : '1.25rem' }}>
                  <Logo className="mobile-header-logo" />
                  <button onClick={onAddTask} className="mobile-add-task-btn" style={{
                     background: 'var(--color-primary-red)',
                     color: 'var(--color-text-on-accent)',
                     border: 'none',
-                    padding: '0.6rem 1rem',
+                    padding: isMobile ? '0.5rem 0.85rem' : '0.6rem 1rem',
                     borderRadius: '4px',
                     cursor: 'pointer',
                     fontSize: '1rem',
                  }}>{t('header.addTask')}</button>
             </div>
-            <TimeTrackerHeader tasks={tasks} />
+            <div style={{ marginBottom: isMobile ? '0.5rem' : '1rem' }}>
+                <TimeTrackerHeader tasks={tasks} />
+            </div>
         </header>
     );
 };

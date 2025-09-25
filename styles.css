@@ -31,6 +31,7 @@ body {
 
 /* App Shell */
 .app-container { background: var(--color-bg-main); color: var(--color-text-primary); }
+html, body, .app-container, .panel, .panel-dark, .btn, .input, .select, .textarea { transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease; }
 @media (max-width: 768px) { .desktop-sidebar-logo { display: none; } }
 
 /* Panels */

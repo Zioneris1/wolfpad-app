@@ -57,11 +57,11 @@ const TaskItem: React.FC<TaskItemProps> = ({
     const taskItemStyle: React.CSSProperties = {
         display: 'flex',
         alignItems: 'center',
-        padding: '0.75rem 1rem',
-        background: isSelected ? 'rgba(66, 153, 225, 0.2)' : 'var(--color-bg-panel)',
+        padding: '0.6rem 0.75rem',
+        background: isSelected ? 'rgba(66, 153, 225, 0.12)' : 'var(--color-bg-panel)',
         border: `1px solid ${isSelected ? 'var(--color-secondary-blue)' : 'var(--color-border)'}`,
-        borderRadius: '4px',
-        gap: '1rem',
+        borderRadius: '10px',
+        gap: '0.75rem',
         transition: 'all 0.2s ease',
         cursor: isDraggable ? 'grab' : 'default',
         opacity: task.completed ? 0.6 : 1,
@@ -77,7 +77,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
     };
 
     const progressBar = (
-         <div style={{ marginTop: '0.5rem', background: 'var(--color-bg-dark)', borderRadius: '4px', height: '6px', overflow: 'hidden', cursor: 'pointer' }}>
+         <div style={{ marginTop: '0.4rem', background: 'var(--color-bg-dark)', borderRadius: '999px', height: '6px', overflow: 'hidden', cursor: 'pointer' }}>
             <div title={`${Math.round(progress)}% complete`} style={{
                 width: `${progress}%`,
                 height: '100%',
@@ -111,7 +111,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
             onDragStart={(e) => onDragStart && onDragStart(e, task)}
         >
             {/* --- DESKTOP LAYOUT --- */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '100%' }} className="task-item-desktop-layout">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%', fontSize: '0.95rem' }} className="task-item-desktop-layout">
                 <input type="checkbox" checked={isSelected} onChange={() => onSelect(task.id)} style={{ cursor: 'pointer' }} />
                 
                 <div className={isAnimating ? 'check-pop-animation' : ''}>
@@ -121,23 +121,23 @@ const TaskItem: React.FC<TaskItemProps> = ({
                 <div style={{ flex: 1 }} onClick={() => onView(task)}>
                     <div style={{ textDecoration: task.completed ? 'line-through' : 'none', cursor: 'pointer' }}>
                         <span style={{ color: 'var(--color-text-primary)' }}>{task.name}</span>
-                        {formattedDueDate && <span style={{ marginLeft: '0.75rem', fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>{t('taskItem.due')}: {formattedDueDate}</span>}
+                        {formattedDueDate && <span style={{ marginLeft: '0.5rem', fontSize: '0.78rem', color: 'var(--color-text-secondary)' }}>{t('taskItem.due')}: {formattedDueDate}</span>}
                     </div>
                     {!task.completed && estimatedTimeInSeconds > 0 && progressBar}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                     {task.tags.slice(0, 2).map(tag => <span key={tag} style={tagStyle}>#{tag}</span>)}
                 </div>
 
-                <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
+                <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem', fontVariantNumeric: 'tabular-nums' }}>
                     💥 {task.impact}
                 </div>
-                 <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
+                 <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem', fontVariantNumeric: 'tabular-nums' }}>
                     ⚙️ {task.effort}
                 </div>
                 
-                <div style={{ minWidth: '80px', textAlign: 'right', color: task.is_tracking ? 'var(--color-secondary-blue-glow)' : 'var(--color-text-secondary)' }}>
+                <div style={{ minWidth: '70px', textAlign: 'right', color: task.is_tracking ? 'var(--color-secondary-blue-glow)' : 'var(--color-text-secondary)', fontVariantNumeric: 'tabular-nums' }}>
                     {formatTime(task.time_spent)}
                 </div>
                 

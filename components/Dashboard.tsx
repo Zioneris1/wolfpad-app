@@ -210,22 +210,31 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                         </nav>
                     </div>
 
-                    <div className="mt-6">
-                        <div className="neo-table-header" style={{ backgroundColor: 'rgba(26,29,36,0.55)' }}>
-                            <span>#</span>
-                            <span>✓</span>
-                            <span>Task / Due</span>
-                            <span>Tags</span>
-                            <span>Impact</span>
-                            <span>Effort</span>
-                            <span>Time</span>
+                    <div className="mt-5">
+                        <div className="glass-panel neon-border cut-corners" style={{ background: 'rgba(26,29,36,0.45)', borderRadius: 16 }}>
+                            {/* Desktop header */}
+                            <div className="hidden md:grid neo-table-header" aria-label="Tasks table header" style={{ gridTemplateColumns: '24px 24px 1fr 100px 56px 56px 70px', fontSize: '0.8rem', padding: '0.5rem 0.6rem' }}>
+                                <span>#</span>
+                                <span>✓</span>
+                                <span>Task / Due</span>
+                                <span>Tags</span>
+                                <button onClick={() => setSortBy('impact')} style={{ textAlign: 'left', background: 'transparent', border: 'none', color: 'var(--color-text-secondary)', cursor: 'pointer', fontVariantNumeric: 'tabular-nums' }}>Impact</button>
+                                <button onClick={() => setSortBy('createdDate')} style={{ textAlign: 'left', background: 'transparent', border: 'none', color: 'var(--color-text-secondary)', cursor: 'pointer', fontVariantNumeric: 'tabular-nums' }}>Effort</button>
+                                <span style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>Time</span>
+                            </div>
+                            {/* Mobile header hint */}
+                            <div className="md:hidden" style={{ padding: '0.5rem 0.75rem', color: 'var(--color-text-secondary)', fontSize: '0.8rem' }}>
+                                Tasks (tap to expand)
+                            </div>
+                            <div style={{ padding: '0.5rem 0.5rem' }}>
+                                <TaskList
+                                    selectedTasks={selectedTasks}
+                                    onSelectionChange={setSelectedTasks}
+                                    {...props}
+                                    tasks={displayedTasks}
+                                />
+                            </div>
                         </div>
-                        <TaskList
-                            selectedTasks={selectedTasks}
-                            onSelectionChange={setSelectedTasks}
-                            {...props}
-                            tasks={displayedTasks}
-                        />
                     </div>
                 </div>
 

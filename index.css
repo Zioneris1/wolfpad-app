@@ -53,7 +53,8 @@ body {
 
 /* Gradient card utility for fancy borders */
 .gradient-card {
-  background: linear-gradient(135deg, rgba(88,166,255,0.4), rgba(218,54,51,0.4));
+  /* Use theme accent colors for gradient border shells */
+  background: linear-gradient(135deg, var(--color-secondary-blue-glow), var(--color-primary-red-glow));
 }
 
 /* Chip */

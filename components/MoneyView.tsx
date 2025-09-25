@@ -7,6 +7,8 @@ import { Card, CardContent } from './ui/Card';
 import SparkBar from './SparkBar';
 import { Tabs } from './ui/Tabs';
 import { motion } from 'framer-motion';
+import MiniLineChart from './MiniLineChart';
+import CategoryHeatmap from './CategoryHeatmap';
 
 interface MoneyViewProps {
     moneyManager: ReturnType<typeof useMoneyManager>;
@@ -309,6 +311,20 @@ const MoneyView: React.FC<MoneyViewProps> = ({ moneyManager }) => {
                         <CardContent>
                             <PieChart transactions={filteredTransactions} currency={selectedCurrency} />
                             <div style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>Top category: <span style={{ color: 'var(--color-text-primary)', fontWeight: 600 }}>{topCategory}</span></div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardContent>
+                            <h4 style={{ marginTop: 0, marginBottom: '0.75rem' }}>Net Worth</h4>
+                            <MiniLineChart points={incomeSeries.map((v, i) => v - (expenseSeries[i] || 0))} width={320} height={90} />
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardContent>
+                            <h4 style={{ marginTop: 0, marginBottom: '0.75rem' }}>Category Heatmap</h4>
+                            <CategoryHeatmap transactions={filteredTransactions} />
                         </CardContent>
                     </Card>
                 </div>

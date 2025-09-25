@@ -2,8 +2,12 @@ import { GoogleGenAI, Type } from "@google/genai";
 import type { Task, GoalWithProgress, AppContextData, AssistantResponse } from '../types';
 
 // Using Vite's standard method for accessing environment variables on the client.
-// Ensure VITE_API_KEY is set in your Vercel/Netlify/other hosting environment.
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY! });
+// Accept both VITE_API_KEY and GEMINI_API_KEY to be friendly with different hosting setups.
+const apiKey = (import.meta.env.VITE_API_KEY || import.meta.env.GEMINI_API_KEY) as string;
+if (!apiKey) {
+    throw new Error('Missing API key: set VITE_API_KEY or GEMINI_API_KEY in your environment.');
+}
+const ai = new GoogleGenAI({ apiKey });
 
 
 const getAiErrorMessage = (error: unknown, action: string): string => {

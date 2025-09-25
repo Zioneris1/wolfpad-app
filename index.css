@@ -1,0 +1,17 @@
+/* Minimal baseline to avoid missing asset at runtime */
+:root {
+  --bg: #0f172a;
+  --fg: #e2e8f0;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

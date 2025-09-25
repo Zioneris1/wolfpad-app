@@ -4,11 +4,12 @@ import type { Transaction } from '../types';
 import PieChart from './PieChart';
 import { useTranslation } from '../hooks/useTranslation';
 import { Card, CardContent } from './ui/Card';
-import SparkBar from './SparkBar';
 import { Tabs } from './ui/Tabs';
 import { motion } from 'framer-motion';
 import MiniLineChart from './MiniLineChart';
 import CategoryHeatmap from './CategoryHeatmap';
+import FancyStatTile from './FancyStatTile';
+import AreaSparkline from './AreaSparkline';
 
 interface MoneyViewProps {
     moneyManager: ReturnType<typeof useMoneyManager>;
@@ -210,52 +211,22 @@ const MoneyView: React.FC<MoneyViewProps> = ({ moneyManager }) => {
             />
             
             {activeTab === 'overview' && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
+                <div className="scanline" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+                    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+                        <FancyStatTile label="Income" value={formatCurrency(totalIncome)} accent="blue">
+                            <AreaSparkline points={incomeSeries} width={220} height={70} />
+                        </FancyStatTile>
+                    </motion.div>
                     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-                        <Card className="hex neon-border glass-panel hover-raise">
-                            <CardContent>
-                                <p style={{color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', margin: '0 0 0.5rem 0'}}>Income</p>
-                                <p style={{fontSize: '2rem', fontWeight: 'bold', color: 'var(--color-secondary-blue-glow)', margin: 0, fontVariantNumeric: 'tabular-nums'}}>{formatCurrency(totalIncome)}</p>
-                                <div style={{ marginTop: '0.75rem' }}>
-                                    <SparkBar values={incomeSeries} height={36} barWidth={6} gap={4} color={'var(--color-secondary-blue)'} />
-                                </div>
-                            </CardContent>
-                        </Card>
+                        <FancyStatTile label="Expenses" value={formatCurrency(Math.abs(totalExpenses))} accent="red">
+                            <AreaSparkline points={expenseSeries} width={220} height={70} color={'var(--color-primary-red)'} />
+                        </FancyStatTile>
                     </motion.div>
                     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-                        <Card className="hex neon-border glass-panel hover-raise">
-                            <CardContent>
-                                <p style={{color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', margin: '0 0 0.5rem 0'}}>Expenses</p>
-                                <p style={{fontSize: '2rem', fontWeight: 'bold', color: 'var(--color-primary-red-glow)', margin: 0, fontVariantNumeric: 'tabular-nums'}}>{formatCurrency(Math.abs(totalExpenses))}</p>
-                                <div style={{ marginTop: '0.75rem' }}>
-                                    <SparkBar values={expenseSeries} height={36} barWidth={6} gap={4} color={'var(--color-primary-red)'} />
-                                </div>
-                            </CardContent>
-                        </Card>
+                        <FancyStatTile label="Net" value={formatCurrency(balance)} accent="blue" sub={`Savings rate ${savingsRatePct}%`} />
                     </motion.div>
                     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-                        <Card className="hex neon-border glass-panel hover-raise">
-                            <CardContent>
-                                <p style={{color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', margin: '0 0 0.5rem 0'}}>Net</p>
-                                <p style={{fontSize: '2rem', fontWeight: 'bold', margin: 0, fontVariantNumeric: 'tabular-nums'}}>{formatCurrency(balance)}</p>
-                                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.75rem', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>Savings rate</span>
-                                    <span style={{ fontWeight: 700, color: 'var(--color-secondary-blue)' }}>{savingsRatePct}%</span>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </motion.div>
-                    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
-                        <Card className="hex neon-border glass-panel hover-raise">
-                            <CardContent>
-                                <p style={{color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', margin: '0 0 0.5rem 0'}}>Last 30d spend</p>
-                                <p style={{fontSize: '2rem', fontWeight: 'bold', margin: 0, fontVariantNumeric: 'tabular-nums'}}>{formatCurrency(last30ExpensesAbs)}</p>
-                                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.75rem', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>Avg txn</span>
-                                    <span style={{ fontWeight: 700 }}>{formatCurrency(avgTxnAbs)}</span>
-                                </div>
-                            </CardContent>
-                        </Card>
+                        <FancyStatTile label="Last 30d" value={formatCurrency(last30ExpensesAbs)} accent="red" sub={`Avg txn ${formatCurrency(avgTxnAbs)}`} />
                     </motion.div>
                 </div>
             )}

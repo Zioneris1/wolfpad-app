@@ -18,3 +18,14 @@ View your app in AI Studio: https://ai.studio/apps/drive/1oZ9Xj89wstVhwc6rw9hBGh
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## Deploy to Vercel
+
+- Build Command: `npm run build`
+- Output Directory: `dist`
+- Framework Preset: `Vite`
+- Node Version: 18+
+
+Environment variables (if needed):
+- `VITE_API_KEY` (optional)
+- Supabase keys are currently embedded in `lib/supabaseClient.ts` for demo; move to env vars for production.

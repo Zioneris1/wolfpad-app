@@ -1,63 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import type { View, ThemeOption, Task } from '../types';
+import React from 'react';
+import type { View, ThemeOption } from '../types';
 import { useTranslation } from '../hooks/useTranslation';
 import { useTheme } from '../hooks/useTheme';
 import { supportedLanguages } from '../context/LanguageContext';
-import { formatTime } from '../utils/time';
 import Logo from './Logo';
 import { useAuthContext } from '../context/AuthContext';
-
-const SidebarTimeTracker: React.FC<{ tasks: Task[] }> = ({ tasks }) => {
-    const { t } = useTranslation();
-    const [currentTime, setCurrentTime] = useState(new Date());
-    const [formattedCurrentTime, setFormattedCurrentTime] = useState('');
-
-    useEffect(() => {
-        const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-        return () => clearInterval(timer);
-    }, []);
-
-    useEffect(() => {
-        setFormattedCurrentTime(currentTime.toLocaleTimeString());
-    }, [currentTime]);
-
-    const totalTimeTrackedToday = tasks.reduce((acc, task) => {
-        if (task.completed && task.completed_at?.startsWith(new Date().toISOString().split('T')[0])) {
-            return acc + task.time_spent;
-        }
-        return acc;
-    }, 0);
-
-    const secondsInDay = 24 * 60 * 60;
-    const secondsPassed = currentTime.getHours() * 3600 + currentTime.getMinutes() * 60 + currentTime.getSeconds();
-    const secondsLeft = secondsInDay - secondsPassed;
-
-    return (
-        <div className="sidebar-time-tracker">
-            <div className="sidebar-time-tracker-item">
-                <span className="sidebar-time-tracker-label">{t('timeTracker.trackedToday')}</span>
-                <span className="sidebar-time-tracker-value highlight">{formatTime(totalTimeTrackedToday)}</span>
-            </div>
-            <div className="sidebar-time-tracker-item">
-                <span className="sidebar-time-tracker-label">{t('timeTracker.currentTime')}</span>
-                <span className="sidebar-time-tracker-value">{formattedCurrentTime || '...'}</span>
-            </div>
-            <div className="sidebar-time-tracker-item">
-                <span className="sidebar-time-tracker-label">{t('timeTracker.timeLeft')}</span>
-                <span className="sidebar-time-tracker-value">{formatTime(secondsLeft)}</span>
-            </div>
-        </div>
-    );
-};
 
 interface DesktopSidebarProps {
     currentView: View;
     setView: (view: View) => void;
-    onAddTask: () => void;
-    tasks: Task[];
 }
 
-const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ currentView, setView, onAddTask, tasks }) => {
+const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ currentView, setView }) => {
     const { t, language, setLanguage } = useTranslation();
     const { theme, setTheme, themes } = useTheme();
     const { user, logout } = useAuthContext();
@@ -110,22 +64,6 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ currentView, setView, o
             borderRight: '1px solid var(--color-border)'
         }}>
             <Logo className="desktop-sidebar-logo" />
-            
-            <SidebarTimeTracker tasks={tasks} />
-
-            <button onClick={onAddTask} style={{
-                background: 'var(--color-primary-red)',
-                color: 'white',
-                border: 'none',
-                padding: '0.75rem',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '1rem',
-                marginBottom: '2rem',
-                width: '100%'
-            }}>
-                {t('header.addTask')}
-            </button>
 
             <nav style={{ flex: 1, overflowY: 'auto' }}>
                 {navItems.map(item => (
@@ -133,8 +71,8 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ currentView, setView, o
                         key={item.view}
                         onClick={() => setView(item.view)}
                         style={navButtonStyle(currentView === item.view)}
-                        onMouseOver={e => { if (currentView !== item.view) e.currentTarget.style.background = 'var(--color-bg-panel)'; }}
-                        onMouseOut={e => { if (currentView !== item.view) e.currentTarget.style.background = 'transparent'; }}
+                        onMouseOver={(e: React.MouseEvent<HTMLButtonElement>) => { if (currentView !== item.view) e.currentTarget.style.background = 'var(--color-bg-panel)'; }}
+                        onMouseOut={(e: React.MouseEvent<HTMLButtonElement>) => { if (currentView !== item.view) e.currentTarget.style.background = 'transparent'; }}
                     >
                         {t(item.labelKey)}
                     </button>

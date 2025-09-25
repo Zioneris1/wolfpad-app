@@ -16,6 +16,7 @@ import { useJournalManager } from './hooks/useJournalManager';
 import DesktopSidebar from './components/DesktopSidebar';
 import BottomNavBar from './components/BottomNavBar';
 import Header from './components/Header';
+import TimeTrackerHeader from './components/TimeTrackerHeader';
 import Dashboard from './components/Dashboard';
 import GoalsView from './components/GoalsView';
 import WeeklyView from './components/WeeklyView';
@@ -190,10 +191,11 @@ const AppContent: React.FC = () => {
 
     return (
         <div className="app-container" style={{ display: 'flex', height: '100vh', background: 'var(--color-bg-main)' }}>
-            {!isMobile && <DesktopSidebar currentView={view} setView={setView} onAddTask={() => handleOpenTaskForm()} tasks={taskManager.tasks} />}
+            {!isMobile && <DesktopSidebar currentView={view} setView={setView} />}
 
             <main style={{ flex: 1, overflowY: 'auto', padding: isMobile ? '1rem' : '1rem 2.5rem', paddingBottom: isMobile ? '80px' : '1rem' }}>
                 {isMobile && <Header onAddTask={() => handleOpenTaskForm()} tasks={taskManager.tasks} />}
+                {!isMobile && <TimeTrackerHeader tasks={taskManager.tasks} />}
                 {renderView()}
             </main>
 

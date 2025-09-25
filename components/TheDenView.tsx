@@ -116,7 +116,7 @@ const TheDenView: React.FC<TheDenViewProps> = ({ journalManager }) => {
             </h2>
 
             {/* Today's Entry Form */}
-            <div className="mb-8 p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
+            <div className="mb-8 p-6 rounded-xl card-elevated" style={{ background: 'var(--color-bg-panel)' }}>
                 <h3 className="font-bold text-lg mb-1">{t('theDen.todaysEntry')}</h3>
                 <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
                     {formattedToday}
@@ -125,16 +125,11 @@ const TheDenView: React.FC<TheDenViewProps> = ({ journalManager }) => {
                     value={newEntryContent}
                     onChange={(e) => setNewEntryContent(e.target.value)}
                     placeholder={t('theDen.placeholder')}
-                    className="w-full p-3 rounded-md bg-[var(--color-bg-dark)] border border-[var(--color-border)] text-[var(--color-text-primary)] transition focus:border-[var(--color-secondary-blue)] focus:ring-1 focus:ring-[var(--color-secondary-blue)]"
+                    className="textarea transition focus:border-[var(--color-secondary-blue)] focus:ring-1 focus:ring-[var(--color-secondary-blue)]"
                     style={{ minHeight: '150px', fontFamily: 'Courier New, monospace' }}
                 />
                 <div className="flex justify-end mt-4">
-                    <button 
-                        onClick={handleSaveNewEntry}
-                        disabled={!newEntryContent.trim()}
-                        className="font-semibold px-6 py-2 rounded-lg transition-colors"
-                        style={{ background: 'var(--color-primary-red)', color: 'var(--color-text-on-accent)' }}
-                    >
+                    <button onClick={handleSaveNewEntry} disabled={!newEntryContent.trim()} className="btn btn-danger">
                         {t('theDen.saveEntry')}
                     </button>
                 </div>
@@ -164,7 +159,7 @@ const TheDenView: React.FC<TheDenViewProps> = ({ journalManager }) => {
                             );
                         })
                     ) : (
-                         <div className="text-center py-12 px-6 border-2 border-dashed rounded-lg" style={{ borderColor: 'var(--color-border)', background: 'var(--color-bg-dark)'}}>
+                            <div className="text-center py-12 px-6 border-2 border-dashed rounded-lg panel-dark">
                             <p className="mt-1 text-sm" style={{ color: 'var(--color-text-secondary)'}}>{t('theDen.noEntries')}</p>
                         </div>
                     )}

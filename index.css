@@ -2,6 +2,19 @@
 :root {
   --bg: #0f172a;
   --fg: #e2e8f0;
+  /* App theme fallbacks so first paint is visible on static hosts */
+  --color-bg-main: #10141A;
+  --color-bg-panel: #1A1D24;
+  --color-bg-dark: #2A2F38;
+  --color-border: #39414F;
+  --color-text-primary: #E6EDF3;
+  --color-text-secondary: #8D96A5;
+  --color-text-on-accent: #FFFFFF;
+  --color-primary-red: #DA3633;
+  --color-primary-red-glow: #F85149;
+  --color-secondary-blue: #3B82F6;
+  --color-secondary-blue-glow: #58A6FF;
+  --color-secondary-blue-rgb: 59, 130, 246;
 }
 
 html, body, #root {
@@ -14,4 +27,10 @@ body {
   color: var(--fg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure app container isn't invisible before hydration */
+.app-container {
+  background: var(--color-bg-main);
+  color: var(--color-text-primary);
 }

@@ -110,7 +110,7 @@ const PersonalDevelopmentView: React.FC = () => {
         <div className="py-2 md:py-6">
             <div className="lg:grid lg:grid-cols-3 lg:gap-8">
                 {/* --- Left Column (Planner) --- */}
-                <div className="lg:col-span-1">
+                <div className="lg:col-span-1 lg:sticky lg:top-6">
                     <Card>
                         <CardContent>
                             <h3 className="font-bold text-lg" style={{ color: 'var(--color-secondary-blue)' }}>{t('personalDevView.aiPlanner')}</h3>

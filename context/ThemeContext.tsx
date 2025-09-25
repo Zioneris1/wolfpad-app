@@ -96,6 +96,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }, [user]);
 
     useEffect(() => {
+        // Guard for non-DOM environments and ensure documentElement exists
+        if (typeof document === 'undefined' || !document.documentElement) return;
         const selectedTheme = themes.find(t => t.id === theme) || themes[0];
         Object.entries(selectedTheme.styles).forEach(([key, value]) => {
             document.documentElement.style.setProperty(key, value);

@@ -88,10 +88,14 @@ const PersonalSchedule: React.FC<PersonalScheduleProps> = ({ scheduleManager }) 
     const [startTime, setStartTime] = useState('09:00');
     const [endTime, setEndTime] = useState('10:00');
 
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const [isMobile, setIsMobile] = useState<boolean>(() => {
+        if (typeof window === 'undefined') return false;
+        return window.innerWidth < 768;
+    });
     const [selectedDayIndex, setSelectedDayIndex] = useState(new Date().getDay());
 
     useEffect(() => {
+        if (typeof window === 'undefined') return;
         const handleResize = () => setIsMobile(window.innerWidth < 768);
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);

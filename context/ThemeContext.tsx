@@ -78,6 +78,48 @@ const themes: ThemeOption[] = [
             '--color-priority-medium': '#ffd54f',
             '--color-priority-low': '#66bb6a',
         }
+    },
+    {
+        id: 'arctic_wolf',
+        name: 'Arctic Wolf',
+        styles: {
+            '--color-bg-main': '#0B1220',
+            '--color-bg-panel': '#121A2A',
+            '--color-bg-dark': '#1B2436',
+            '--color-border': '#2B3852',
+            '--color-text-primary': '#E8EEF9',
+            '--color-text-secondary': '#9BA7BF',
+            '--color-text-on-accent': '#0B1220',
+            '--color-primary-red': '#7DD3FC',
+            '--color-primary-red-glow': '#BAE6FD',
+            '--color-secondary-blue': '#7DD3FC',
+            '--color-secondary-blue-glow': '#BAE6FD',
+            '--color-secondary-blue-rgb': '125, 211, 252',
+            '--color-priority-high': '#60A5FA',
+            '--color-priority-medium': '#93C5FD',
+            '--color-priority-low': '#7DD3FC',
+        }
+    },
+    {
+        id: 'crimson_dusk',
+        name: 'Crimson Dusk',
+        styles: {
+            '--color-bg-main': '#160E13',
+            '--color-bg-panel': '#22141E',
+            '--color-bg-dark': '#2E1B28',
+            '--color-border': '#4A2C3C',
+            '--color-text-primary': '#F2E9EC',
+            '--color-text-secondary': '#B89AA6',
+            '--color-text-on-accent': '#FFFFFF',
+            '--color-primary-red': '#F43F5E',
+            '--color-primary-red-glow': '#FB7185',
+            '--color-secondary-blue': '#FB7185',
+            '--color-secondary-blue-glow': '#FDA4AF',
+            '--color-secondary-blue-rgb': '251, 113, 133',
+            '--color-priority-high': '#F43F5E',
+            '--color-priority-medium': '#FB7185',
+            '--color-priority-low': '#FDA4AF',
+        }
     }
 ];
 

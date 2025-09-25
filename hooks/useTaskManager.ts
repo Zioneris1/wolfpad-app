@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type { Task } from '../types';
 import { useAuthContext } from '../context/AuthContext';
 import { taskApi } from '../services/api';
@@ -232,8 +232,11 @@ export const useTaskManager = () => {
         }
     }, [tasks, updateTask]);
 
+    // Memoize tasks to prevent unnecessary re-renders
+    const memoizedTasks = useMemo(() => tasks, [tasks]);
+
     return { 
-        tasks,
+        tasks: memoizedTasks,
         loading,
         addTask, 
         addBulkTasks,

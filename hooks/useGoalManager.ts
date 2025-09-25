@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import type { Goal, Task, GoalWithProgress } from '../types';
 import { useAuthContext } from '../context/AuthContext';
 import { goalApi } from '../services/api';
@@ -8,6 +8,7 @@ export const useGoalManager = (tasks: Task[]) => {
     const { user } = useAuthContext();
     const [goals, setGoals] = useState<Goal[]>([]);
     const [loading, setLoading] = useState(true);
+    const prevTasksRef = useRef<Task[]>([]);
 
     useEffect(() => {
         if (user) {
@@ -75,6 +76,17 @@ export const useGoalManager = (tasks: Task[]) => {
     }, [user]);
 
     const goalsWithProgress: GoalWithProgress[] = useMemo(() => {
+        // Only recalculate if tasks actually changed
+        const tasksChanged = tasks.length !== prevTasksRef.current.length || 
+            tasks.some((task, index) => {
+                const prevTask = prevTasksRef.current[index];
+                return !prevTask || task.id !== prevTask.id || task.completed !== prevTask.completed || task.goal_id !== prevTask.goal_id;
+            });
+        
+        if (tasksChanged) {
+            prevTasksRef.current = tasks;
+        }
+        
         return goals.map(goal => {
             // Fix: Changed goalId to goal_id to match Task type.
             const associatedTasks = tasks.filter(task => task.goal_id === goal.id);

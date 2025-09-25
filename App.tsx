@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import type { View, Task, AppContextData } from './types';
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
@@ -43,7 +43,10 @@ const AppContent: React.FC = () => {
     const [dashboardFilter, setDashboardFilter] = useState<'pending' | 'completed' | 'all'>('pending');
 
     const taskManager = useTaskManager();
-    const goalManager = useGoalManager(taskManager.tasks);
+    
+    // Memoize tasks to prevent infinite re-renders
+    const memoizedTasks = useMemo(() => taskManager.tasks, [taskManager.tasks]);
+    const goalManager = useGoalManager(memoizedTasks);
     const scheduleManager = useScheduleManager();
     const moneyManager = useMoneyManager();
     const journalManager = useJournalManager();

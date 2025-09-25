@@ -182,8 +182,8 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
 
             <div className="agents-grid grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Task Prioritizer Agent */}
-                <div className="gradient-card p-[1px] rounded-2xl">
-                <div className="agent-card prioritizer p-6 rounded-[15px] shadow-lg" style={{ background: 'var(--color-bg-panel)' }}>
+                <div className="gradient-card p-[1px] rounded-2xl glow-accent">
+                <div className="agent-card prioritizer p-6 rounded-[15px] card-elevated" style={{ background: 'var(--color-bg-panel)' }}>
                     <div className="agent-card-header">
                         <div className="agent-card-icon" style={{color: 'var(--color-secondary-blue)'}}>
                             <PrioritizerIcon />
@@ -203,8 +203,8 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
                 </div>
 
                 {/* Content Creator Agent */}
-                <div className="gradient-card p-[1px] rounded-2xl">
-                <div className="agent-card creator p-6 rounded-[15px] shadow-lg" style={{ background: 'var(--color-bg-panel)'}}>
+                <div className="gradient-card p-[1px] rounded-2xl glow-accent">
+                <div className="agent-card creator p-6 rounded-[15px] card-elevated" style={{ background: 'var(--color-bg-panel)'}}>
                     <div className="agent-card-header">
                         <div className="agent-card-icon" style={{color: '#ff00ff'}}>
                            <CreatorIcon />
@@ -241,8 +241,8 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
                 </div>
 
                 {/* Goal Strategist Agent */}
-                <div className="gradient-card p-[1px] rounded-2xl">
-                <div className="agent-card strategist p-6 rounded-[15px] shadow-lg" style={{ background: 'var(--color-bg-panel)'}}>
+                <div className="gradient-card p-[1px] rounded-2xl glow-accent">
+                <div className="agent-card strategist p-6 rounded-[15px] card-elevated" style={{ background: 'var(--color-bg-panel)'}}>
                      <div className="agent-card-header">
                         <div className="agent-card-icon" style={{color: '#64ffda'}}>
                            <StrategistIcon />

@@ -47,7 +47,7 @@ const GoalItem: React.FC<GoalItemProps> = (props) => {
     };
 
     return (
-        <div className="bg-[var(--color-bg-panel)] border border-[var(--color-border)] rounded-lg shadow-lg flex flex-col transition-all duration-300 border-t-4" style={{borderColor: 'var(--color-secondary-blue)'}}>
+        <div className="bg-[var(--color-bg-panel)] border border-[var(--color-border)] rounded-lg card-elevated flex flex-col transition-all duration-300 border-t-4" style={{borderColor: 'var(--color-secondary-blue)'}}>
             
             {/* Main Card Content */}
             <div className="p-5 flex flex-col flex-grow">

@@ -57,12 +57,20 @@ html, body, .app-container, .panel, .panel-dark, .btn, .input, .select, .textare
 .btn-danger { background: var(--color-primary-red); color: var(--color-text-on-accent); }
 .btn-ghost { background: transparent; color: var(--color-text-primary); border: 1px solid var(--color-border); }
 .btn:hover { transform: translateY(-1px); }
+.btn-primary:hover { box-shadow: 0 0 12px 0 var(--color-secondary-blue-glow); }
+.btn-danger:hover { box-shadow: 0 0 12px 0 var(--color-primary-red-glow); }
 
 /* Chips */
 .chip { background: var(--color-bg-dark); color: var(--color-text-secondary); border: 1px solid var(--color-border); padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; }
 
 /* Gradient shell utility */
 .gradient-card { background: linear-gradient(135deg, var(--color-secondary-blue-glow), var(--color-primary-red-glow)); }
+
+/* Theme-tinted shadows & elevation */
+.card-elevated { box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 0 0 1px var(--color-border); }
+.card-tinted { box-shadow: 0 10px 30px rgba(var(--color-secondary-blue-rgb), 0.12), 0 0 0 1px var(--color-border); }
+.glow-accent { box-shadow: 0 0 16px 0 var(--color-secondary-blue-glow); }
+.glow-danger { box-shadow: 0 0 16px 0 var(--color-primary-red-glow); }
 
 /* Animations */
 .fade-in { animation: fadeIn 220ms ease-in forwards; }

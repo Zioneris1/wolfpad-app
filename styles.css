@@ -1,0 +1,82 @@
+/* Global Styles Hub - styles.css */
+
+/* Font & Base */
+html, body, #root { height: 100%; }
+body {
+	margin: 0;
+	font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+	background: var(--bg);
+	color: var(--fg);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* Theme Variables (fallbacks + app variables) */
+:root {
+	--bg: #0f172a;
+	--fg: #e2e8f0;
+	--color-bg-main: #10141A;
+	--color-bg-panel: #1A1D24;
+	--color-bg-dark: #2A2F38;
+	--color-border: #39414F;
+	--color-text-primary: #E6EDF3;
+	--color-text-secondary: #8D96A5;
+	--color-text-on-accent: #FFFFFF;
+	--color-primary-red: #DA3633;
+	--color-primary-red-glow: #F85149;
+	--color-secondary-blue: #3B82F6;
+	--color-secondary-blue-glow: #58A6FF;
+	--color-secondary-blue-rgb: 59, 130, 246;
+}
+
+/* App Shell */
+.app-container { background: var(--color-bg-main); color: var(--color-text-primary); }
+@media (max-width: 768px) { .desktop-sidebar-logo { display: none; } }
+
+/* Panels */
+.panel { background: var(--color-bg-panel); border: 1px solid var(--color-border); border-radius: 8px; }
+.panel-dark { background: var(--color-bg-dark); border: 1px solid var(--color-border); border-radius: 8px; }
+.panel-padded { padding: 1.5rem; }
+.panel-section { border-top: 1px solid var(--color-border); padding-top: 1rem; margin-top: 1rem; }
+
+/* Text helpers */
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.heading-glow { text-shadow: 0 0 5px var(--color-secondary-blue); }
+
+/* Inputs */
+.input { width: 100%; padding: 0.75rem; background: var(--color-bg-dark); border: 1px solid var(--color-border); color: var(--color-text-primary); border-radius: 4px; }
+.select { width: 100%; padding: 0.5rem 0.75rem; background: var(--color-bg-dark); border: 1px solid var(--color-border); color: var(--color-text-primary); border-radius: 4px; }
+.textarea { width: 100%; padding: 0.75rem; min-height: 110px; background: var(--color-bg-dark); border: 1px solid var(--color-border); color: var(--color-text-primary); border-radius: 6px; }
+
+/* Buttons */
+.btn { border: none; border-radius: 6px; padding: 0.6rem 1rem; font-weight: 600; cursor: pointer; transition: background 180ms ease, transform 120ms ease, opacity 120ms ease; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-primary { background: var(--color-secondary-blue); color: var(--color-text-on-accent); }
+.btn-danger { background: var(--color-primary-red); color: var(--color-text-on-accent); }
+.btn-ghost { background: transparent; color: var(--color-text-primary); border: 1px solid var(--color-border); }
+.btn:hover { transform: translateY(-1px); }
+
+/* Chips */
+.chip { background: var(--color-bg-dark); color: var(--color-text-secondary); border: 1px solid var(--color-border); padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; }
+
+/* Gradient shell utility */
+.gradient-card { background: linear-gradient(135deg, var(--color-secondary-blue-glow), var(--color-primary-red-glow)); }
+
+/* Animations */
+.fade-in { animation: fadeIn 220ms ease-in forwards; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Toasts */
+.toast-container { position: fixed; right: 1rem; bottom: 1rem; display: flex; flex-direction: column; gap: 0.5rem; z-index: 9999; }
+.toast { background: var(--color-bg-panel); color: var(--color-text-primary); border: 1px solid var(--color-border); border-left: 3px solid var(--color-secondary-blue); padding: 0.5rem 0.75rem; border-radius: 6px; box-shadow: 0 10px 20px rgba(0,0,0,0.25); }
+
+/* Responsive Layout Helpers */
+.grid-2col-sidebar { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+@media (min-width: 1024px) { .grid-2col-sidebar { grid-template-columns: 2fr 1fr; } }
+
+.grid-cards { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+@media (min-width: 1024px) { .grid-cards { grid-template-columns: 1fr 1fr; } }
+
+.scroll-panel { max-height: 500px; overflow-y: auto; }
+

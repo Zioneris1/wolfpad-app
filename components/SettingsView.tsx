@@ -25,14 +25,14 @@ const SettingsView: React.FC = () => {
 
     return (
         <div className="py-2 md:py-6">
-            <h2 className="text-3xl font-bold tracking-tight mb-6" style={{ textShadow: `0 0 5px var(--color-secondary-blue)` }}>
+            <h2 className="text-3xl font-bold tracking-tight mb-6 heading-glow">
                 {t('settingsView.title')}
             </h2>
 
             <div className="max-w-2xl mx-auto space-y-8">
-                <div className="p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
+                <div className="panel panel-padded shadow-lg">
                     <h3 className="font-bold text-lg mb-2">Theme</h3>
-                    <p className="text-sm mt-1 mb-3" style={{ color: 'var(--color-text-secondary)' }}>Choose your color theme.</p>
+                    <p className="text-sm mt-1 mb-3 text-secondary">Choose your color theme.</p>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {themes.map(opt => (
                             <button
@@ -50,28 +50,26 @@ const SettingsView: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
+                <div className="panel panel-padded shadow-lg">
                     <h3 className="font-bold text-lg mb-2">{t('settingsView.dataManagement')}</h3>
 
-                    <div className="pt-4 mt-4 border-t" style={{ borderColor: 'var(--color-border)' }}>
+                    <div className="panel-section">
                         <h4 className="font-semibold">{t('settingsView.exportTitle')}</h4>
-                        <p className="text-sm mt-1 mb-3" style={{ color: 'var(--color-text-secondary)' }}>{t('settingsView.exportDesc')}</p>
+                        <p className="text-sm mt-1 mb-3 text-secondary">{t('settingsView.exportDesc')}</p>
                         <button 
                             onClick={exportData}
-                            className="font-semibold px-4 py-2 rounded-lg transition-colors"
-                            style={{ background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)', border: 'none' }}
+                            className="btn btn-primary"
                         >
                             {t('settingsView.exportButton')}
                         </button>
                     </div>
 
-                    <div className="pt-4 mt-4 border-t" style={{ borderColor: 'var(--color-border)' }}>
+                    <div className="panel-section">
                         <h4 className="font-semibold text-[var(--color-primary-red)]">{t('settingsView.importTitle')}</h4>
-                        <p className="text-sm mt-1 mb-3" style={{ color: 'var(--color-text-secondary)' }}>{t('settingsView.importDesc')}</p>
+                        <p className="text-sm mt-1 mb-3 text-secondary">{t('settingsView.importDesc')}</p>
                         <button 
                             onClick={handleImportClick}
-                            className="font-semibold px-4 py-2 rounded-lg transition-colors"
-                            style={{ background: 'transparent', border: '1px solid var(--color-primary-red)', color: 'var(--color-primary-red)' }}
+                            className="btn btn-ghost"
                         >
                             {t('settingsView.importButton')}
                         </button>

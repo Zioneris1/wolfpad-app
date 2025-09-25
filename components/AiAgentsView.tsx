@@ -154,29 +154,29 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
     };
 
     return (
-        <div style={{ padding: '1.5rem 0' }}>
+        <div className="fade-in" style={{ padding: '1.5rem 0' }}>
             <header className="mb-4">
-                <h2 className="text-3xl font-bold tracking-tight m-0" style={{ textShadow: `0 0 5px var(--color-secondary-blue)` }}>{t('aiAgentsView.title')}</h2>
-                <p className="mt-1 text-sm" style={{ color: 'var(--color-text-secondary)' }}>High‑leverage assistants to boost focus and execution.</p>
+                <h2 className="text-3xl font-bold tracking-tight m-0 heading-glow">{t('aiAgentsView.title')}</h2>
+                <p className="mt-1 text-sm text-secondary">High‑leverage assistants to boost focus and execution.</p>
             </header>
 
             {/* Quick Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                <div className="p-3 rounded-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)'}} aria-label="Pending tasks">
-                    <div className="text-xs uppercase" style={{ color: 'var(--color-text-secondary)'}}>Pending</div>
-                    <div className="text-xl font-bold" style={{ color: 'var(--color-text-primary)'}}>{pendingTasks.length}</div>
+                <div className="panel panel-padded" aria-label="Pending tasks">
+                    <div className="text-xs uppercase text-secondary">Pending</div>
+                    <div className="text-xl font-bold text-primary">{pendingTasks.length}</div>
                 </div>
-                <div className="p-3 rounded-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)'}} aria-label="Completed tasks">
-                    <div className="text-xs uppercase" style={{ color: 'var(--color-text-secondary)'}}>Completed</div>
-                    <div className="text-xl font-bold" style={{ color: 'var(--color-text-primary)'}}>{completedTasks.length}</div>
+                <div className="panel panel-padded" aria-label="Completed tasks">
+                    <div className="text-xs uppercase text-secondary">Completed</div>
+                    <div className="text-xl font-bold text-primary">{completedTasks.length}</div>
                 </div>
-                <div className="p-3 rounded-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)'}} aria-label="Total tasks">
-                    <div className="text-xs uppercase" style={{ color: 'var(--color-text-secondary)'}}>Total Tasks</div>
-                    <div className="text-xl font-bold" style={{ color: 'var(--color-text-primary)'}}>{tasks.length}</div>
+                <div className="panel panel-padded" aria-label="Total tasks">
+                    <div className="text-xs uppercase text-secondary">Total Tasks</div>
+                    <div className="text-xl font-bold text-primary">{tasks.length}</div>
                 </div>
-                <div className="p-3 rounded-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)'}} aria-label="Goals">
-                    <div className="text-xs uppercase" style={{ color: 'var(--color-text-secondary)'}}>Goals</div>
-                    <div className="text-xl font-bold" style={{ color: 'var(--color-text-primary)'}}>{goals.length}</div>
+                <div className="panel panel-padded" aria-label="Goals">
+                    <div className="text-xs uppercase text-secondary">Goals</div>
+                    <div className="text-xl font-bold text-primary">{goals.length}</div>
                 </div>
             </div>
 
@@ -192,10 +192,10 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
                     </div>
                     <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', flex: 1 }}>{t('aiAgentsView.taskPrioritizerDesc')}</p>
                     <div className="flex gap-2">
-                    <button aria-label="Run Task Prioritizer" onClick={handleRunPrioritizer} disabled={isPrioritizerLoading || pendingTasks.length === 0} className="w-full font-semibold px-4 py-2 rounded-lg transition-colors" style={{background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>
+                    <button aria-label="Run Task Prioritizer" onClick={handleRunPrioritizer} disabled={isPrioritizerLoading || pendingTasks.length === 0} className="btn btn-primary w-full">
                         {isPrioritizerLoading ? t('aiAgentsView.runningAgent') : t('aiAgentsView.runAgent')}
                     </button>
-                    <button aria-label="Clear Prioritizer Output" onClick={() => setPrioritizerResult('')} className="px-3 rounded-lg" style={{ background: 'var(--color-bg-dark)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)'}}>Clear</button>
+                    <button aria-label="Clear Prioritizer Output" onClick={() => setPrioritizerResult('')} className="btn btn-ghost">Clear</button>
                     </div>
                     {pendingTasks.length === 0 && <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem'}}>{t('aiAgentsView.noPendingTasks')}</p>}
                     <AgentOutput result={prioritizerResult} isLoading={isPrioritizerLoading} onCopy={() => showToast('Copied prioritizer output')} onSave={() => showToast('Saved to notes (coming soon)')} />
@@ -230,11 +230,11 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
                         aria-label="Content Creator Prompt"
                     />
                     <div className="flex items-center gap-2">
-                        <button aria-label="Run Content Creator (Ctrl+Enter)" onClick={handleRunCreator} disabled={isCreatorLoading || !creatorPrompt} className="w-full font-semibold px-4 py-2 rounded-lg transition-colors" style={{background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>
+                        <button aria-label="Run Content Creator (Ctrl+Enter)" onClick={handleRunCreator} disabled={isCreatorLoading || !creatorPrompt} className="btn btn-primary w-full">
                             {isCreatorLoading ? t('aiAgentsView.runningAgent') : t('aiAgentsView.runAgent')}
                         </button>
                         <span className="hidden md:inline text-xs px-2 py-1 rounded border" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)'}}>Ctrl/⌘ + Enter</span>
-                        <button aria-label="Clear Content Creator" onClick={() => { setCreatorPrompt(''); setCreatorResult(''); }} className="px-3 rounded-lg" style={{ background: 'var(--color-bg-dark)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)'}}>Clear</button>
+                        <button aria-label="Clear Content Creator" onClick={() => { setCreatorPrompt(''); setCreatorResult(''); }} className="btn btn-ghost">Clear</button>
                     </div>
                     <AgentOutput result={creatorResult} isLoading={isCreatorLoading} onCopy={() => showToast('Copied content')} onSave={() => showToast('Saved to notes (coming soon)')} />
                 </div>
@@ -263,10 +263,10 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
                         ))}
                     </select>
                     <div className="flex gap-2">
-                        <button aria-label="Run Goal Strategist" onClick={handleRunStrategist} disabled={isStrategistLoading || !selectedGoalId} className="w-full font-semibold px-4 py-2 rounded-lg transition-colors" style={{background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>
+                        <button aria-label="Run Goal Strategist" onClick={handleRunStrategist} disabled={isStrategistLoading || !selectedGoalId} className="btn btn-primary w-full">
                             {isStrategistLoading ? t('aiAgentsView.runningAgent') : t('aiAgentsView.runAgent')}
                         </button>
-                        <button aria-label="Clear Strategist Output" onClick={() => setStrategistResult('')} className="px-3 rounded-lg" style={{ background: 'var(--color-bg-dark)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)'}}>Clear</button>
+                        <button aria-label="Clear Strategist Output" onClick={() => setStrategistResult('')} className="btn btn-ghost">Clear</button>
                     </div>
                      {goals.length === 0 && <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem'}}>{t('aiAgentsView.noGoals')}</p>}
                     <AgentOutput result={strategistResult} isLoading={isStrategistLoading} onCopy={() => showToast('Copied strategy')} onSave={() => showToast('Saved to notes (coming soon)')} />

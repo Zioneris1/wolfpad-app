@@ -108,15 +108,15 @@ const MoneyView: React.FC<MoneyViewProps> = ({ moneyManager }) => {
             </div>
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-                <div style={{background: 'var(--color-bg-panel)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--color-border)', textAlign: 'center'}}>
+                <div className="card-tinted" style={{background: 'var(--color-bg-panel)', padding: '1.5rem', borderRadius: '8px', textAlign: 'center'}}>
                     <p style={{color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', margin: '0 0 0.5rem 0'}}>{translate('moneyView.totalIncome')}</p>
                     <p style={{fontSize: '2rem', fontWeight: 'bold', color: 'var(--color-secondary-blue-glow)', margin: 0}}>{formatCurrency(totalIncome)}</p>
                 </div>
-                <div style={{background: 'var(--color-bg-panel)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--color-border)', textAlign: 'center'}}>
+                <div className="card-tinted" style={{background: 'var(--color-bg-panel)', padding: '1.5rem', borderRadius: '8px', textAlign: 'center'}}>
                     <p style={{color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', margin: '0 0 0.5rem 0'}}>{translate('moneyView.totalExpenses')}</p>
                     <p style={{fontSize: '2rem', fontWeight: 'bold', color: 'var(--color-primary-red-glow)', margin: 0}}>{formatCurrency(totalExpenses)}</p>
                 </div>
-                <div style={{background: 'var(--color-bg-panel)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--color-border)', textAlign: 'center'}}>
+                <div className="card-tinted" style={{background: 'var(--color-bg-panel)', padding: '1.5rem', borderRadius: '8px', textAlign: 'center'}}>
                     <p style={{color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', margin: '0 0 0.5rem 0'}}>{translate('moneyView.netBalance')}</p>
                     <p style={{fontSize: '2rem', fontWeight: 'bold', margin: 0}}>{formatCurrency(balance)}</p>
                 </div>

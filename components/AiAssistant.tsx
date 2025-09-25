@@ -63,8 +63,13 @@ const AiAssistant: React.FC<AiAssistantProps> = ({ context, setView }) => {
         };
 
         const handleClickOutside = (event: MouseEvent) => {
-            if (chatWindowRef.current && !chatWindowRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
+            const target = event.target as unknown;
+            if (!chatWindowRef.current) return;
+            // Ensure the target is a Node before calling contains
+            if (target && typeof target === 'object' && 'nodeType' in (target as any)) {
+                if (!chatWindowRef.current.contains(target as Node)) {
+                    setIsOpen(false);
+                }
             }
         };
 

@@ -228,7 +228,7 @@ const AppContent: React.FC = () => {
 
     return (
         <div className="app-container" style={{ display: 'flex', height: '100vh', background: 'var(--color-bg-main)' }}>
-            {!isMobile && <DesktopSidebar currentView={view} setView={navigateToView} onAddTask={() => handleOpenTaskForm()} tasks={taskManager.tasks} />}
+            {!isMobile && <DesktopSidebar currentView={view} setView={navigateToView} />}
 
             <main style={{ flex: 1, overflowY: 'auto', padding: isMobile ? '1rem' : '1rem 2.5rem', paddingBottom: isMobile ? '80px' : '1rem' }}>
                 <Header onAddTask={() => handleOpenTaskForm()} tasks={taskManager.tasks} />

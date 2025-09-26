@@ -168,7 +168,11 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                             tasks={displayedTasks}
                             selectedTasks={selectedTasks}
                             onSelectionChange={setSelectedTasks}
-                            {...props}
+                            onToggleComplete={props.onToggleComplete}
+                            onEdit={props.onEdit}
+                            onView={props.onView}
+                            onStartTracking={props.onStartTracking}
+                            onStopTracking={props.onStopTracking}
                         />
                     </div>
                 </div>

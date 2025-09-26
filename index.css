@@ -20,6 +20,13 @@ body {
     color: var(--color-text-primary);
 }
 
+/* iOS surfaces: higher blur, softer borders */
+.ios-surface { backdrop-filter: saturate(140%) blur(22px); -webkit-backdrop-filter: saturate(140%) blur(22px); border: 1px solid var(--color-border); background: var(--color-bg-panel); border-radius: 20px; }
+.ios-pill { border-radius: 9999px; }
+.ios-seg { display: inline-flex; padding: 4px; background: var(--color-bg-dark); border-radius: 12px; gap: 4px; }
+.ios-seg button { border: none; padding: 6px 10px; border-radius: 10px; color: var(--color-text-secondary); background: transparent; }
+.ios-seg button.active { background: var(--color-secondary-blue); color: var(--color-text-on-accent); }
+
 /* Utility containers */
 .wp-container {
     max-width: 1200px;

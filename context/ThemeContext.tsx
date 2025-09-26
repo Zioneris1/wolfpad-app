@@ -120,6 +120,48 @@ const themes: ThemeOption[] = [
             '--color-priority-medium': '#FB7185',
             '--color-priority-low': '#FDA4AF',
         }
+    },
+    {
+        id: 'ios_light',
+        name: 'iOS Light',
+        styles: {
+            '--color-bg-main': '#F5F6F7',
+            '--color-bg-panel': 'rgba(255,255,255,0.72)',
+            '--color-bg-dark': 'rgba(255,255,255,0.86)',
+            '--color-border': 'rgba(0,0,0,0.08)',
+            '--color-text-primary': '#11181C',
+            '--color-text-secondary': '#58677A',
+            '--color-text-on-accent': '#ffffff',
+            '--color-primary-red': '#FF3B30',
+            '--color-primary-red-glow': '#FF6259',
+            '--color-secondary-blue': '#0A84FF',
+            '--color-secondary-blue-glow': '#64B5FF',
+            '--color-secondary-blue-rgb': '10, 132, 255',
+            '--color-priority-high': '#FF3B30',
+            '--color-priority-medium': '#FF9F0A',
+            '--color-priority-low': '#0A84FF',
+        }
+    },
+    {
+        id: 'ios_dark',
+        name: 'iOS Dark',
+        styles: {
+            '--color-bg-main': '#0B0B0C',
+            '--color-bg-panel': 'rgba(28,28,30,0.72)',
+            '--color-bg-dark': 'rgba(44,44,46,0.86)',
+            '--color-border': 'rgba(255,255,255,0.08)',
+            '--color-text-primary': '#EDEEF0',
+            '--color-text-secondary': '#9AA3AD',
+            '--color-text-on-accent': '#0B0B0C',
+            '--color-primary-red': '#FF453A',
+            '--color-primary-red-glow': '#FF7B73',
+            '--color-secondary-blue': '#0A84FF',
+            '--color-secondary-blue-glow': '#3AA0FF',
+            '--color-secondary-blue-rgb': '10, 132, 255',
+            '--color-priority-high': '#FF453A',
+            '--color-priority-medium': '#FFD60A',
+            '--color-priority-low': '#0A84FF',
+        }
     }
 ];
 

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import type { GoalWithProgress, Task } from '../types';
 import TaskItem from './TaskItem';
 import { useTranslation } from '../hooks/useTranslation';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/Card';
 
 // --- ICONS ---
 const EditIcon = () => <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" /></svg>;
@@ -47,14 +48,11 @@ const GoalItem: React.FC<GoalItemProps> = (props) => {
     };
 
     return (
-        <div className="bg-[var(--color-bg-panel)] border border-[var(--color-border)] rounded-lg shadow-lg flex flex-col transition-all duration-300 border-t-4" style={{borderColor: 'var(--color-secondary-blue)'}}>
-            
-            {/* Main Card Content */}
-            <div className="p-5 flex flex-col flex-grow">
-                {/* Header */}
+        <Card className="glass-panel neon-border cut-corners hover-raise">
+            <CardHeader>
                 <div className="flex justify-between items-start gap-4">
                     <div className="flex-1">
-                        <h3 className="font-bold text-lg leading-tight" style={{ color: 'var(--color-text-primary)'}}>{goal.name}</h3>
+                        <CardTitle>{goal.name}</CardTitle>
                         <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)'}}>{goal.description}</p>
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0">
@@ -62,55 +60,51 @@ const GoalItem: React.FC<GoalItemProps> = (props) => {
                         <button style={iconButtonStyle} onMouseOver={e => e.currentTarget.style.color = 'var(--color-primary-red)'} onMouseOut={e => e.currentTarget.style.color = 'var(--color-text-secondary)'} onClick={(e) => { e.stopPropagation(); onDeleteGoal(goal.id); }}><DeleteIcon/></button>
                     </div>
                 </div>
-
-                {/* Stats */}
-                <div className="mt-4 grid grid-cols-2 gap-4 pt-4 border-t border-dashed" style={{borderColor: 'var(--color-border)'}}>
+            </CardHeader>
+            <CardContent>
+                <div className="grid grid-cols-2 gap-4">
                     <div>
                         <div className="text-3xl font-bold" style={{color: progressColor}}>{goal.progress}%</div>
                         <div className="text-xs uppercase tracking-wider" style={{color: 'var(--color-text-secondary)'}}>{t('goalItem.progress')}</div>
                     </div>
-                     <div>
+                    <div>
                         <div className="text-3xl font-bold" style={{color: 'var(--color-text-primary)'}}>{goal.completedTaskCount}<span className="text-lg" style={{color: 'var(--color-text-secondary)'}}>/ {goal.taskCount}</span></div>
                         <div className="text-xs uppercase tracking-wider" style={{color: 'var(--color-text-secondary)'}}>{t('common.tasks')} {t('dashboard.completed')}</div>
                     </div>
                 </div>
-            </div>
-
-            {/* Footer Actions */}
-             <div className="flex justify-between items-center p-3 border-t" style={{background: 'var(--color-bg-dark)', borderColor: 'var(--color-border)', borderBottomLeftRadius: '0.5rem', borderBottomRightRadius: '0.5rem'}}>
-                <button onClick={() => onBreakdown(goal)} className="flex items-center text-sm font-semibold px-3 py-1.5 rounded-md transition-colors" style={{background: 'transparent', color: 'var(--color-secondary-blue)', border: '1px solid var(--color-secondary-blue)'}}>
-                    <AiIcon />
-                    {t('goalItem.aiBreakdown')}
-                </button>
-                <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center text-sm font-semibold px-3 py-1.5" style={{color: 'var(--color-text-secondary)'}}>
-                    {isExpanded ? 'Hide Tasks' : 'View Tasks'}
-                    <ChevronDownIcon className={`ml-1 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
-                </button>
-             </div>
-
-            {/* Expandable Task List */}
-            {isExpanded && (
-                <div className="border-t bg-black/20" style={{borderColor: 'var(--color-border)'}}>
-                    <div className="p-4 space-y-2">
-                         <h4 className="font-semibold" style={{color: 'var(--color-text-secondary)'}}>{t('goalItem.associatedTasks')}</h4>
-                        {associatedTasks.length > 0 ? associatedTasks.map(task => (
-                            <TaskItem 
-                                key={task.id}
-                                task={task}
-                                onToggleComplete={props.onToggleTaskComplete}
-                                onEdit={props.onEditTask}
-                                onView={props.onViewTask}
-                                onStartTracking={props.onStartTracking}
-                                onStopTracking={props.onStopTracking}
-                                onPromote={props.onPromoteTask}
-                                isSelected={false}
-                                onSelect={() => {}}
-                            />
-                        )) : <p className="text-center text-sm p-4" style={{color: 'var(--color-text-secondary)'}}>{t('goalItem.noTasks')}</p>}
-                    </div>
+            </CardContent>
+            <CardFooter>
+                <div className="flex justify-between items-center w-full">
+                    <button onClick={() => onBreakdown(goal)} className="flex items-center text-sm font-semibold px-3 py-1.5 rounded-md transition-colors" style={{background: 'transparent', color: 'var(--color-secondary-blue)', border: '1px solid var(--color-secondary-blue)'}}>
+                        <AiIcon />
+                        {t('goalItem.aiBreakdown')}
+                    </button>
+                    <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center text-sm font-semibold px-3 py-1.5" style={{color: 'var(--color-text-secondary)'}}>
+                        {isExpanded ? 'Hide Tasks' : 'View Tasks'}
+                        <ChevronDownIcon className={`ml-1 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+                    </button>
                 </div>
+            </CardFooter>
+            {isExpanded && (
+                <CardContent>
+                    <h4 className="font-semibold" style={{color: 'var(--color-text-secondary)'}}>{t('goalItem.associatedTasks')}</h4>
+                    {associatedTasks.length > 0 ? associatedTasks.map(task => (
+                        <TaskItem 
+                            key={task.id}
+                            task={task}
+                            onToggleComplete={props.onToggleTaskComplete}
+                            onEdit={props.onEditTask}
+                            onView={props.onViewTask}
+                            onStartTracking={props.onStartTracking}
+                            onStopTracking={props.onStopTracking}
+                            onPromote={props.onPromoteTask}
+                            isSelected={false}
+                            onSelect={() => {}}
+                        />
+                    )) : <p className="text-center text-sm p-4" style={{color: 'var(--color-text-secondary)'}}>{t('goalItem.noTasks')}</p>}
+                </CardContent>
             )}
-        </div>
+        </Card>
     );
 };
 

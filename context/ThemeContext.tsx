@@ -78,21 +78,110 @@ const themes: ThemeOption[] = [
             '--color-priority-medium': '#ffd54f',
             '--color-priority-low': '#66bb6a',
         }
+    },
+    {
+        id: 'arctic_wolf',
+        name: 'Arctic Wolf',
+        styles: {
+            '--color-bg-main': '#0B1220',
+            '--color-bg-panel': '#121A2A',
+            '--color-bg-dark': '#1B2436',
+            '--color-border': '#2B3852',
+            '--color-text-primary': '#E8EEF9',
+            '--color-text-secondary': '#9BA7BF',
+            '--color-text-on-accent': '#0B1220',
+            '--color-primary-red': '#7DD3FC',
+            '--color-primary-red-glow': '#BAE6FD',
+            '--color-secondary-blue': '#7DD3FC',
+            '--color-secondary-blue-glow': '#BAE6FD',
+            '--color-secondary-blue-rgb': '125, 211, 252',
+            '--color-priority-high': '#60A5FA',
+            '--color-priority-medium': '#93C5FD',
+            '--color-priority-low': '#7DD3FC',
+        }
+    },
+    {
+        id: 'crimson_dusk',
+        name: 'Crimson Dusk',
+        styles: {
+            '--color-bg-main': '#160E13',
+            '--color-bg-panel': '#22141E',
+            '--color-bg-dark': '#2E1B28',
+            '--color-border': '#4A2C3C',
+            '--color-text-primary': '#F2E9EC',
+            '--color-text-secondary': '#B89AA6',
+            '--color-text-on-accent': '#FFFFFF',
+            '--color-primary-red': '#F43F5E',
+            '--color-primary-red-glow': '#FB7185',
+            '--color-secondary-blue': '#FB7185',
+            '--color-secondary-blue-glow': '#FDA4AF',
+            '--color-secondary-blue-rgb': '251, 113, 133',
+            '--color-priority-high': '#F43F5E',
+            '--color-priority-medium': '#FB7185',
+            '--color-priority-low': '#FDA4AF',
+        }
+    },
+    {
+        id: 'ios_light',
+        name: 'iOS Light',
+        styles: {
+            '--color-bg-main': '#F5F6F7',
+            '--color-bg-panel': 'rgba(255,255,255,0.72)',
+            '--color-bg-dark': 'rgba(255,255,255,0.86)',
+            '--color-border': 'rgba(0,0,0,0.08)',
+            '--color-text-primary': '#11181C',
+            '--color-text-secondary': '#58677A',
+            '--color-text-on-accent': '#ffffff',
+            '--color-primary-red': '#FF3B30',
+            '--color-primary-red-glow': '#FF6259',
+            '--color-secondary-blue': '#0A84FF',
+            '--color-secondary-blue-glow': '#64B5FF',
+            '--color-secondary-blue-rgb': '10, 132, 255',
+            '--color-priority-high': '#FF3B30',
+            '--color-priority-medium': '#FF9F0A',
+            '--color-priority-low': '#0A84FF',
+        }
+    },
+    {
+        id: 'ios_dark',
+        name: 'iOS Dark',
+        styles: {
+            '--color-bg-main': '#0B0B0C',
+            '--color-bg-panel': 'rgba(28,28,30,0.72)',
+            '--color-bg-dark': 'rgba(44,44,46,0.86)',
+            '--color-border': 'rgba(255,255,255,0.08)',
+            '--color-text-primary': '#EDEEF0',
+            '--color-text-secondary': '#9AA3AD',
+            '--color-text-on-accent': '#0B0B0C',
+            '--color-primary-red': '#FF453A',
+            '--color-primary-red-glow': '#FF7B73',
+            '--color-secondary-blue': '#0A84FF',
+            '--color-secondary-blue-glow': '#3AA0FF',
+            '--color-secondary-blue-rgb': '10, 132, 255',
+            '--color-priority-high': '#FF453A',
+            '--color-priority-medium': '#FFD60A',
+            '--color-priority-low': '#0A84FF',
+        }
     }
 ];
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { user } = useAuthContext();
-    const [theme, setThemeState] = useState(themes[0].id);
+    const [theme, setThemeState] = useState(() => {
+        const stored = typeof window !== 'undefined' ? window.localStorage.getItem('wolfpad_theme') : null;
+        return stored && themes.some(t => t.id === stored) ? stored : themes[0].id;
+    });
 
     useEffect(() => {
-        if (user) {
-            profileApi.getProfile(user.id).then(profile => {
-                if (profile?.theme && themes.some(t => t.id === profile.theme)) {
-                    setThemeState(profile.theme);
+        if (!user) return;
+        profileApi.getProfile(user.id).then(profile => {
+            if (profile?.theme && themes.some(t => t.id === profile.theme)) {
+                setThemeState(profile.theme);
+                if (typeof window !== 'undefined') {
+                    window.localStorage.setItem('wolfpad_theme', profile.theme);
                 }
-            });
-        }
+            }
+        });
     }, [user]);
 
     useEffect(() => {
@@ -103,9 +192,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }, [theme]);
     
     const setTheme = (newTheme: string) => {
-        if (!user) return;
+        if (!themes.some(t => t.id === newTheme)) return;
         setThemeState(newTheme);
-        profileApi.updateProfile(user.id, { theme: newTheme });
+        if (typeof window !== 'undefined') {
+            window.localStorage.setItem('wolfpad_theme', newTheme);
+        }
+        if (user) {
+            profileApi.updateProfile(user.id, { theme: newTheme });
+        }
     };
 
     const value = useMemo(() => ({ theme, setTheme, themes }), [theme]);

@@ -1,82 +1,165 @@
-import React, { useState } from 'react';
-import { useAuthContext } from '../context/AuthContext';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from '../hooks/useTranslation';
-import Logo from './Logo';
+import { useJournalManager } from '../hooks/useJournalManager';
+import type { JournalEntry } from '../types';
 
-interface LoginViewProps {
-    onSwitchToSignUp: () => void;
-}
+// Helper to format date for grouping and display
+const formatDateForDisplay = (isoString: string) => {
+    return new Date(isoString).toLocaleDateString(undefined, {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+};
+const formatDateKey = (isoString: string) => isoString.split('T')[0];
 
-const LoginView: React.FC<LoginViewProps> = ({ onSwitchToSignUp }) => {
-    const { login } = useAuthContext();
+const JournalEntryItem: React.FC<{
+    entry: JournalEntry;
+    onUpdate: (id: string, content: string) => void;
+    onDelete: (id: string) => void;
+}> = ({ entry, onUpdate, onDelete }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editText, setEditText] = useState(entry.content);
+    const [formattedTime, setFormattedTime] = useState('');
     const { t } = useTranslation();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
-        setIsLoading(true);
-        try {
-            const success = await login(email, password);
-            if (!success) {
-                setError('Invalid credentials. Please try again.');
+    useEffect(() => {
+        setFormattedTime(new Date(entry.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }));
+    }, [entry.created_at]);
+
+    const handleSave = () => {
+        onUpdate(entry.id, editText);
+        setIsEditing(false);
+    };
+
+    const handleCancel = () => {
+        setEditText(entry.content);
+        setIsEditing(false);
+    };
+
+    return (
+        <div className="bg-[var(--color-bg-dark)] p-4 rounded-lg border border-[var(--color-border)]">
+            <div className="flex justify-between items-center mb-2">
+                <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{formattedTime}</p>
+                {!isEditing && (
+                    <div className="flex gap-2">
+                        <button onClick={() => setIsEditing(true)} className="text-xs font-semibold" style={{ color: 'var(--color-secondary-blue)' }}>{t('common.edit')}</button>
+                        <button onClick={() => onDelete(entry.id)} className="text-xs font-semibold" style={{ color: 'var(--color-primary-red)' }}>{t('common.delete')}</button>
+                    </div>
+                )}
+            </div>
+            {isEditing ? (
+                <>
+                    <textarea
+                        value={editText}
+                        onChange={(e) => setEditText(e.target.value)}
+                        className="w-full p-2 rounded-md bg-[var(--color-bg-main)] border border-[var(--color-border)] text-[var(--color-text-primary)]"
+                        style={{ minHeight: '120px', fontFamily: 'Courier New, monospace' }}
+                    />
+                    <div className="flex justify-end gap-2 mt-2">
+                        <button onClick={handleCancel} style={{ background: 'transparent', border: '1px solid var(--color-border)' }}>{t('common.cancel')}</button>
+                        <button onClick={handleSave} style={{ background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)' }}>{t('common.save')}</button>
+                    </div>
+                </>
+            ) : (
+                <p className="whitespace-pre-wrap" style={{ fontFamily: 'Courier New, monospace', color: 'var(--color-text-secondary)' }}>{entry.content}</p>
+            )}
+        </div>
+    );
+};
+
+const DateHeader: React.FC<{ dateString: string }> = ({ dateString }) => {
+    const [formattedDate, setFormattedDate] = useState('');
+    useEffect(() => {
+        setFormattedDate(formatDateForDisplay(dateString));
+    }, [dateString]);
+    return (
+        <h4 className="font-semibold pb-2 mb-4 border-b border-dashed" style={{ color: 'var(--color-text-primary)', borderColor: 'var(--color-border)' }}>
+            {formattedDate}
+        </h4>
+    );
+};
+
+const LoginView: React.FC = () => {
+    const { t } = useTranslation();
+    const journalManager = useJournalManager();
+    const [newEntryContent, setNewEntryContent] = useState('');
+    const [formattedToday, setFormattedToday] = useState('');
+
+    useEffect(() => {
+        setFormattedToday(formatDateForDisplay(new Date().toISOString()));
+    }, []);
+
+    const handleSaveNewEntry = () => {
+        journalManager.addEntry(newEntryContent);
+        setNewEntryContent('');
+    };
+
+    const groupedEntries = useMemo(() => {
+        return journalManager.entries.reduce((acc: Record<string, JournalEntry[]>, entry) => {
+            const dateKey = formatDateKey(entry.created_at);
+            if (!acc[dateKey]) {
+                acc[dateKey] = [];
             }
-        } catch (err) {
-            setError('An unexpected error occurred.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const inputStyle: React.CSSProperties = {
-        width: '100%',
-        padding: '0.75rem 1rem',
-        background: 'var(--color-bg-dark)',
-        border: '1px solid var(--color-border)',
-        color: 'var(--color-text-primary)',
-        borderRadius: '4px',
-        fontSize: '1rem'
-    };
+            acc[dateKey].push(entry);
+            return acc;
+        }, {});
+    }, [journalManager.entries]);
     
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'var(--color-bg-main)', padding: '1rem' }}>
-            <div style={{ width: '100%', maxWidth: '400px', background: 'var(--color-bg-panel)', padding: '2.5rem', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
-                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                    <Logo className="desktop-sidebar-logo" />
-                    <h2 style={{ color: 'var(--color-text-primary)', margin: '0.5rem 0 0.25rem' }}>{t('auth.loginTitle')}</h2>
-                    <p style={{ color: 'var(--color-text-secondary)', margin: 0, fontSize: '0.9rem' }}>{t('auth.loginSubtitle')}</p>
-                </div>
+        <div className="py-2 md:py-6">
+            <h2 className="text-3xl font-bold tracking-tight mb-6" style={{ textShadow: `0 0 5px var(--color-secondary-blue)` }}>
+                {t('header.theDen')}
+            </h2>
 
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <input
-                        type="email"
-                        placeholder={t('auth.email')}
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                        required
-                        style={inputStyle}
-                    />
-                    <input
-                        type="password"
-                        placeholder={t('auth.password')}
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        required
-                        style={inputStyle}
-                    />
-                    {error && <p style={{ color: 'var(--color-primary-red)', margin: 0, textAlign: 'center' }}>{error}</p>}
-                    <button type="submit" disabled={isLoading} style={{ background: 'var(--color-primary-red)', color: 'var(--color-text-on-accent)', padding: '0.75rem', fontSize: '1rem', marginTop: '0.5rem' }}>
-                        {isLoading ? t('common.loading') : t('auth.loginButton')}
+            <div className="mb-8 p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
+                <h3 className="font-bold text-lg mb-1">{t('theDen.todaysEntry')}</h3>
+                <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
+                    {formattedToday}
+                </p>
+                <textarea
+                    value={newEntryContent}
+                    onChange={(e) => setNewEntryContent(e.target.value)}
+                    placeholder={t('theDen.placeholder')}
+                    className="w-full p-3 rounded-md bg-[var(--color-bg-dark)] border border-[var(--color-border)] text-[var(--color-text-primary)] transition focus:border-[var(--color-secondary-blue)] focus:ring-1 focus:ring-[var(--color-secondary-blue)]"
+                    style={{ minHeight: '150px', fontFamily: 'Courier New, monospace' }}
+                />
+                <div className="flex justify-end mt-4">
+                    <button 
+                        onClick={handleSaveNewEntry}
+                        disabled={!newEntryContent.trim()}
+                        className="font-semibold px-6 py-2 rounded-lg transition-colors"
+                        style={{ background: 'var(--color-primary-red)', color: 'var(--color-text-on-accent)' }}
+                    >
+                        {t('theDen.saveEntry')}
                     </button>
-                </form>
-                 <div style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.9rem' }}>
-                    <span style={{ color: 'var(--color-text-secondary)' }}>{t('auth.dontHaveAccount')} </span>
-                    <button onClick={onSwitchToSignUp} style={{ color: 'var(--color-secondary-blue)', fontWeight: 'bold' }}>
-                        {t('auth.signup')}
-                    </button>
+                </div>
+            </div>
+
+            <div>
+                <h3 className="text-2xl font-bold mb-4">{t('theDen.archive')}</h3>
+                <div className="space-y-8">
+                    {Object.keys(groupedEntries).length > 0 ? (
+                        Object.entries(groupedEntries).map(([date, entriesOnDate]) => {
+                            return (
+                                <div key={date}>
+                                    <DateHeader dateString={date} />
+                                    <div className="space-y-4">
+                                        {entriesOnDate.map(entry => (
+                                            <JournalEntryItem 
+                                                key={entry.id}
+                                                entry={entry}
+                                                onUpdate={journalManager.updateEntry}
+                                                onDelete={journalManager.deleteEntry}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            );
+                        })
+                    ) : (
+                         <div className="text-center py-12 px-6 border-2 border-dashed rounded-lg" style={{ borderColor: 'var(--color-border)', background: 'var(--color-bg-dark)'}}>
+                            <p className="mt-1 text-sm" style={{ color: 'var(--color-text-secondary)'}}>{t('theDen.noEntries')}</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

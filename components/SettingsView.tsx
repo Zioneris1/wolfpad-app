@@ -27,7 +27,7 @@ const SettingsView: React.FC = () => {
             </h2>
 
             <div className="max-w-2xl mx-auto space-y-8">
-                <div className="p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
+                <div className="p-6 rounded-xl shadow-lg glass-panel neon-border cut-corners hover-raise" style={{ backgroundColor: 'rgba(26,29,36,0.55)' }}>
                     <h3 className="font-bold text-lg mb-2">{t('settingsView.dataManagement')}</h3>
 
                     <div className="pt-4 mt-4 border-t" style={{ borderColor: 'var(--color-border)' }}>
@@ -59,6 +59,28 @@ const SettingsView: React.FC = () => {
                             accept=".json"
                             style={{ display: 'none' }}
                         />
+                    </div>
+                </div>
+
+                <div className="p-6 rounded-xl shadow-lg glass-panel neon-border cut-corners hover-raise" style={{ backgroundColor: 'rgba(26,29,36,0.55)' }}>
+                    <h3 className="font-bold text-lg mb-4">Notification Preferences</h3>
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <span>Email summaries</span>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" className="sr-only peer" defaultChecked />
+                                <div className="w-11 h-6 bg-[var(--color-border)] peer-focus:outline-none rounded-full peer peer-checked:bg-[var(--color-secondary-blue)]"></div>
+                                <div className="dot absolute left-0.5 top-0.5 bg-white w-5 h-5 rounded-full transition peer-checked:translate-x-5"></div>
+                            </label>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <span>Task due reminders</span>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" className="sr-only peer" />
+                                <div className="w-11 h-6 bg-[var(--color-border)] peer-focus:outline-none rounded-full peer peer-checked:bg-[var(--color-secondary-blue)]"></div>
+                                <div className="dot absolute left-0.5 top-0.5 bg-white w-5 h-5 rounded-full transition peer-checked:translate-x-5"></div>
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>

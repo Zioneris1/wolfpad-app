@@ -26,9 +26,9 @@ const AlertTriangleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" classNam
 const CheckCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
 
 // --- NEW COMPONENTS ---
-const StatCard: React.FC<{ value: number; label: string; icon: ReactNode; colorClass: string }> = ({ value, label, icon, colorClass }) => (
-    <div className="flex items-center p-4 rounded-lg" style={{ background: `var(--color-bg-dark)`}}>
-        <div className={`flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-lg ${colorClass} text-white`}>
+const StatCard: React.FC<{ value: number; label: string; icon: ReactNode; color: string; glow: string }> = ({ value, label, icon, color, glow }) => (
+    <div className="flex items-center p-4 rounded-lg" style={{ background: `var(--color-bg-dark)`, border: '1px solid var(--color-border)' }}>
+        <div className="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-lg text-white" style={{ background: color, boxShadow: `0 0 15px ${glow}` }}>
             {icon}
         </div>
         <div className="ml-4">
@@ -136,7 +136,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                 {/* --- Left Column (Main Content) --- */}
                 <div className="lg:col-span-2">
                     <header>
-                        <h1 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--color-text-primary)' }}>
+                        <h1 className="text-3xl font-bold tracking-tight">
                             Command Center
                         </h1>
                         <p className="mt-1 text-lg" style={{ color: 'var(--color-text-secondary)' }}>
@@ -155,6 +155,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                                             ? 'border-[var(--color-secondary-blue)] text-[var(--color-secondary-blue)]'
                                             : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-border)]'
                                         }`}
+                                    style={{ textShadow: activeTab === tab.id ? `0 0 8px var(--color-secondary-blue-glow)`: 'none' }}
                                 >
                                     {tab.label}
                                 </button>
@@ -164,23 +165,27 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
                     <div className="mt-6">
                         <TaskList
+                            tasks={displayedTasks}
                             selectedTasks={selectedTasks}
                             onSelectionChange={setSelectedTasks}
-                            {...props}
-                            tasks={displayedTasks}
+                            onToggleComplete={props.onToggleComplete}
+                            onEdit={props.onEdit}
+                            onView={props.onView}
+                            onStartTracking={props.onStartTracking}
+                            onStopTracking={props.onStopTracking}
                         />
                     </div>
                 </div>
 
                 {/* --- Right Column (Sidebar) --- */}
                 <div className="mt-8 lg:mt-0 lg:col-span-1">
-                     <div className="space-y-6 p-4 md:p-6 rounded-lg" style={{background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)'}}>
+                     <div className="space-y-6 p-4 md:p-6 rounded-lg" style={{background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)', backdropFilter: 'blur(10px)'}}>
                         <div>
                             <h3 className="text-lg font-medium" style={{ color: 'var(--color-text-primary)' }}>Stats</h3>
                             <div className="mt-4 space-y-4">
-                               <StatCard value={stats.dueToday} label={t('dashboard.dueToday')} icon={<CalendarIcon />} colorClass="bg-blue-500" />
-                               <StatCard value={stats.overdue} label={t('dashboard.overdue')} icon={<AlertTriangleIcon />} colorClass="bg-red-500" />
-                               <StatCard value={stats.completedToday} label={t('dashboard.completedToday')} icon={<CheckCircleIcon />} colorClass="bg-gray-500" />
+                               <StatCard value={stats.dueToday} label={t('dashboard.dueToday')} icon={<CalendarIcon />} color={'var(--color-secondary-blue)'} glow={'var(--color-secondary-blue-glow)'} />
+                               <StatCard value={stats.overdue} label={t('dashboard.overdue')} icon={<AlertTriangleIcon />} color={'var(--color-primary-red)'} glow={'var(--color-primary-red-glow)'} />
+                               <StatCard value={stats.completedToday} label={t('dashboard.completedToday')} icon={<CheckCircleIcon />} color={'var(--color-text-secondary)'} glow={'var(--color-text-secondary)'} />
                             </div>
                         </div>
                         
@@ -189,13 +194,13 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                              <div className="mt-4 space-y-4">
                                 <div>
                                     <label className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Show</label>
-                                    <div className="flex space-x-1 mt-1">
+                                    <div className="flex space-x-1 mt-1 p-1 rounded-lg" style={{backgroundColor: 'var(--color-bg-dark)'}}>
                                          {['pending', 'completed', 'all'].map((f) => (
                                              <button
                                                  key={f}
                                                  onClick={() => { setFilter(f as any); onSetInitialFilter(f as any); }}
-                                                 className={`flex-1 text-xs px-2 py-1.5 rounded transition-colors duration-200 ${filter === f ? 'text-white' : 'text-[var(--color-text-secondary)]'}`}
-                                                 style={{backgroundColor: filter === f ? 'var(--color-secondary-blue)' : 'var(--color-bg-dark)'}}
+                                                 className={`flex-1 text-xs px-2 py-1.5 rounded-md transition-colors duration-200 font-semibold ${filter === f ? 'text-white' : 'text-[var(--color-text-secondary)]'}`}
+                                                 style={{backgroundColor: filter === f ? 'var(--color-secondary-blue)' : 'transparent'}}
                                              >
                                                  {t(`dashboard.${f}`)}
                                              </button>

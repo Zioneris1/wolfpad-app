@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import type { Task, GoalWithProgress } from '../types';
 import { useTranslation } from '../hooks/useTranslation';
 import { getTaskPrioritization, generateContent, getGoalStrategy } from '../lib/ai';
+import { Card, CardContent } from './ui/Card';
 
 interface AiAgentsViewProps {
     tasks: Task[];
@@ -24,20 +25,22 @@ const AgentOutput: React.FC<{ result: string; isLoading: boolean }> = ({ result,
     };
 
     return (
-        <div className="agent-output-container">
-            <div className="agent-output-header">
-                <span>{t('aiAgentsView.agentResponse')}</span>
-                {result && !isLoading && (
-                    <button onClick={handleCopy} className="copy-btn">
-                        {copied ? t('aiAgentsView.copied') : t('aiAgentsView.copy')}
-                    </button>
-                )}
-            </div>
-            <div className="agent-output-content">
-                {result || ''}
-            </div>
-            {isLoading && <div className="agent-thinking-animation"></div>}
-        </div>
+        <Card>
+            <CardContent>
+                <div className="flex justify-between items-center mb-2">
+                    <span>{t('aiAgentsView.agentResponse')}</span>
+                    {result && !isLoading && (
+                        <button onClick={handleCopy} className="text-sm font-semibold px-2 py-1 rounded" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
+                            {copied ? t('aiAgentsView.copied') : t('aiAgentsView.copy')}
+                        </button>
+                    )}
+                </div>
+                <div className="whitespace-pre-wrap text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                    {result || ''}
+                </div>
+                {isLoading && <div style={{ marginTop: '0.5rem', color: 'var(--color-text-secondary)' }}>{t('aiAgentsView.runningAgent')}</div>}
+            </CardContent>
+        </Card>
     );
 };
 
@@ -115,31 +118,34 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
         <div style={{ padding: '1.5rem 0' }}>
             <h2 style={{ textShadow: `0 0 5px var(--color-secondary-blue)` }}>{t('aiAgentsView.title')}</h2>
 
-            <div className="agents-grid">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Task Prioritizer Agent */}
-                <div className="agent-card prioritizer">
-                    <div className="agent-card-header">
+                <Card>
+                    <CardContent>
+                        <div className="flex items-center justify-between mb-2">
                         <div className="agent-card-icon" style={{color: 'var(--color-secondary-blue)'}}>
                             <PrioritizerIcon />
                         </div>
                         <h3 style={{ margin: 0 }}>{t('aiAgentsView.taskPrioritizer')}</h3>
-                    </div>
-                    <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', flex: 1 }}>{t('aiAgentsView.taskPrioritizerDesc')}</p>
+                        </div>
+                        <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', flex: 1 }}>{t('aiAgentsView.taskPrioritizerDesc')}</p>
                     <button onClick={handleRunPrioritizer} disabled={isPrioritizerLoading || pendingTasks.length === 0} style={{width: '100%', background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)'}}>
                         {isPrioritizerLoading ? t('aiAgentsView.runningAgent') : t('aiAgentsView.runAgent')}
                     </button>
                     {pendingTasks.length === 0 && <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem'}}>{t('aiAgentsView.noPendingTasks')}</p>}
                     <AgentOutput result={prioritizerResult} isLoading={isPrioritizerLoading} />
-                </div>
+                    </CardContent>
+                </Card>
 
                 {/* Content Creator Agent */}
-                <div className="agent-card creator">
-                    <div className="agent-card-header">
+                <Card>
+                    <CardContent>
+                        <div className="flex items-center justify-between mb-2">
                         <div className="agent-card-icon" style={{color: '#ff00ff'}}>
                            <CreatorIcon />
                         </div>
                         <h3 style={{ margin: 0 }}>{t('aiAgentsView.contentCreator')}</h3>
-                    </div>
+                        </div>
                     <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>{t('aiAgentsView.contentCreatorDesc')}</p>
                     <textarea
                         value={creatorPrompt}
@@ -151,16 +157,18 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
                         {isCreatorLoading ? t('aiAgentsView.runningAgent') : t('aiAgentsView.runAgent')}
                     </button>
                     <AgentOutput result={creatorResult} isLoading={isCreatorLoading} />
-                </div>
+                    </CardContent>
+                </Card>
 
                 {/* Goal Strategist Agent */}
-                <div className="agent-card strategist">
-                     <div className="agent-card-header">
+                <Card>
+                    <CardContent>
+                        <div className="flex items-center justify-between mb-2">
                         <div className="agent-card-icon" style={{color: '#64ffda'}}>
                            <StrategistIcon />
                         </div>
                         <h3 style={{ margin: 0 }}>{t('aiAgentsView.goalStrategist')}</h3>
-                    </div>
+                        </div>
                     <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>{t('aiAgentsView.goalStrategistDesc')}</p>
                      <select
                         value={selectedGoalId}
@@ -178,7 +186,8 @@ const AiAgentsView: React.FC<AiAgentsViewProps> = ({ tasks, goals }) => {
                     </button>
                      {goals.length === 0 && <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem'}}>{t('aiAgentsView.noGoals')}</p>}
                     <AgentOutput result={strategistResult} isLoading={isStrategistLoading} />
-                </div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );

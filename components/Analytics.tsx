@@ -2,6 +2,7 @@ import React from 'react';
 import type { Task } from '../types';
 import type { useMoneyManager } from '../hooks/useMoneyManager';
 import DonutChart from './DonutChart';
+import SparkBar from './SparkBar';
 import { useTranslation } from '../hooks/useTranslation';
 import { formatTime } from '../utils/time';
 
@@ -27,14 +28,14 @@ interface StatCardProps {
 const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color, onClick }) => (
     <div
         onClick={onClick}
-        className={`p-5 rounded-xl shadow-lg flex items-center space-x-4 transition-all duration-300 ${onClick ? 'cursor-pointer hover:shadow-2xl hover:-translate-y-1' : ''}`}
-        style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}
+        className={`p-5 shadow-lg flex items-center space-x-4 transition-all duration-300 hover-raise hex neon-border glass-panel ${onClick ? 'cursor-pointer' : ''}`}
+        style={{ backgroundColor: 'rgba(26, 29, 36, 0.55)' }}
     >
         <div className="flex-shrink-0 flex items-center justify-center h-16 w-16 rounded-2xl" style={{ backgroundColor: color }}>
             {icon}
         </div>
         <div>
-            <div className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>{value}</div>
+            <div className="text-2xl font-bold glow-title" style={{ color: 'var(--color-text-primary)' }}>{value}</div>
             <div className="text-sm font-medium uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>{title}</div>
         </div>
     </div>
@@ -104,7 +105,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ tasks, moneyManager, onNavigateTo
 
     return (
         <div className="py-2 md:py-6">
-            <h2 className="text-3xl font-bold tracking-tight mb-6" style={{ textShadow: `0 0 5px var(--color-secondary-blue)` }}>{t('analyticsView.title')}</h2>
+            <h2 className="text-3xl font-bold tracking-tight mb-6 glow-title" style={{ textShadow: `0 0 5px var(--color-secondary-blue)` }}>{t('analyticsView.title')}</h2>
 
             {/* --- Key Metrics Grid --- */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -140,9 +141,9 @@ const Analytics: React.FC<AnalyticsProps> = ({ tasks, moneyManager, onNavigateTo
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
                 {/* Task Completion */}
-                <div className="lg:col-span-1 p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
-                    <h3 className="font-bold text-lg mb-4">{t('analyticsView.completionRate')}</h3>
-                    <DonutChart completed={completedTasks} total={totalTasks} />
+                <div className="lg:col-span-1 p-6 rounded-xl shadow-lg glass-panel neon-border cut-corners hover-raise" style={{ backgroundColor: 'rgba(26, 29, 36, 0.55)' }}>
+                    <h3 className="font-bold text-lg mb-4 glow-title">{t('analyticsView.completionRate')}</h3>
+                    <DonutChart completed={completedTasks} total={totalTasks} animated />
                     <div className="flex justify-around mt-4 text-center">
                         <div>
                             <p className="font-bold text-2xl" style={{ color: 'var(--color-text-primary)'}}>{completedTasks}</p>
@@ -156,8 +157,8 @@ const Analytics: React.FC<AnalyticsProps> = ({ tasks, moneyManager, onNavigateTo
                 </div>
 
                 {/* Financial Overview & Reports */}
-                <div className="lg:col-span-2 p-6 rounded-xl shadow-lg space-y-6" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
-                     <h3 className="font-bold text-lg">Financial Overview (This Month)</h3>
+                <div className="lg:col-span-2 p-6 rounded-xl shadow-lg space-y-6 glass-panel neon-border cut-corners hover-raise" style={{ backgroundColor: 'rgba(26, 29, 36, 0.55)' }}>
+                     <h3 className="font-bold text-lg glow-title">Financial Overview (This Month)</h3>
                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <StatCard 
                             title="Income" 
@@ -178,21 +179,29 @@ const Analytics: React.FC<AnalyticsProps> = ({ tasks, moneyManager, onNavigateTo
                             color="#3b82f6" // Blue
                         />
                      </div>
-                     <div className="pt-6 border-t" style={{ borderColor: 'var(--color-border)' }}>
-                        <div className="flex justify-between items-center">
-                            <div>
-                                <h4 className="font-bold">{t('analyticsView.financialReport')}</h4>
-                                <p className="text-sm" style={{ color: 'var(--color-text-secondary)'}}>{t('analyticsView.financialReportDesc')}</p>
-                            </div>
-                            <button 
-                                onClick={handleDownloadFinancials} 
-                                className="flex items-center justify-center font-semibold px-4 py-2 rounded-lg transition-colors" 
-                                style={{background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)', border: 'none' }}
-                            >
-                                <DownloadIcon />
-                                {t('analyticsView.downloadCsv')}
-                            </button>
+                     <div>
+                        <h4 className="font-bold mb-2" style={{ color: 'var(--color-text-primary)' }}>Spending Pattern (This Month)</h4>
+                        <SparkBar values={monthlyTransactions.filter(t => t.amount < 0).slice(0, 24).map(t => Math.abs(t.amount))} />
+                     </div>
+                </div>
+            </div>
+
+            {/* --- Reports --- */}
+            <div className="mt-8">
+                <div className="p-6 rounded-xl shadow-lg glass-panel neon-border cut-corners hover-raise" style={{ backgroundColor: 'rgba(26, 29, 36, 0.55)' }}>
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <h4 className="font-bold glow-title">{t('analyticsView.financialReport')}</h4>
+                            <p className="text-sm" style={{ color: 'var(--color-text-secondary)'}}>{t('analyticsView.financialReportDesc')}</p>
                         </div>
+                        <button 
+                            onClick={handleDownloadFinancials} 
+                            className="flex items-center justify-center font-semibold px-4 py-2 rounded-lg transition-colors"
+                            style={{background: 'var(--color-secondary-blue)', color: 'var(--color-text-on-accent)', border: 'none' }}
+                        >
+                            <DownloadIcon />
+                            {t('analyticsView.downloadCsv')}
+                        </button>
                     </div>
                 </div>
             </div>

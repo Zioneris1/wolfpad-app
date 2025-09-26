@@ -2,10 +2,11 @@ import React, { useState, useMemo, useEffect } from 'react';
 import type { useJournalManager } from '../hooks/useJournalManager';
 import type { JournalEntry } from '../types';
 import { useTranslation } from '../hooks/useTranslation';
+import { Card, CardContent } from './ui/Card';
 
 // Helper to format date for grouping and display
-const formatDateForDisplay = (isoString: string) => {
-    return new Date(isoString).toLocaleDateString(undefined, {
+const formatDateForDisplay = (isoString: string, locale?: string) => {
+    return new Date(isoString).toLocaleDateString(locale, {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
     });
 };
@@ -19,11 +20,11 @@ const JournalEntryItem: React.FC<{
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(entry.content);
     const [formattedTime, setFormattedTime] = useState('');
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
 
     useEffect(() => {
-        setFormattedTime(new Date(entry.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }));
-    }, [entry.created_at]);
+        setFormattedTime(new Date(entry.created_at).toLocaleTimeString(language, { hour: '2-digit', minute: '2-digit' }));
+    }, [entry.created_at, language]);
 
     const handleSave = () => {
         onUpdate(entry.id, editText);
@@ -72,9 +73,10 @@ interface TheDenViewProps {
 
 const DateHeader: React.FC<{ dateString: string }> = ({ dateString }) => {
     const [formattedDate, setFormattedDate] = useState('');
+    const { language } = useTranslation();
     useEffect(() => {
-        setFormattedDate(formatDateForDisplay(dateString));
-    }, [dateString]);
+        setFormattedDate(formatDateForDisplay(dateString, language));
+    }, [dateString, language]);
     return (
         <h4 className="font-semibold pb-2 mb-4 border-b border-dashed" style={{ color: 'var(--color-text-primary)', borderColor: 'var(--color-border)' }}>
             {formattedDate}
@@ -84,13 +86,13 @@ const DateHeader: React.FC<{ dateString: string }> = ({ dateString }) => {
 
 
 const TheDenView: React.FC<TheDenViewProps> = ({ journalManager }) => {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [newEntryContent, setNewEntryContent] = useState('');
     const [formattedToday, setFormattedToday] = useState('');
 
     useEffect(() => {
-        setFormattedToday(formatDateForDisplay(new Date().toISOString()));
-    }, []);
+        setFormattedToday(formatDateForDisplay(new Date().toISOString(), language));
+    }, [language]);
 
     const handleSaveNewEntry = () => {
         journalManager.addEntry(newEntryContent);
@@ -116,29 +118,31 @@ const TheDenView: React.FC<TheDenViewProps> = ({ journalManager }) => {
             </h2>
 
             {/* Today's Entry Form */}
-            <div className="mb-8 p-6 rounded-xl shadow-lg" style={{ background: 'var(--color-bg-panel)', border: '1px solid var(--color-border)' }}>
-                <h3 className="font-bold text-lg mb-1">{t('theDen.todaysEntry')}</h3>
-                <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
-                    {formattedToday}
-                </p>
-                <textarea
-                    value={newEntryContent}
-                    onChange={(e) => setNewEntryContent(e.target.value)}
-                    placeholder={t('theDen.placeholder')}
-                    className="w-full p-3 rounded-md bg-[var(--color-bg-dark)] border border-[var(--color-border)] text-[var(--color-text-primary)] transition focus:border-[var(--color-secondary-blue)] focus:ring-1 focus:ring-[var(--color-secondary-blue)]"
-                    style={{ minHeight: '150px', fontFamily: 'Courier New, monospace' }}
-                />
-                <div className="flex justify-end mt-4">
-                    <button 
-                        onClick={handleSaveNewEntry}
-                        disabled={!newEntryContent.trim()}
-                        className="font-semibold px-6 py-2 rounded-lg transition-colors"
-                        style={{ background: 'var(--color-primary-red)', color: 'var(--color-text-on-accent)' }}
-                    >
-                        {t('theDen.saveEntry')}
-                    </button>
-                </div>
-            </div>
+            <Card className="glass-panel neon-border cut-corners hover-raise">
+                <CardContent>
+                    <h3 className="font-bold text-lg mb-1">{t('theDen.todaysEntry')}</h3>
+                    <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
+                        {formattedToday}
+                    </p>
+                    <textarea
+                        value={newEntryContent}
+                        onChange={(e) => setNewEntryContent(e.target.value)}
+                        placeholder={t('theDen.placeholder')}
+                        className="w-full p-3 rounded-md bg-[var(--color-bg-dark)] border border-[var(--color-border)] text-[var(--color-text-primary)] transition focus:border-[var(--color-secondary-blue)] focus:ring-1 focus:ring-[var(--color-secondary-blue)]"
+                        style={{ minHeight: '150px', fontFamily: 'Courier New, monospace' }}
+                    />
+                    <div className="flex justify-end mt-4">
+                        <button 
+                            onClick={handleSaveNewEntry}
+                            disabled={!newEntryContent.trim()}
+                            className="font-semibold px-6 py-2 rounded-lg transition-colors"
+                            style={{ background: 'var(--color-primary-red)', color: 'var(--color-text-on-accent)' }}
+                        >
+                            {t('theDen.saveEntry')}
+                        </button>
+                    </div>
+                </CardContent>
+            </Card>
 
             {/* Journal Archive */}
             <div>

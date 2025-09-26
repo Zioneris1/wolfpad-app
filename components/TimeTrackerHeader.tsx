@@ -4,7 +4,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import { formatTime } from '../utils/time';
 
 const TimeTrackerHeader: React.FC<{ tasks: Task[] }> = ({ tasks }) => {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [currentTime, setCurrentTime] = useState(new Date());
     const [formattedCurrentTime, setFormattedCurrentTime] = useState('');
 
@@ -15,8 +15,8 @@ const TimeTrackerHeader: React.FC<{ tasks: Task[] }> = ({ tasks }) => {
 
     useEffect(() => {
         // Format time on the client to avoid hydration mismatch
-        setFormattedCurrentTime(currentTime.toLocaleTimeString());
-    }, [currentTime]);
+        setFormattedCurrentTime(currentTime.toLocaleTimeString(language));
+    }, [currentTime, language]);
 
     const totalTimeTrackedToday = tasks.reduce((acc, task) => {
         if (task.completed && task.completed_at?.startsWith(new Date().toISOString().split('T')[0])) {

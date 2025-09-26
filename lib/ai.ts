@@ -1,9 +1,22 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { Task, GoalWithProgress, AppContextData, AssistantResponse } from '../types';
 
-// Using Vite's standard method for accessing environment variables on the client.
-// Ensure VITE_API_KEY is set in your Vercel/Netlify/other hosting environment.
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY! });
+// Using Vite's method for accessing env variables on the client.
+// IMPORTANT: Avoid creating the client at module load to prevent crashes when the key is missing.
+// Lazily initialize and gracefully handle missing keys in the browser.
+let cachedClient: GoogleGenAI | null | undefined;
+const getAiClient = (): GoogleGenAI | null => {
+    if (cachedClient !== undefined) return cachedClient;
+    const apiKey = (import.meta as any)?.env?.VITE_API_KEY as string | undefined;
+    if (!apiKey || typeof apiKey !== 'string' || apiKey.trim() === '') {
+        cachedClient = null;
+        return cachedClient;
+    }
+    cachedClient = new GoogleGenAI({ apiKey });
+    return cachedClient;
+};
+
+export const isAiEnabled = (): boolean => !!getAiClient();
 
 
 const getAiErrorMessage = (error: unknown, action: string): string => {
@@ -59,7 +72,9 @@ export const getTaskSuggestions = async (taskName: string): Promise<SuggestedTas
     const prompt = `Based on the task name "${taskName}", generate a concise, one-paragraph description (max 3 sentences), estimate its effort (1-5), impact (1-10), and suggest 3-5 relevant single-word tags.`;
 
     try {
-        const response = await ai.models.generateContent({
+        const client = getAiClient();
+        if (!client) throw new Error("AI features are disabled. Set VITE_API_KEY.");
+        const response = await client.models.generateContent({
             model,
             contents: prompt,
             config: {
@@ -102,7 +117,9 @@ export const getMoreTagSuggestions = async (taskName: string, description: strin
     const prompt = `Given the task "${taskName}" with description "${description}", suggest 5 additional, relevant, single-word tags.`;
     
     try {
-        const response = await ai.models.generateContent({
+        const client = getAiClient();
+        if (!client) throw new Error("AI features are disabled. Set VITE_API_KEY.");
+        const response = await client.models.generateContent({
             model,
             contents: prompt,
             config: {
@@ -136,7 +153,9 @@ export const getTaskBreakdownForGoal = async (goalName: string, goalDescription:
     const prompt = `Break down the high-level goal "${goalName}" (Description: "${goalDescription}") into 5-7 actionable, smaller tasks. For each task, provide a name, a concise one-sentence description, and estimate its effort (1-5) and impact (1-10) relative to achieving the main goal.`;
 
     try {
-        const response = await ai.models.generateContent({
+        const client = getAiClient();
+        if (!client) throw new Error("AI features are disabled. Set VITE_API_KEY.");
+        const response = await client.models.generateContent({
             model,
             contents: prompt,
             config: {
@@ -184,7 +203,17 @@ export const getDevelopmentPlan = async (goal: string, bookCount: number, channe
     const prompt = `Create a personal development plan for the goal: "${goal}". Provide a list of the top ${bookCount} books (with authors), ${channelCount} YouTube channels, and ${podcastCount} podcasts to achieve this goal.`;
     
     try {
-        const response = await ai.models.generateContent({
+        const client = getAiClient();
+        if (!client) {
+            const res = await fetch('/api/dev-plan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ goal, bookCount, channelCount, podcastCount })
+            });
+            if (!res.ok) throw new Error(await res.text());
+            return await res.json() as DevelopmentPlan;
+        }
+        const response = await client.models.generateContent({
             model,
             contents: prompt,
             config: {
@@ -223,22 +252,32 @@ export const getAlternativeResource = async (goal: string, resourceToReplace: st
     const prompt = `For a personal development plan focused on "${goal}", suggest one alternative resource to replace "${resourceToReplace}". Provide the title and the author or channel name.`;
 
     try {
-         const response = await ai.models.generateContent({
-            model,
-            contents: prompt,
-            config: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: Type.OBJECT,
-                    properties: {
-                        title: { type: Type.STRING },
-                        authorOrChannel: { type: Type.STRING },
-                    },
-                }
-            }
-        });
-        const jsonText = response.text?.trim() || '';
-        return JSON.parse(jsonText) as DevelopmentResource;
+        const client = getAiClient();
+        if (!client) {
+            const res = await fetch('/api/alt-resource', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ goal, resourceToReplace })
+            });
+            if (!res.ok) throw new Error(await res.text());
+            return await res.json() as DevelopmentResource;
+        }
+        const response = await client.models.generateContent({
+           model,
+           contents: prompt,
+           config: {
+               responseMimeType: "application/json",
+               responseSchema: {
+                   type: Type.OBJECT,
+                   properties: {
+                       title: { type: Type.STRING },
+                       authorOrChannel: { type: Type.STRING },
+                   },
+               }
+           }
+       });
+       const jsonText = response.text?.trim() || '';
+       return JSON.parse(jsonText) as DevelopmentResource;
     } catch (error) {
         throw new Error(getAiErrorMessage(error, 'get an alternative resource'));
     }
@@ -258,7 +297,9 @@ export const getTaskPrioritization = async (tasks: Task[]): Promise<string> => {
     ${taskData}`;
 
     try {
-        const response = await ai.models.generateContent({
+        const client = getAiClient();
+        if (!client) throw new Error("AI features are disabled. Set VITE_API_KEY.");
+        const response = await client.models.generateContent({
             model,
             contents: prompt,
         });
@@ -277,7 +318,9 @@ export const generateContent = async (prompt: string): Promise<string> => {
 
 User prompt: "${prompt}"`;
     try {
-        const response = await ai.models.generateContent({
+        const client = getAiClient();
+        if (!client) throw new Error("AI features are disabled. Set VITE_API_KEY.");
+        const response = await client.models.generateContent({
             model,
             contents: finalPrompt,
         });
@@ -302,7 +345,9 @@ export const getGoalStrategy = async (goal: GoalWithProgress): Promise<string> =
     Based on this, suggest 3-4 key strategic steps or areas of focus to help achieve this goal. Provide a very brief, one-sentence explanation for each point. Keep the total response under 100 words. The output must be a simple numbered list in plain text. Do not use any markdown formatting such as asterisks, bullet points, or bolding.`;
 
     try {
-        const response = await ai.models.generateContent({
+        const client = getAiClient();
+        if (!client) throw new Error("AI features are disabled. Set VITE_API_KEY.");
+        const response = await client.models.generateContent({
             model,
             contents: prompt,
         });
@@ -349,7 +394,9 @@ Here is the user's current data:
     const prompt = `${contextString}\n\nUser query: "${query}"`;
     
     try {
-        const response = await ai.models.generateContent({
+        const client = getAiClient();
+        if (!client) throw new Error("AI features are disabled. Set VITE_API_KEY.");
+        const response = await client.models.generateContent({
             model,
             contents: { parts: [{ text: prompt }] },
             config: {

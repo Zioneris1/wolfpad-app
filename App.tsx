@@ -82,8 +82,46 @@ const AppContent: React.FC = () => {
 
     const handleNavigateToDashboard = (filter: 'pending' | 'completed') => {
         setDashboardFilter(filter);
-        setView('dashboard');
+        navigateToView('dashboard');
     };
+
+    const allowedViews: View[] = ['dashboard','goals','weekly','schedule','financials','personalDevelopment','analytics','agents','theDen','settings'];
+    const parseHash = (): { auth?: 'login' | 'signup'; view?: View } => {
+        const raw = (window.location.hash || '').replace(/^#\/?/, '');
+        if (raw === 'login' || raw === 'signup') return { auth: raw as 'login' | 'signup' };
+        if (allowedViews.includes(raw as View)) return { view: raw as View };
+        return {};
+    };
+    const navigateToView = (next: View) => {
+        setView(next);
+        if (typeof window !== 'undefined') {
+            window.location.hash = `/${next}`;
+        }
+    };
+
+    useEffect(() => {
+        const handleRoute = () => {
+            const parsed = parseHash();
+            if (!user) {
+                const target = parsed.auth || 'login';
+                setAuthView(target);
+                if (!parsed.auth) window.location.hash = `/${target}`;
+                return;
+            }
+            if (parsed.auth) {
+                window.location.hash = '/dashboard';
+                setView('dashboard');
+                return;
+            }
+            if (parsed.view && parsed.view !== view) {
+                setView(parsed.view);
+            }
+        };
+        handleRoute();
+        window.addEventListener('hashchange', handleRoute);
+        return () => window.removeEventListener('hashchange', handleRoute);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user]);
 
     const renderView = () => {
         const isDataLoading = taskManager.loading || goalManager.loading || scheduleManager.loading || moneyManager.loading || journalManager.loading;
@@ -184,20 +222,22 @@ const AppContent: React.FC = () => {
 
     if (!user) {
         return authView === 'login' 
-            ? <LoginView onSwitchToSignUp={() => setAuthView('signup')} />
+            ? <LoginView />
             : <SignUpView onSwitchToLogin={() => setAuthView('login')} />;
     }
 
     return (
         <div className="app-container" style={{ display: 'flex', height: '100vh', background: 'var(--color-bg-main)' }}>
-            {!isMobile && <DesktopSidebar currentView={view} setView={setView} onAddTask={() => handleOpenTaskForm()} tasks={taskManager.tasks} />}
+            {!isMobile && <DesktopSidebar currentView={view} setView={navigateToView} />}
 
             <main style={{ flex: 1, overflowY: 'auto', padding: isMobile ? '1rem' : '1rem 2.5rem', paddingBottom: isMobile ? '80px' : '1rem' }}>
-                {isMobile && <Header onAddTask={() => handleOpenTaskForm()} tasks={taskManager.tasks} />}
-                {renderView()}
+                <Header onAddTask={() => handleOpenTaskForm()} tasks={taskManager.tasks} />
+                <div className="wp-container">
+                    {renderView()}
+                </div>
             </main>
 
-            {isMobile && <BottomNavBar currentView={view} setView={setView} />}
+            {isMobile && <BottomNavBar currentView={view} setView={navigateToView} />}
 
             <TaskForm
                 isOpen={isTaskFormOpen}

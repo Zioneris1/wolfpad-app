@@ -8,7 +8,7 @@ interface PieChartProps {
 }
 
 const PieChart: React.FC<PieChartProps> = ({ transactions, currency }) => {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const expenseData = transactions
         .filter(t => t.amount < 0)
         // Fix: Explicitly type the accumulator of the reduce function to ensure type safety.
@@ -22,7 +22,7 @@ const PieChart: React.FC<PieChartProps> = ({ transactions, currency }) => {
     
     const formatCurrency = (value: number) => {
         try {
-            return new Intl.NumberFormat(undefined, { style: 'currency', currency: currency }).format(value);
+            return new Intl.NumberFormat(language, { style: 'currency', currency: currency }).format(value);
         } catch (e) {
             return `${currency} ${value.toFixed(2)}`; // Fallback
         }

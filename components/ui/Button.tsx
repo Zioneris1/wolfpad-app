@@ -6,7 +6,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	fullWidth?: boolean;
 }
 
-const base = 'inline-flex items-center justify-center font-semibold transition-all focus:outline-none rounded-2xl';
+const base = 'inline-flex items-center justify-center font-semibold transition-all focus:outline-none ios-pill';
 const sizes: Record<NonNullable<ButtonProps['size']>, string> = {
 	sm: 'text-sm px-3 py-1.5',
 	md: 'text-sm md:text-base px-4 py-2',

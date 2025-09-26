@@ -1,7 +1,7 @@
 import React from 'react';
 
 export const Card: React.FC<{ className?: string; children: React.ReactNode }> = ({ className = '', children }) => (
-	<div className={`rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-panel)] shadow-sm ${className}`}>{children}</div>
+	<div className={`ios-surface ${className}`}>{children}</div>
 );
 
 export const CardHeader: React.FC<{ className?: string; children: React.ReactNode }> = ({ className = '', children }) => (
